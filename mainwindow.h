@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "gameview.h"
+#include "gameviewmodel.h"
 #include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
@@ -35,7 +36,7 @@ private:
     QPushButton *finish_button;
 
     GameView *game_view;
-    GameModel *game_model;
+    GameViewModel *game_model;
 
 signals:
     void gameViewResized();

@@ -19,17 +19,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += gamemodel.h mainwindow.h \
+HEADERS += mainwindow.h \
     gameview.h \
     gamecommon.h \
     graphicspiece.h \
     piece.h \
     move.h \
-    layout.h
+    layout.h \
+    gameviewmodel.h \
+    gameview.h \
+    gamemodel.h
 FORMS += mainwindow.ui
-SOURCES += gamemodel.cpp main.cpp mainwindow.cpp \
+SOURCES += main.cpp mainwindow.cpp \
     gameview.cpp \
     graphicspiece.cpp \
     move.cpp \
-    layout.cpp
+    layout.cpp \
+    gameviewmodel.cpp \
+    gameview.cpp \
+    gamemodel.cpp
 RESOURCES += resources.qrc

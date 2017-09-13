@@ -1,24 +1,24 @@
-#include "gamemodel.h"
+#include "gameviewmodel.h"
 #include <QObject>
 #include "gamecommon.h"
 
 
-GameModel::GameModel(QObject *parent) : QObject(parent)
+GameViewModel::GameViewModel(QObject *parent) : QObject(parent)
 {
 
 }
 
-void GameModel::onMove(const Move &move)
+void GameViewModel::onMove(const Move &move)
 {
 
 }
 
-void GameModel::onUndo()
+void GameViewModel::onUndo()
 {
 
 }
 
-void GameModel::onRedo()
+void GameViewModel::onRedo()
 {
 
 }

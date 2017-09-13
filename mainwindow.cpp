@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     game_view->setObjectName("game_view");
 
     // Setup game_model
-    game_model = new GameModel(this);
+    game_model = new GameViewModel(this);
     connectSignalSlot();
 }
 

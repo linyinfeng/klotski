@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "gamemodel.h"
+#include "gameviewmodel.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

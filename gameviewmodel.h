@@ -8,11 +8,11 @@
 #include <vector>
 
 
-class GameModel : public QObject
+class GameViewModel : public QObject
 {
     Q_OBJECT
 public:
-    GameModel(QObject *parent = nullptr);
+    GameViewModel(QObject *parent = nullptr);
 
     const Layout &layout();
 
