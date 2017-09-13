@@ -23,10 +23,13 @@ HEADERS += gamemodel.h mainwindow.h \
     gameview.h \
     gamecommon.h \
     graphicspiece.h \
-    piece.h
+    piece.h \
+    move.h \
+    layout.h
 FORMS += mainwindow.ui
 SOURCES += gamemodel.cpp main.cpp mainwindow.cpp \
     gameview.cpp \
     graphicspiece.cpp \
-    piece.cpp
+    move.cpp \
+    layout.cpp
 RESOURCES += resources.qrc

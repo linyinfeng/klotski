@@ -8,11 +8,7 @@ GameModel::GameModel(QObject *parent) : QObject(parent)
 
 }
 
-GameModel::~GameModel() {
-
-}
-
-void GameModel::onMove(const game::Move &move)
+void GameModel::onMove(const Move &move)
 {
 
 }

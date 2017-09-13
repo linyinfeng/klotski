@@ -14,7 +14,7 @@ public:
     explicit GameView(QWidget *parent = nullptr);
 
     GameModel *model();
-    void setGameModel(GameModel *model);
+    void setModel(GameModel *model);
 
 private:
     QGraphicsScene *m_scene;
