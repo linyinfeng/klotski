@@ -101,8 +101,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
     qDebug() << "Old game view size" << old_game_view_size;
     qDebug() << "New game view size" << game_view->size();
-    if (game_view->size() != old_game_view_size)
-        emit gameViewResized();
+    emit gameViewResized();
 }
 
 

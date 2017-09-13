@@ -2,32 +2,57 @@
 #include "gamecommon.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QGraphicsSceneHoverEvent>
 #include <QDebug>
 #include <QTimer>
 
 GameView::GameView(QWidget *parent)
-    : QWidget(parent),
-      m_scene(new QGraphicsScene(this)),
-      m_view(new QGraphicsView(m_scene, this))
+    : QGraphicsView(parent),
+      m_scene(new QGraphicsScene(this))
 {
-    m_view->setRenderHint(QPainter::Antialiasing);
-    m_view->setBackgroundBrush(Qt::white);
+    setAttribute(Qt::WA_Hover, true);
+
+    setScene(m_scene);
+
+    setRenderHint(QPainter::Antialiasing);
+    setBackgroundBrush(Qt::white);
+
+    createNewPiece(QRect(0, 0, 1, 2));
+    createNewPiece(QRect(1, 0, 2, 2));
+    createNewPiece(QRect(3, 0, 1, 2));
+    createNewPiece(QRect(0, 2, 1, 2));
+    createNewPiece(QRect(1, 2, 2, 1));
+    createNewPiece(QRect(3, 2, 1, 2));
+    createNewPiece(QRect(0, 4, 1, 1));
+    createNewPiece(QRect(3, 4, 1, 1));
+    createNewPiece(QRect(1, 3, 1, 1));
+    createNewPiece(QRect(2, 3, 1, 1));
+
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, &QTimer::timeout, m_scene, &QGraphicsScene::advance);
+//    timer->start(16);
+}
+
+void GameView::createNewPiece(const QRect &rect)
+{
+    GraphicsPiece *piece = new GraphicsPiece(nullptr, rect, m_scale);
+    connect(this, &GameView::scaleChanged, piece, &GraphicsPiece::setScale);
+    pieces.push_back(piece);
+    m_scene->addItem(piece);
 }
 
 void GameView::onGameViewResized()
 {
-    m_scene->setSceneRect(0, 0, width(), height());
-    m_view->setGeometry(0, 0, width(), height());
-    m_view->fitInView(QRect(0, 0, width(), height()));
-    qDebug() << this << "resized...";
+    QRect scene_rect(0, 0, width(), height());
+    m_scene->setSceneRect(scene_rect);
+    fitInView(scene_rect);
+
+    setScale(static_cast<float>(scene_rect.width()) / HorizontalUnit);
 }
 
-GameModel *GameView::model()
+void GameView::enterEvent(QEvent *event)
 {
-    return m_model;
-}
-
-void GameView::setModel(GameModel *model)
-{
-    m_model = model;
+    QGraphicsView::enterEvent(event);
+    setFocus(Qt::MouseFocusReason);
+    qDebug() << "GameView::enterEvent";
 }
