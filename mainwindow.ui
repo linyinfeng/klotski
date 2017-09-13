@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>264</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="minimumSize">
+    <size>
+     <width>240</width>
+     <height>330</height>
+    </size>
+   </property>
+   <widget class="QWidget" name="mainArea" native="true">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>240</width>
+      <height>330</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>240</width>
+      <height>330</height>
+     </size>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuGame">
+    <property name="title">
+     <string>&amp;Game</string>
+    </property>
+    <widget class="QMenu" name="menuNew">
+     <property name="title">
+      <string>&amp;New</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/resources/icons/add.svg</normaloff>:/resources/icons/add.svg</iconset>
+     </property>
+     <addaction name="actionClassic"/>
+     <addaction name="actionCustom"/>
+    </widget>
+    <addaction name="menuNew"/>
+    <addaction name="actionRestart"/>
+    <addaction name="actionPause"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_Optimal_solution"/>
+    <addaction name="actionShow_High_Scores"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Setti&amp;ngs</string>
+    </property>
+    <widget class="QMenu" name="menuSwitch_Application_Language">
+     <property name="title">
+      <string>Switch Application &amp;Language</string>
+     </property>
+     <addaction name="actionChinese_Simplified"/>
+     <addaction name="actionChinese_Traditional"/>
+     <addaction name="actionEnglish"/>
+    </widget>
+    <addaction name="actionShow_Toolbar"/>
+    <addaction name="actionShow_Statusbar"/>
+    <addaction name="separator"/>
+    <addaction name="menuSwitch_Application_Language"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>He&amp;lp</string>
+    </property>
+    <addaction name="actionKlotski_Handbook"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout_Klotski"/>
+   </widget>
+   <addaction name="menuGame"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNewOnToolbar"/>
+   <addaction name="actionRestartOnToolBar"/>
+   <addaction name="actionUndoOnToolBar"/>
+   <addaction name="actionRedoOnToolBar"/>
+  </widget>
+  <action name="actionPause">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/pause.svg</normaloff>:/resources/icons/pause.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Pause</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionShow_High_Scores">
+   <property name="text">
+    <string>Show &amp;High Scores</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionShow_Optimal_solution">
+   <property name="text">
+    <string>Show &amp;Optimal solution</string>
+   </property>
+  </action>
+  <action name="actionShow_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;Toolbar</string>
+   </property>
+  </action>
+  <action name="actionClassic">
+   <property name="text">
+    <string>&amp;Classic</string>
+   </property>
+  </action>
+  <action name="actionCustom">
+   <property name="text">
+    <string>C&amp;ustom</string>
+   </property>
+  </action>
+  <action name="actionKlotski_Handbook">
+   <property name="text">
+    <string>&amp;Klotski Handbook</string>
+   </property>
+  </action>
+  <action name="actionAbout_Klotski">
+   <property name="text">
+    <string>&amp;About Klotski</string>
+   </property>
+  </action>
+  <action name="actionChinese_Simplified">
+   <property name="text">
+    <string>&amp;Chinese (Simplified)</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="text">
+    <string>&amp;English</string>
+   </property>
+  </action>
+  <action name="actionChinese_Traditional">
+   <property name="text">
+    <string>Chinese (&amp;Traditional)</string>
+   </property>
+  </action>
+  <action name="actionRestart">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/reset.svg</normaloff>:/resources/icons/reset.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Restart</string>
+   </property>
+  </action>
+  <action name="actionNewOnToolbar">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/add.svg</normaloff>:/resources/icons/add.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionRestartOnToolBar">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/reset.svg</normaloff>:/resources/icons/reset.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionUndoOnToolBar">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/undo.svg</normaloff>:/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedoOnToolBar">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/redo.svg</normaloff>:/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/undo.svg</normaloff>:/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/redo.svg</normaloff>:/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo</string>
+   </property>
+  </action>
+  <action name="actionShow_Statusbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;Statusbar</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

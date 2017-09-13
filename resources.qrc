@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/images/frame.svg</file>
+        <file>resources/icons/add.svg</file>
+        <file>resources/icons/pause.svg</file>
+        <file>resources/icons/redo.svg</file>
+        <file>resources/icons/reset.svg</file>
+        <file>resources/icons/undo.svg</file>
+        <file>resources/images/background.jpg</file>
+    </qresource>
+</RCC>
