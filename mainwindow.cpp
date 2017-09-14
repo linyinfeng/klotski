@@ -1,18 +1,17 @@
-#include "mainwindow.h"
+#include "common.h"
 #include "ui_mainwindow.h"
-#include "gameview.h"
-#include "gamecommon.h"
+
 #include <QtGui>
 #include <QDebug>
+#include <QMainWindow>
+#include <QLabel>
+#include <QWidget>
+#include <QList>
 
 extern const double MainWindow::FinishButtonVerticalUnit = 0.5;
-extern const double MainWindow::FinishButtonHorizontalUnit = 0.5;
-extern const double MainWindow::MainAreaHeightWidthRatio =
-    (VerticalUnit + FinishButtonVerticalUnit) / HorizontalUnit;
-extern const double MainWindow::ViewButtonHeightRatio =
-    VerticalUnit / FinishButtonVerticalUnit;
-extern const double MainWindow::ViewButtonWidthtRatio =
-    HorizontalUnit / FinishButtonHorizontalUnit;
+extern const double MainWindow::FinishButtonHorizontalUnit = 2;
+extern const double MainWindow::DefaultHorizontalUnit = 4;
+extern const double MainWindow::DefaultVerticalUnit = 5;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,39 +22,41 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("Klotski"));
 
     // Setup status bar
-
     ui->statusBar->setStyleSheet("#statusBar { border-top: 2px dashed rgb(220, 220, 220); }");
-    step_info = new QLabel(ui->statusBar);
-    step_info->setObjectName("step_info");
-    ui->statusBar->addPermanentWidget(step_info);
-    step_info->setText("0 steps");
-    step_info->setStyleSheet("#step_info { font-size: 15px; } ");
+    stepInfo = new QLabel(ui->statusBar);
+    stepInfo->setObjectName("step_info");
+    ui->statusBar->addPermanentWidget(stepInfo);
+    stepInfo->setText("0 steps");
+    stepInfo->setStyleSheet("#step_info { font-size: 15px; } ");
 
     // Setup finish_button
-    finish_button = new QPushButton(ui->centralWidget);
-    finish_button->setObjectName("finish_button");
-    finish_button->setText("Finish");
+    finishButton = new QPushButton(ui->centralWidget);
+    finishButton->setObjectName("finish_button");
+    finishButton->setText("Finish");
 
-    // Setup game_view
-    game_view = new GameView(ui->centralWidget);
-    game_view->setObjectName("game_view");
+    setupView();
 
-    // Setup game_model
-    game_model = new GameViewModel(this);
     connectSignalSlot();
 }
+
+void MainWindow::setupView() {
+
+}
+
+void MainWindow::setModel(const game::Model *model) {
+    m_model = model;
+}
+
 
 void MainWindow::connectSignalSlot()
 {
     connect(ui->actionShow_Statusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
     connect(ui->actionShow_Toolbar, &QAction::toggled, ui->toolBar, &QToolBar::setVisible);
-    connect(ui->actionShow_Statusbar, &QAction::changed, this, &MainWindow::onCentralWidgetResized);
-    connect(ui->actionShow_Toolbar, &QAction::changed, this, &MainWindow::onCentralWidgetResized);
-
-    connect(this, &MainWindow::gameViewResized, game_view, &GameView::onGameViewResized);
+    connect(ui->actionShow_Statusbar, &QAction::changed, this, &MainWindow::forceResize);
+    connect(ui->actionShow_Toolbar, &QAction::changed, this, &MainWindow::forceResize);
 }
 
-void MainWindow::onCentralWidgetResized()
+void MainWindow::forceResize()
 {
     QResizeEvent *event = new QResizeEvent(this->size(), this->size());
     QCoreApplication::postEvent(this, event);
@@ -64,7 +65,15 @@ void MainWindow::onCentralWidgetResized()
 void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
 
-    QSize old_game_view_size = game_view->size();
+    const double VerticalUint = m_model ?  m_model->verticalUint() : DefaultVerticalUnit;
+    const double HorizontalUnit =  m_model ?  m_model->horizontalUnit() : DefaultHorizontalUnit;
+
+    const double MainAreaHeightWidthRatio =
+        (VerticalUint + FinishButtonVerticalUnit) / HorizontalUnit;
+    const double ViewButtonHeightRatio =
+        VerticalUint / FinishButtonVerticalUnit;
+    const double ViewButtonWidthtRatio =
+        FinishButtonHorizontalUnit / HorizontalUnit;
 
     int cw_height = ui->centralWidget->height();
     int cw_width  = ui->centralWidget->width();
@@ -86,22 +95,17 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     view_rect.setTopLeft(main_area_rect.topLeft());
     view_rect.setSize(QSize(main_area_rect.width(),
         main_area_rect.height() / (ViewButtonHeightRatio + 1) * ViewButtonHeightRatio));
-    button_rect.setWidth(main_area_rect.width() / 2);
+    button_rect.setWidth(main_area_rect.width() * ViewButtonWidthtRatio);
     button_rect.setHeight(main_area_rect.height() - view_rect.height());
     button_rect.moveLeft(cw_width / 2 - button_rect.width() / 2);
     button_rect.moveTop(main_area_rect.y() + view_rect.height());
 
-    game_view->setGeometry(view_rect);
-    finish_button->setGeometry(button_rect);
+    m_view->setGeometry(view_rect);
+    finishButton->setGeometry(button_rect);
 
-    qDebug() << "Resized...";
     qDebug() << ui->centralWidget << ui->centralWidget->geometry();
-    qDebug() << game_view << game_view->geometry();
-    qDebug() << finish_button << finish_button->geometry();
-
-    qDebug() << "Old game view size" << old_game_view_size;
-    qDebug() << "New game view size" << game_view->size();
-    emit gameViewResized();
+    qDebug() << m_view << m_view->geometry();
+    qDebug() << finishButton << finishButton->geometry();
 }
 
 

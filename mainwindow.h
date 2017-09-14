@@ -1,12 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "gameview.h"
-#include "gameviewmodel.h"
+#include "game_model.h"
+#include "game_view.h"
+#include "ui_mainwindow.h"
+
 #include <QMainWindow>
 #include <QLabel>
 #include <QPushButton>
-#include <QSpacerItem>
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+    void setModel(const game::Model *model);
 
 private:
     void connectSignalSlot();
@@ -26,23 +30,24 @@ private:
 
     static const double FinishButtonVerticalUnit;
     static const double FinishButtonHorizontalUnit;
-    static const double MainAreaHeightWidthRatio;
-    static const double ViewButtonHeightRatio;
-    static const double ViewButtonWidthtRatio;
+    static  const double DefaultHorizontalUnit;
+    static const double DefaultVerticalUnit;
 
+    void setupView();
+
+    // UI
     Ui::MainWindow *ui;
-    QLabel *step_info;
+    QLabel *stepInfo;
+    QPushButton *finishButton;
+    game::View *m_view;
 
-    QPushButton *finish_button;
+    // Model
+    const game::Model *m_model;
 
-    GameView *game_view;
-    GameViewModel *game_model;
-
-signals:
     void gameViewResized();
 
 private slots:
-    void onCentralWidgetResized();
+    void forceResize();
 };
 
 #endif // MAINWINDOW_H

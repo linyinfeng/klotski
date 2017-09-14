@@ -1,17 +1,21 @@
-#ifndef GRAPHICSPIECE_H
-#define GRAPHICSPIECE_H
+#ifndef GAME_PIECE_VIEW_H
+#define GAME_PIECE_VIEW_H
+
+#include "game_model.h"
 
 #include <QGraphicsItem>
-#include "gamecommon.h"
-#include "piece.h"
 
-class GraphicsPiece : public QGraphicsObject
+namespace game {
+
+class PieceView : public QGraphicsObject
 {
     Q_OBJECT
 public:
     // Init
-    GraphicsPiece(QGraphicsItem * parent, const QRect &rect, float scale, const QColor &color = Qt::black);
-    GraphicsPiece(QGraphicsItem * parent, const QSize &size, float scale, const QColor &color = Qt::black);
+    PieceView(QGraphicsItem * parent,
+              const Piece *piece,
+              float scale,
+              const QColor &color = Qt::black);
     void initialize();
 
 public:
@@ -20,33 +24,26 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public:
-    // Properties
-    Q_PROPERTY(float scale
-               READ scale
-               WRITE setScale
-               NOTIFY scaleChanged)
-    Q_PROPERTY(QColor color
-               READ color
-               WRITE setColor)
-
-    // Read
-    double scale() const { return m_scale; }
-    const QColor &color() const { return m_color; }
-
+    float scale() const;
+    QColor color() const;
+    const Piece *piece() const;
 signals:
     // Notify
     void scaleChanged(float scale);
-
+    void pieceChanged(const Piece *piece);
 public slots:
-    // Set
-    void setScale(float scale) { m_scale = scale; emit scaleChanged(scale); }
-    void setColor(const QColor &color) { m_color = color; }
-
+    void setScale(float scale);
+    void setColor(const QColor &color);
+    void setPiece(const Piece *piece);
 private:
+    void resetRect();
+
     float m_scale;
     QColor m_color;
 
-    Piece m_piece;
+    QRectF m_rect;
+
+    const Piece *m_piece;
 
 private:
     // Private data
@@ -64,4 +61,6 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 };
 
-#endif // GRAPHICSPIECE_H
+}
+
+#endif // GAME_PIECE_VIEW_H
