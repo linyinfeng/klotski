@@ -33,6 +33,5 @@ SOURCES += game_controller.cpp \
            game_piece_view.cpp \
            game_view.cpp \
            main.cpp \
-           mainwindow.cpp \
-           test/testmatrix.cpp
+           mainwindow.cpp
 RESOURCES += resources.qrc

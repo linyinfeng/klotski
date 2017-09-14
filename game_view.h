@@ -28,29 +28,28 @@ protected:
 
 public slots:
     // Write
-    void setModel(const Model *model) { m_model = model; }
-    void setScale(float scale)  { m_scale = scale; emit scaleChanged(m_scale); }
+    void setModel(const Model *model);
+
+    void setScale(float scale);
 
     void onModelReady();
 
 signals:
     void scaleChanged(float new_scale);
 
-    void setupModel();
-
 private:
     // Member
     QGraphicsScene *m_scene;
     float m_scale;
 
-    std::vector<PieceView *> m_pieces;
+    std::vector<PieceView *> m_piece_views;
+
     void createNewPiece(const QRect &rect);
+    void clearScene();
 
 private:
     // Model
     const Model *m_model;
-
-
 
 protected:
     virtual void enterEvent(QEvent *event) override;

@@ -22,6 +22,11 @@ template <typename T>
 Matrix<T>::Matrix(int m, int n) : m_m(m), m_n(n)
 {
     m_data = new T[m_m * m_n];
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            at(i, j) = 0;
+        }
+    }
 }
 
 template <typename T>

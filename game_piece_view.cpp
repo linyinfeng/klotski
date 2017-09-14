@@ -14,11 +14,10 @@
 namespace game {
 
 PieceView::PieceView(
-    QGraphicsItem *parent,
     const Piece *piece,
     float scale,
     const QColor &color
-) : QGraphicsObject(parent),
+) : QGraphicsObject(nullptr),
     m_scale(scale),
     m_color(color),
     m_piece(piece)

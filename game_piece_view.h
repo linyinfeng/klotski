@@ -12,8 +12,7 @@ class PieceView : public QGraphicsObject
     Q_OBJECT
 public:
     // Init
-    PieceView(QGraphicsItem * parent,
-              const Piece *piece,
+    PieceView(const Piece *piece,
               float scale,
               const QColor &color = Qt::black);
     void initialize();
@@ -27,14 +26,19 @@ public:
     float scale() const;
     QColor color() const;
     const Piece *piece() const;
+
 signals:
     // Notify
     void scaleChanged(float scale);
-    void pieceChanged(const Piece *piece);
+
 public slots:
-    void setScale(float scale);
-    void setColor(const QColor &color);
-    void setPiece(const Piece *piece);
+    void setScale(float scale) {
+        m_scale = scale;
+    }
+    void setColor(const QColor &color) {
+        m_color = color;
+    }
+
 private:
     void resetRect();
 

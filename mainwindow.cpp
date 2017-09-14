@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::setupView() {
-
+    m_view = new game::View(ui->centralWidget);
 }
 
 void MainWindow::setModel(const game::Model *model) {

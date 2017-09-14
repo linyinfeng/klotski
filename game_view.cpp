@@ -21,6 +21,36 @@ View::View(QWidget *parent)
     setBackgroundBrush(Qt::white);
 }
 
+void View::setModel(const Model *model) {
+    if (m_model) {
+        clearScene();
+    }
+    m_model = model;
+    onModelReady();
+}
+
+void View::setScale(float scale) {
+    m_scale = scale;
+    emit scaleChanged(m_scale);
+}
+
+void View::clearScene() {
+    for (PieceView *piece_view : m_piece_views) {
+        m_scene->removeItem(piece_view);
+        piece_view->deleteLater();
+    }
+}
+
+void View::onModelReady() {
+    // gen piece_views
+    const std::vector<Piece> pieces = m_model->pieces();
+    for (const Piece &piece : pieces) {
+        PieceView *piece_view = new PieceView(&piece, m_scale);
+        m_piece_views.push_back(piece_view);
+        m_scene->addItem(piece_view);
+    }
+}
+
 //void View::createNewPiece(const QRect &rect)
 //{
 //    PieceView *piece = new PieceView(nullptr, rect, m_scale);

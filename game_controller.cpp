@@ -8,7 +8,7 @@ namespace game {
 Controller::Controller(QObject *parent) : QObject(parent)
 {
     // Setup window
-    MainWindow *window;
+    m_window = new MainWindow;
     // Read model
     loadModelData();
 }
@@ -31,8 +31,8 @@ void Controller::loadModelData() {
     pieces.push_back(QRect(3, 4, 1, 1));
 
     m_model = new Model(this, 4, 5, 0, pieces);
-    if (window) {
-        window->setModel(m_model);
+    if (m_window) {
+        m_window->setModel(m_model);
     }
     generateLayout();
     emit modelChanged(m_model);

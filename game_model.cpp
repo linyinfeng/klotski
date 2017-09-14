@@ -38,7 +38,7 @@ void Model::setStepCount(int step_count) {
 }
 
 void Model::setValidMoves(const std::vector<Move> &moves) {
-
+    m_valid_moves = moves;
 }
 
 void Model::incStepCount() {

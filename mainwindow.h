@@ -19,7 +19,6 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 
     void setModel(const game::Model *model);
 

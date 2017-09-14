@@ -39,8 +39,8 @@ public slots:
     void redo();
 
     void showWindow() {
-        if (window)
-            window->show();
+        if (m_window)
+            m_window->show();
         else
             qDebug() << "Error MainWindow is nullptr";
     }
@@ -65,7 +65,7 @@ private:
     // Model
     Model *m_model;
     // View
-    MainWindow *window;
+    MainWindow *m_window;
 };
 
 }
