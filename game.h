@@ -28,8 +28,9 @@ public:
 
         QObject::connect(&model, SIGNAL(modelLoaded(const Model*)), &view, SLOT(onModelLoaded(const Model*)));
 
-        QObject::connect(&model, SIGNAL(syncMove(const Move &)), &view,  SLOT(onSyncMove(const Move &)));
-        QObject::connect(&view,  SIGNAL(syncMove(const Move &)), &model, SLOT(onSyncMove(const Move &)));
+        QObject::connect(&model, SIGNAL(syncMove(const Move &)), &view,  SLOT(applyMove(const Move &)));
+        QObject::connect(&view,  SIGNAL(syncMove(const Move &)), &model, SLOT(applyMove(const Move &)));
+
         QObject::connect(&model, SIGNAL(validMovesChanged(const std::vector<Move> &)),
                          &view,  SLOT(onValidMovesChanged(const std::vector<Move> &)));
 

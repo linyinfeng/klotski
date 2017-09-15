@@ -20,41 +20,38 @@ public:
     int stepCount() const;
     int bestStepCount() const;
     const QString &levelName() const;
+
 signals:
     void canWinStateChanged(bool can_win);
     void canUndoStateChanged(bool can_undo);
     void canRedoStateChanged(bool can_redo);
+
     void syncMove(const Move &move);
     void stepCountChanged(int step_rount);
     void validMovesChanged(const std::vector<Move> &valid_moves);
+
     void modelLoaded(const Model *model);
     void modelSaved(bool successed);
 
 public slots:
-    void onSyncMove(const Move &move);
+    void applyMove(const Move &move);
+
     void onUndo();
     void onRedo();
-    void onReload();
 
+    void onReload();
     void onLoad(const QString & file_name);
     void onSave(const QString & file_name);
 
 private:
-    void undoWithOutSync();
+    void load(const QString &file_name);
 
-    void updateLogic();
     void updateValidMoves();
     void updateCanWinState();
-
     void updateCanUndoRedoState();
-
-    void applyMove(const Move &move);
-    void moveAndSync(const Move &move);
 
     void incStepCount();
     void decStepCount();
-
-    void clearHistory();
 
     void setStepCount(int step_count);
 

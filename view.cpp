@@ -84,7 +84,7 @@ void View::onModelLoaded(const Model *model) {
         scene_->addItem(graphics_piece);
         graphics_piece->onSceneResize();
     }
-    updateValidMoves();
+//    updateValidMoves();
 
     this->setWindowTitle(tr("Klotski - %1 - %2").arg(model_->levelName()).arg(model_->bestStepCount()));
     ui->statusBar->showMessage(tr("Level Loaded"));
@@ -97,8 +97,8 @@ void View::onModelSaved(bool successed) {
         QMessageBox::warning(this, tr("Warning"), tr("Failed to open file"));
 }
 
-void View::onSyncMove(const Move &move) {
-    graphics_pieces_[move.index()]->onSyncMove(move);
+void View::applyMove(const Move &move) {
+    graphics_pieces_[move.index()]->applyMove(move);
 }
 void View::updateValidMoves() {
     onValidMovesChanged(model_->validMoves());

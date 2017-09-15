@@ -10,7 +10,7 @@ public:
         : index_(index) {
         setX(x);
         setY(y);
-        id_ = getId();
+        setId();
     }
 
     Move() : Move(-1, 0, 0)  { }
@@ -30,7 +30,6 @@ public:
     int index() const { return index_; }
     int x()     const { return x_;     }
     int y()     const { return y_;     }
-
     std::size_t id() const { return id_; }
 
     Move reverse () const {
@@ -45,9 +44,9 @@ private:
     void setX(int x) { x_ = forceConvert(x); }
     void setY(int y) { y_ = forceConvert(y); }
 
-    std::size_t getId() {
+    void setId() {
         static std::size_t id = 0;
-        return id++;
+        id_ = ++id; // start from 1
     }
 
 private:
@@ -66,7 +65,7 @@ private:
     int x_;
     int y_;
 
-    size_t id_;
+    std::size_t id_;
 };
 
 #endif // MOVE_H

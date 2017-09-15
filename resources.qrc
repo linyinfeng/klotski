@@ -7,5 +7,6 @@
         <file>resources/icons/reset.svg</file>
         <file>resources/icons/undo.svg</file>
         <file>resources/images/background.jpg</file>
+        <file>resources/levels/QiBuChengShi.klotski</file>
     </qresource>
 </RCC>

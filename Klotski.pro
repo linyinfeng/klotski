@@ -30,3 +30,5 @@ HEADERS += common.h \
 FORMS += view.ui
 SOURCES += common.cpp graphicspiece.cpp main.cpp model.cpp view.cpp
 RESOURCES += resources.qrc
+
+DISTFILES +=

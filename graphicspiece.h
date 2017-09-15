@@ -19,8 +19,9 @@ public:
 signals:
     void syncMove(const Move &move);
 public slots:
-    void onSyncMove(const Move &move);
     void onSceneResize();
+
+    void applyMove(const Move &move);
 
 protected:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
@@ -38,8 +39,6 @@ private:
     QRectF calcRect(const Piece &piece);
     QPointF calcPosition(const Piece &piece);
     QPointF calcPosition(const QPoint &point);
-
-    void applyMove(const Move &move);
 
     bool can_move_up;
     bool can_move_down;

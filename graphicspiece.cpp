@@ -87,21 +87,9 @@ QPointF GraphicsPiece::calcPosition(const QPoint &point) {
     return pos;
 }
 
-void GraphicsPiece::onSyncMove(const Move &move) {
-    piece_ << move;
-
-    QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-    animation->setDuration(200);
-    animation->setStartValue(pos());
-    QPointF end_position = calcPosition(piece_);
-    animation->setEndValue(end_position);
-    qDebug() << "Animation" << "start" << pos() << "end" << end_position;
-    animation->start();
-}
-
 void GraphicsPiece::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
-    setFocus(Qt::OtherFocusReason);
+    setFocus(Qt::MouseFocusReason);
     hovered_ = true;
     qDebug() << this << "hoverEnterEvent";
 }
@@ -109,7 +97,7 @@ void GraphicsPiece::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverLeaveEvent(event);
     clearFocus();
     hovered_ = false;
-    qDebug() << this << "mousePressEvent";
+    qDebug() << this << "hoverLeaveEvent";
 }
 //void GraphicsPiece::hoverMoveEvent(QGraphicsSceneHoverEvent *event) {
 //    QGraphicsObject::hoverMoveEvent(event);
@@ -160,7 +148,7 @@ void GraphicsPiece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
     pressed_ = false;
     update();
-    onSyncMove(Move(-1, 0, 0));
+    applyMove(Move(-1, 0, 0));
     qDebug() << this << "mouseReleaseEvent" << event->button();
 }
 void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
@@ -202,8 +190,7 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
     qDebug() << "Keypress move" << x << y;
 
     if (x != 0 || y != 0) {
-        onSyncMove(Move(index_, x, y));
-        emit syncMove(Move(index_, x, y));
+        applyMove(Move(index_, x, y));
     }
     qDebug() << this << "keyPressEvent";
 }
@@ -219,4 +206,25 @@ void GraphicsPiece::addValidMoveDirection(const Move &valid_move) {
         can_move_left = true;
     else if (valid_move.x() == 1)
         can_move_right = true;
+}
+
+void GraphicsPiece::applyMove(const Move &move) {
+    static std::size_t emitted = 0;
+    if (move.id() != emitted) {
+        piece_ << move;
+
+        QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+        animation->setDuration(200);
+        animation->setStartValue(pos());
+        QPointF end_position = calcPosition(piece_);
+        animation->setEndValue(end_position);
+        qDebug() << "Animation" << "start" << pos() << "end" << end_position;
+        animation->start();
+
+        qDebug() << "Move" << &move << "Finished on View";
+        emitted = move.id();
+        emit syncMove(move);
+    } else {
+        qDebug() << "Move" << &move << "required on View but have be down";
+    }
 }

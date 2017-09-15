@@ -68,7 +68,7 @@ signals:
 public slots:
     /* forward syncMove signal to specified graphics pieces
      */
-    void onSyncMove(const Move &move);
+    void applyMove(const Move &move);
     /* forward validMovesChanged signal to spcified graphics pieces
      */
     void onValidMovesChanged(const std::vector<Move> &move);
