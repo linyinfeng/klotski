@@ -100,8 +100,6 @@ private slots:
     /* do when user requires save */
     void onSaveFile();
 
-
-
 private:
     /* UI */
     Ui::View *ui;

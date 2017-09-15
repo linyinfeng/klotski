@@ -21,7 +21,7 @@ View::View(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    this->setStyleSheet("* { font-size: 15px; }");
+    this->setStyleSheet("* { font-size: 13px; }");
     ui->statusBar->setStyleSheet("#statusBar { border-top: 2px dashed rgb(220, 220, 220); } * { font-weight:bold; }");
     step_info_ = new QLabel(ui->statusBar);
     step_info_->setObjectName("step_info_");
@@ -30,7 +30,6 @@ View::View(QWidget *parent) :
     scene_ = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(scene_);
     ui->graphicsView->installEventFilter(this);
-
     ui->graphicsView->setBackgroundBrush(QBrush(Qt::white));
 
     connect(ui->actionUndo, SIGNAL(triggered()), this, SIGNAL(undo()));
@@ -170,8 +169,12 @@ void View::resizeEvent(QResizeEvent *event) {
 bool View::eventFilter(QObject *watched, QEvent *event) {
     if (watched == ui->graphicsView) {
         if (event->type() == QEvent::Enter) {
-            ui->graphicsView->setFocus();
+            ui->graphicsView->setFocus(Qt::MouseFocusReason);
             qDebug() << "GraphicsView focus set";
+            return true;
+        } else if (event->type() == QEvent::Leave) {
+            ui->graphicsView->clearFocus();
+            qDebug() << "GraphicsView focus clear";
             return true;
         } else {
             return false;
@@ -184,10 +187,12 @@ bool View::eventFilter(QObject *watched, QEvent *event) {
 void View::onFinish() {
     qDebug() << "Finish";
     if (model_->stepCount() > model_->bestStepCount())
-        QMessageBox::information(this, tr("You win!"), tr("Your take %1 steps to finish this level\nThe best solution only takes %2 steps")
-                      .arg(model_->stepCount()).arg(model_->bestStepCount()));
+        QMessageBox::information(this, tr("You win!"),
+            tr("Your take %1 steps to finish this level\nThe best solution only takes %2 steps")
+                .arg(model_->stepCount()).arg(model_->bestStepCount()));
     else {
-        QMessageBox::information(this, tr("You win!"), tr("Congratulations!\n You find the best solution!"));
+        QMessageBox::information(this, tr("You win!"),
+            tr("Congratulations!\nYou find the best solution!"));
     }
 }
 
@@ -197,9 +202,15 @@ void View::onOpenFile() {
         tr("Open Saved game"),
         ".",
         tr("Klotski Save Files (*.klotski)"));
-    QFileInfo file_info(file_name);
-    if (file_info.isFile())
-        emit load(file_name);
+    qDebug() << "Attempt to open file" << file_name;
+    if (!file_name.isEmpty()) {
+        QFileInfo file_info(file_name);
+        if (file_info.isFile())
+            emit load(file_name);
+        else
+            QMessageBox::warning(this, "Warning", tr("\"%1\" can't be find or is not a file ").arg(file_name));
+    } else
+        ui->statusBar->showMessage(tr("No file specified"));
 }
 void View::onSaveFile() {
     QString file_name = QFileDialog::getSaveFileName(
@@ -207,5 +218,10 @@ void View::onSaveFile() {
         tr("Open Save file"),
         ".",
         tr("Klotski Save Files (*.klotski)"));
-    emit save(file_name);
+    qDebug() << "Attempt to save file" << file_name;
+    if (!file_name.isEmpty())
+        emit save(file_name);
+    else
+        ui->statusBar->showMessage(tr("No file specified"));
 }
+

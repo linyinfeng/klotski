@@ -20,6 +20,7 @@ GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
 {
     hovered_ = false;
     pressed_ = false;
+    focused_ = false;
     qDebug() << "New GraphicsPiece" << index_ << piece_.geometry();
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
@@ -31,23 +32,27 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget)
 
     QPen pen;
-    if (hovered_)
-        pen.setColor(Qt::green);
-    else
-        pen.setColor(Qt::black);
+
+    pen.setColor(Qt::black);
+    if (focused_) {
+        pen.setWidth(3);
+    } else {
+        pen.setWidth(2);
+    }
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setCapStyle(Qt::RoundCap);
-    pen.setWidth(2);
+
     painter->setPen(pen);
     if (pressed_)
-        painter->setBrush(QBrush(Qt::green));
+        painter->setBrush(QBrush(QColor(200, 200, 200)));
     else
         painter->setBrush(QBrush(Qt::gray));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
 }
 
 QRectF GraphicsPiece::boundingRect() const {
-    return rect_;
+    return QRectF(QPointF(0, 0), piece_.size() * scale_);
+    // ignore free space for easy drawing
 }
 
 void GraphicsPiece::onSceneResize() {
@@ -89,13 +94,12 @@ QPointF GraphicsPiece::calcPosition(const QPoint &point) {
 
 void GraphicsPiece::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
-    setFocus(Qt::MouseFocusReason);
+    setFocus();
     hovered_ = true;
     qDebug() << this << "hoverEnterEvent";
 }
 void GraphicsPiece::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverLeaveEvent(event);
-    clearFocus();
     hovered_ = false;
     qDebug() << this << "hoverLeaveEvent";
 }
@@ -194,6 +198,19 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
     }
     qDebug() << this << "keyPressEvent";
 }
+
+void GraphicsPiece::focusInEvent(QFocusEvent *event) {
+    qDebug() << index_ << event;
+    focused_ = true;
+    // gain focus will auto update
+}
+
+void GraphicsPiece::focusOutEvent(QFocusEvent *event) {
+    qDebug() << index_ << event;
+    focused_ = false;
+    update();
+}
+
 void GraphicsPiece::clearValidMoveDirection() {
     can_move_up = can_move_down = can_move_right = can_move_left = false;
 }
@@ -214,10 +231,10 @@ void GraphicsPiece::applyMove(const Move &move) {
         piece_ << move;
 
         QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-        animation->setDuration(200);
         animation->setStartValue(pos());
         QPointF end_position = calcPosition(piece_);
         animation->setEndValue(end_position);
+        animation->setDuration((end_position - pos()).manhattanLength() / scale_ * 200);
         qDebug() << "Animation" << "start" << pos() << "end" << end_position;
         animation->start();
 

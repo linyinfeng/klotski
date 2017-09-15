@@ -16,8 +16,10 @@ public:
 public:
     void addValidMoveDirection(const Move &valid_move);
     void clearValidMoveDirection();
+
 signals:
     void syncMove(const Move &move);
+
 public slots:
     void onSceneResize();
 
@@ -34,6 +36,8 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void focusInEvent(QFocusEvent *event) override;
+    virtual void focusOutEvent(QFocusEvent *event) override;
 
 private:
     QRectF calcRect(const Piece &piece);
@@ -45,6 +49,7 @@ private:
     bool can_move_left;
     bool can_move_right;
 
+    bool focused_;
     bool hovered_;
     bool pressed_;
 

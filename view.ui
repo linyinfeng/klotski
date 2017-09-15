@@ -113,11 +113,16 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
    <addaction name="actionRestart"/>
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
   </widget>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/save.svg</normaloff>:/resources/icons/save.svg</iconset>
+   </property>
    <property name="text">
     <string>&amp;Save</string>
    </property>
@@ -128,6 +133,10 @@
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/exit.svg</normaloff>:/resources/icons/exit.svg</iconset>
+   </property>
    <property name="text">
     <string>&amp;Quit</string>
    </property>
@@ -176,7 +185,7 @@
   <action name="actionRestart">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/reset.svg</normaloff>:/resources/icons/reset.svg</iconset>
+     <normaloff>:/resources/icons/restart.svg</normaloff>:/resources/icons/restart.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Restart</string>
@@ -185,7 +194,7 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/add.svg</normaloff>:/resources/icons/add.svg</iconset>
+     <normaloff>:/resources/icons/open.svg</normaloff>:/resources/icons/open.svg</iconset>
    </property>
    <property name="text">
     <string>Open</string>
