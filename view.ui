@@ -1,57 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>View</class>
+ <widget class="QMainWindow" name="View">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>412</height>
+    <width>450</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Klotski</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="minimumSize">
     <size>
-     <width>240</width>
-     <height>330</height>
+     <width>280</width>
+     <height>350</height>
     </size>
    </property>
-   <widget class="QWidget" name="mainArea" native="true">
+   <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>240</width>
-      <height>330</height>
+      <x>0</x>
+      <y>0</y>
+      <width>131</width>
+      <height>131</height>
      </rect>
     </property>
-    <property name="minimumSize">
-     <size>
-      <width>240</width>
-      <height>330</height>
-     </size>
+   </widget>
+   <widget class="QPushButton" name="pushButtonFinish">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-    </layout>
+    <property name="text">
+     <string>Finish</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -59,7 +49,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>450</width>
      <height>21</height>
     </rect>
    </property>
@@ -67,18 +57,7 @@
     <property name="title">
      <string>&amp;Game</string>
     </property>
-    <widget class="QMenu" name="menuNew">
-     <property name="title">
-      <string>&amp;New</string>
-     </property>
-     <property name="icon">
-      <iconset resource="resources.qrc">
-       <normaloff>:/resources/icons/add.svg</normaloff>:/resources/icons/add.svg</iconset>
-     </property>
-     <addaction name="actionClassic"/>
-     <addaction name="actionCustom"/>
-    </widget>
-    <addaction name="menuNew"/>
+    <addaction name="actionOpen"/>
     <addaction name="actionRestart"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
@@ -133,20 +112,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNewOnToolbar"/>
-   <addaction name="actionRestartOnToolBar"/>
-   <addaction name="actionUndoOnToolBar"/>
-   <addaction name="actionRedoOnToolBar"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionRestart"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
   </widget>
-  <action name="actionPause">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/pause.svg</normaloff>:/resources/icons/pause.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Pause</string>
-   </property>
-  </action>
   <action name="actionSave">
    <property name="text">
     <string>&amp;Save</string>
@@ -176,16 +146,6 @@
    </property>
    <property name="text">
     <string>Show &amp;Toolbar</string>
-   </property>
-  </action>
-  <action name="actionClassic">
-   <property name="text">
-    <string>&amp;Classic</string>
-   </property>
-  </action>
-  <action name="actionCustom">
-   <property name="text">
-    <string>C&amp;ustom</string>
    </property>
   </action>
   <action name="actionKlotski_Handbook">
@@ -222,40 +182,13 @@
     <string>&amp;Restart</string>
    </property>
   </action>
-  <action name="actionNewOnToolbar">
+  <action name="actionOpen">
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/resources/icons/add.svg</normaloff>:/resources/icons/add.svg</iconset>
    </property>
    <property name="text">
-    <string>New</string>
-   </property>
-  </action>
-  <action name="actionRestartOnToolBar">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/reset.svg</normaloff>:/resources/icons/reset.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Restart</string>
-   </property>
-  </action>
-  <action name="actionUndoOnToolBar">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/undo.svg</normaloff>:/resources/icons/undo.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Undo</string>
-   </property>
-  </action>
-  <action name="actionRedoOnToolBar">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resources/icons/redo.svg</normaloff>:/resources/icons/redo.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Redo</string>
+    <string>Open</string>
    </property>
   </action>
   <action name="actionUndo">

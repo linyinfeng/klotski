@@ -1,14 +1,14 @@
-#include "common.h"
-
+#include "game.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication app(argc, argv);
+    QApplication a(argc, argv);
 
-    game::Controller controller;
-    controller.showWindow();
+    Game game;
 
-    return app.exec();
+    game.start();
+
+    return a.exec();
 }
