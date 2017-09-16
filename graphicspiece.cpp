@@ -1,6 +1,6 @@
 //#define IGNORE_VALID_MOVES
 
-#define MOVE_THRESHOLD 0.55
+#define MOVE_THRESHOLD 0.75
 
 #include "common.h"
 #include "graphicspiece.h"
@@ -142,7 +142,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
                 if (abs(piece_move.y()) > scale_ * MOVE_THRESHOLD) {
                     applyMove(Move(index_, 0, -1), false);
                     virtual_initial_mouse_pos_.setY(virtual_initial_mouse_pos_.y() - scale_);
-                    piece_move = QPointF(0, -mouse_move.y());
+                    piece_move = QPointF(0, -mouse_move.y() * (1 - MOVE_THRESHOLD)  / MOVE_THRESHOLD);
                 }
             }
         } else
@@ -151,7 +151,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
                 if (abs(piece_move.y()) > scale_ * MOVE_THRESHOLD) {
                     applyMove(Move(index_, 0, 1), false);
                     virtual_initial_mouse_pos_.setY(virtual_initial_mouse_pos_.y() + scale_);
-                    piece_move = QPointF(0, -mouse_move.y());
+                    piece_move = QPointF(0, -mouse_move.y() * (1 - MOVE_THRESHOLD)  / MOVE_THRESHOLD);
                 }
             }
 //        if (abs(piece_move.y()) > scale_)
@@ -163,7 +163,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
                 if (abs(piece_move.x()) > scale_ * MOVE_THRESHOLD) {
                     applyMove(Move(index_, -1, 0), false);
                     virtual_initial_mouse_pos_.setX(virtual_initial_mouse_pos_.x() - scale_);
-                    piece_move = QPointF(-mouse_move.x(), 0);
+                    piece_move = QPointF(-mouse_move.x() * (1 - MOVE_THRESHOLD)  / MOVE_THRESHOLD, 0);
                 }
             }
         } else {
@@ -172,7 +172,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
                 if (abs(piece_move.x()) > scale_ * MOVE_THRESHOLD) {
                     applyMove(Move(index_, 1, 0), false);
                     virtual_initial_mouse_pos_.setX(virtual_initial_mouse_pos_.x() + scale_);
-                    piece_move = QPointF(-mouse_move.x(), 0);
+                    piece_move = QPointF(-mouse_move.x() * (1 - MOVE_THRESHOLD)  / MOVE_THRESHOLD, 0);
                 }
             }
         }
