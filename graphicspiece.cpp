@@ -245,8 +245,11 @@ void GraphicsPiece::applyMove(const Move &move) {
         animation->start();
 
         qDebug() << "Move" << &move << "Finished on View";
-        emitted = move.id();
-        emit syncMove(move);
+
+        if (move.index() != -1) {
+            emitted = move.id();
+            emit syncMove(move);
+        }
     } else {
         qDebug() << "Move" << &move << "required on View but have be down";
     }
