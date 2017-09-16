@@ -1,7 +1,10 @@
 #include "historyview.h"
+#include <QListView>
 
 HistoryView::HistoryView(QWidget *parent) : QListView(parent)
 {
+//    setSelectionBehavior(QAbstractItemView::SelectRows);
+//    setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 void HistoryView::updateCurrentMoveIndex(int index) {

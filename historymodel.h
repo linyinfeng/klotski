@@ -2,6 +2,7 @@
 #define HISTORYMODEL_H
 
 #include <QAbstractItemModel>
+#include <QPair>
 #include <QObject>
 #include <vector>
 #include <QDebug>
@@ -28,13 +29,13 @@ public:
 
     // Interface for operating by model
     void reset();
-    void pushBack(const Move &move);
+    void pushBack(int step_count, const Move &move);
     void cutToFit(int size);
 
     const Move &operator[](int index) const;
 
 private:
-    std::vector<Move> data_;
+    std::vector<QPair<int, Move>> data_;
 };
 
 #endif // HISTORYMODEL_H

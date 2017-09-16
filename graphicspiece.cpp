@@ -1,5 +1,7 @@
 //#define IGNORE_VALID_MOVES
 
+#define MOVE_THRESHOLD 0.55
+
 #include "common.h"
 #include "graphicspiece.h"
 #include "move.h"
@@ -14,13 +16,15 @@
 #include <cmath>
 
 GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
-    : can_move_up(false), can_move_down(false),
-      can_move_left(false), can_move_right(false),
+    : can_move_up_(false), can_move_down_(false),
+      can_move_left_(false), can_move_right_(false),
       piece_(piece), index_(index)
 {
     hovered_ = false;
     pressed_ = false;
     focused_ = false;
+
+    qDebug() << "Piece" << index_ << "piece_base_pose_ initialized" << piece_base_pos_;
     qDebug() << "New GraphicsPiece" << index_ << piece_.geometry();
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
@@ -65,7 +69,8 @@ void GraphicsPiece::onSceneResize() {
     if (scene() != nullptr) {
         scale_ = scene()->sceneRect().width() / kHorizontalUnit;
         rect_ = calcRect(piece_);
-        setPos(calcPosition(piece_));
+        piece_base_pos_ = calcPosition(piece_);
+        setPos(piece_base_pos_);
 
         qDebug() << "GraphicsPiece" << index_ << "boundingRect" << boundingRect() << "pos" << pos();
         update();
@@ -117,6 +122,9 @@ void GraphicsPiece::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
     pressed_ = true;
     update(); // update color
+    if (event->button() & Qt::LeftButton) {
+        virtual_initial_mouse_pos_ = event->scenePos();
+    }
     qDebug() << this << "mousePressEvent" << event->button();
 }
 void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -124,33 +132,60 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         QGraphicsObject::mouseMoveEvent(event);
         return;
     }
-    QPointF initial_mouse_pos = event->buttonDownScenePos(Qt::LeftButton);
     QPointF current_mouse_pos = event->scenePos();
-    QPointF start_pos = calcPosition(piece_);
-    QPointF mouse_move = current_mouse_pos - initial_mouse_pos;
+    QPointF mouse_move = current_mouse_pos - virtual_initial_mouse_pos_;
     QPointF piece_move = QPointF(0, 0);
     if (std::abs(mouse_move.y()) > std::abs(mouse_move.x())) {
         if (mouse_move.y() < 0) {
-            if (can_move_up) piece_move = QPointF(0, mouse_move.y());
+            if (can_move_up_) {
+                piece_move = QPointF(0, mouse_move.y());
+                if (abs(piece_move.y()) > scale_ * MOVE_THRESHOLD) {
+                    applyMove(Move(index_, 0, -1), false);
+                    virtual_initial_mouse_pos_.setY(virtual_initial_mouse_pos_.y() - scale_);
+                    piece_move = QPointF(0, -mouse_move.y());
+                }
+            }
         } else
-            if (can_move_down) piece_move = QPointF(0, mouse_move.y());
-        if (abs(piece_move.y()) > scale_)
-            piece_move.setY(piece_move.y() > 0 ? scale_ : -scale_);
+            if (can_move_down_) {
+                piece_move = QPointF(0, mouse_move.y());
+                if (abs(piece_move.y()) > scale_ * MOVE_THRESHOLD) {
+                    applyMove(Move(index_, 0, 1), false);
+                    virtual_initial_mouse_pos_.setY(virtual_initial_mouse_pos_.y() + scale_);
+                    piece_move = QPointF(0, -mouse_move.y());
+                }
+            }
+//        if (abs(piece_move.y()) > scale_)
+//            piece_move.setY(piece_move.y() > 0 ? scale_ : -scale_);
     } else {
         if (mouse_move.x() < 0) {
-            if (can_move_left) piece_move = QPointF(mouse_move.x(), 0);
+            if (can_move_left_) {
+                piece_move = QPointF(mouse_move.x(), 0);
+                if (abs(piece_move.x()) > scale_ * MOVE_THRESHOLD) {
+                    applyMove(Move(index_, -1, 0), false);
+                    virtual_initial_mouse_pos_.setX(virtual_initial_mouse_pos_.x() - scale_);
+                    piece_move = QPointF(-mouse_move.x(), 0);
+                }
+            }
         } else {
-            if (can_move_right) piece_move = QPointF(mouse_move.x(), 0);
+            if (can_move_right_) {
+                piece_move = QPointF(mouse_move.x(), 0);
+                if (abs(piece_move.x()) > scale_ * MOVE_THRESHOLD) {
+                    applyMove(Move(index_, 1, 0), false);
+                    virtual_initial_mouse_pos_.setX(virtual_initial_mouse_pos_.x() + scale_);
+                    piece_move = QPointF(-mouse_move.x(), 0);
+                }
+            }
         }
-        if (abs(piece_move.x()) > scale_)
-            piece_move.setX(piece_move.x() > 0 ? scale_ : -scale_);
+//        if (abs(piece_move.x()) > scale_)
+//            piece_move.setX(piece_move.x() > 0 ? scale_ : -scale_);
     }
-    qDebug() << "initial_mouse_pos" << initial_mouse_pos;
+    qDebug("%d, %d, %d, %d", can_move_up_, can_move_down_, can_move_left_, can_move_right_);
+    qDebug() << "virtual_initial_mouse_pos_" << virtual_initial_mouse_pos_;
     qDebug() << "current_mouse_pos" << current_mouse_pos;
-    qDebug() << "start_pos" << start_pos;
+    qDebug() << "piece_base_pos_" << piece_base_pos_;
     qDebug() << "mouse_move" << mouse_move;
     qDebug() << "piece_move" << piece_move;
-    setPos(start_pos + piece_move);
+    setPos(piece_base_pos_ + piece_move);
 //    QGraphicsObject::mouseMoveEvent(event);
     qDebug() << this << "mouseMoveEvent" << event->button();
 }
@@ -183,16 +218,16 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
 #else
     switch (event->key()) {
     case Qt::Key_W: case Qt::Key_Up:
-        y = can_move_up ? -1 : 0;
+        y = can_move_up_ ? -1 : 0;
         break;
     case Qt::Key_S: case Qt::Key_Down:
-        y = can_move_down ? 1 : 0;
+        y = can_move_down_ ? 1 : 0;
         break;
     case Qt::Key_A: case Qt::Key_Left:
-        x = can_move_left ? -1 : 0;
+        x = can_move_left_ ? -1 : 0;
         break;
     case Qt::Key_D: case Qt::Key_Right:
-        x = can_move_right ? 1 : 0;
+        x = can_move_right_ ? 1 : 0;
         break;
     }
 #endif
@@ -218,31 +253,36 @@ void GraphicsPiece::focusOutEvent(QFocusEvent *event) {
 }
 
 void GraphicsPiece::clearValidMoveDirection() {
-    can_move_up = can_move_down = can_move_right = can_move_left = false;
+    can_move_up_ = can_move_down_ = can_move_right_ = can_move_left_ = false;
+    qDebug() << "Piece" << index_ << "clearValidMoveDirection";
 }
 void GraphicsPiece::addValidMoveDirection(const Move &valid_move) {
+    qDebug() << "Piece" << index_ << "adding valid move direction";
     if (valid_move.y() == -1)
-        can_move_up = true;
+        can_move_up_ = true;
     else if (valid_move.y() == 1)
-        can_move_down = true;
+        can_move_down_ = true;
     else if (valid_move.x() == -1)
-        can_move_left = true;
+        can_move_left_ = true;
     else if (valid_move.x() == 1)
-        can_move_right = true;
+        can_move_right_ = true;
 }
 
-void GraphicsPiece::applyMove(const Move &move) {
+void GraphicsPiece::applyMove(const Move &move, bool animate) {
     static std::size_t emitted = 0;
     if (move.id() != emitted) {
         piece_ << move;
+        piece_base_pos_ = calcPosition(piece_);
 
-        QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-        animation->setStartValue(pos());
-        QPointF end_position = calcPosition(piece_);
-        animation->setEndValue(end_position);
-        animation->setDuration((end_position - pos()).manhattanLength() / scale_ * 200);
-        qDebug() << "Animation" << "start" << pos() << "end" << end_position;
-        animation->start();
+        if (animate) {
+            QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+            animation->setStartValue(pos());
+            animation->setEndValue(piece_base_pos_);
+//            animation->setDuration((piece_base_pos_ - pos()).manhattanLength() / scale_ * 200);
+            animation->setDuration(200);
+            qDebug() << "Animation" << "start" << pos() << "end" << piece_base_pos_;
+            animation->start();
+        }
 
         qDebug() << "Move" << &move << "Finished on View";
 

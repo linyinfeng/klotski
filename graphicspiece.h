@@ -23,7 +23,7 @@ signals:
 public slots:
     void onSceneResize();
 
-    void applyMove(const Move &move);
+    void applyMove(const Move &move, bool animate = true);
 
 protected:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = Q_NULLPTR) override;
@@ -44,10 +44,13 @@ private:
     QPointF calcPosition(const Piece &piece);
     QPointF calcPosition(const QPoint &point);
 
-    bool can_move_up;
-    bool can_move_down;
-    bool can_move_left;
-    bool can_move_right;
+    bool can_move_up_;
+    bool can_move_down_;
+    bool can_move_left_;
+    bool can_move_right_;
+
+    QPointF virtual_initial_mouse_pos_;
+    QPointF piece_base_pos_; // Cached
 
     bool focused_;
     bool hovered_;

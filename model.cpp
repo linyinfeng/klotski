@@ -2,10 +2,12 @@
 #include "common.h"
 #include "matrix.h"
 
+#include <chrono>
 #include <cstddef>
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
+#include <QTimer>
 
 Model::Model(QObject *parent) : QObject(parent), history_model_(this) {
 //    load(QString(":/resources/levels/QiBuChengShi.klotski"));
@@ -105,17 +107,21 @@ void Model::applyMove(const Move &move) {
             if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1]) {
                 // Redo
                 // history_ unchanged
+                incCurrentMoveIndex();
+                if (current_move_index_ <= 0 ||
+                    history_model_[current_move_index_].index() !=
+                        history_model_[current_move_index_ - 1].index())
+                    incStepCount();
             } else {
                 // Move forward
+                if (current_move_index_ == -1 ||
+                    move.index() != history_model_[current_move_index_].index())
+                    incStepCount();
                 history_model_.cutToFit(current_move_index_ + 1);
                 qDebug() << "push move to history_model_";
-                history_model_.pushBack(move);
+                history_model_.pushBack(step_count_, move);
+                incCurrentMoveIndex();
             }
-            incCurrentMoveIndex();
-            if (current_move_index_ <= 0 ||
-                history_model_[current_move_index_].index() !=
-                    history_model_[current_move_index_ - 1].index())
-                incStepCount();
         }
         updateCanUndoRedoState();
 
@@ -156,7 +162,6 @@ void Model::onUserSelectedHistory(int selected) {
 
 void Model::updateValidMoves() {
     valid_moves_.clear();
-
     Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
 
     for (int i = 0; i < static_cast<int>(pieces_.size()); i++)
@@ -172,7 +177,6 @@ void Model::updateValidMoves() {
         if (pieces_[i].size().width() == 2 && pieces_[i].size().height() == 2)
             matrix.at(x + 1, y + 1) = 1;
     }
-
     for (int i = 0; i < static_cast<int>(pieces_.size()); i++)
     {
         if (pieces_[i].size().width() == 1 && pieces_[i].size().height() == 1)//1*1

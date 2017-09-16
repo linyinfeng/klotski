@@ -29,8 +29,14 @@ QVariant HistoryModel::headerData(int section, Qt::Orientation orientation, int 
         return QVariant();
     }
     switch (section) {
+//    case 0:
+//        return tr("Step");
+//    case 1:
+//        return tr("Piece");
+//    case 2:
+//        return tr("Move");
     case 0:
-        return tr("Piece - Move");
+        return tr("Step-Piece-Move");
     default:
         return QVariant();
     }
@@ -39,21 +45,24 @@ QVariant HistoryModel::data(const QModelIndex &index, int role) const {
 //    if (role != Qt::DisplayRole || !index.isValid())
     if (role != Qt::DisplayRole)
         return QVariant();
+    QPair<int, Move> pair = data_[index.row()];
+
+    QString direction;
     switch (index.column()) {
-    case 0: // #
-    {
-        QString move_direction;
-        const Move &move = data_[index.row()];
-        if (move.x() == 1)
-            move_direction = tr("Right");
-        else if (move.x() == -1)
-            move_direction = tr("Left");
-        else if (move.y() == 1)
-            move_direction = tr("Down");
-        else if (move.y() == -1)
-            move_direction = tr("Up");
-        return tr("#%1 - %2").arg(data_[index.row()].index()).arg(move_direction);
-    }
+    case 0:
+//        return pair.first;
+//        return pair.second.index();
+        if (pair.second.x() == 1)
+            direction = tr("Right");
+        else if (pair.second.x() == -1)
+            direction = tr("Left");
+        else if (pair.second.y() == 1)
+            direction = tr("Down");
+        else if (pair.second.y() == -1)
+            direction = tr("Up");
+        else
+            direction = tr("Error");
+        return tr("Step %1 - #%2 %3").arg(pair.first).arg(pair.second.index()).arg(direction);
     default:
         return QVariant();
     }
@@ -62,9 +71,9 @@ QVariant HistoryModel::data(const QModelIndex &index, int role) const {
 bool HistoryModel::insertRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
     beginInsertRows(QModelIndex(), row, row + count - 1);
-    std::vector<Move>::iterator last = data_.begin();
+    std::vector<QPair<int, Move>>::iterator last = data_.begin();
     std::advance(last, row);
-    data_.insert(last, count, Move(-1, 0, 0));
+    data_.insert(last, count, QPair<int, Move>(0, Move(-1, 0, 0)));
     endInsertRows();
     return true;
 }
@@ -72,7 +81,7 @@ bool HistoryModel::removeRows(int row, int count, const QModelIndex &parent) {
     Q_UNUSED(parent);
     if (count == 0) return false;
     beginRemoveRows(QModelIndex(), row, row + count -1);
-    std::vector<Move>::iterator first = data_.begin(), last;
+    std::vector<QPair<int, Move>>::iterator first = data_.begin(), last;
     std::advance(first, row);
     last = first;
     std::advance(last, count);
@@ -85,8 +94,9 @@ bool HistoryModel::setData(const QModelIndex &index, const QVariant &value, int 
 //    if (!index.isValid() || role != Qt::EditRole)
     if (role != Qt::EditRole)
         return false;
-    const Move *move = value.value<const Move *>();
-    data_[index.row()] = *move;
+    QPair<int, const Move *> pair = value.value<QPair<int, const Move *>>();
+    data_[index.row()].second = *pair.second;
+    data_[index.row()].first = pair.first;
     emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), columnCount() - 1));
     return true;
 }
@@ -102,11 +112,11 @@ void HistoryModel::reset() {
     endResetModel();
 }
 
-void HistoryModel::pushBack(const Move &move) {
+void HistoryModel::pushBack(int step_count, const Move &move) {
     insertRow(rowCount());
     qDebug() << "setData at" << createIndex(rowCount() - 1, 0);
     QVariant variant;
-    variant.setValue(&move);
+    variant.setValue(QPair<int, const Move *>(step_count, &move));
     setData(createIndex(rowCount() - 1, 0), variant);
 }
 
@@ -115,5 +125,5 @@ void HistoryModel::cutToFit(int size) {
 }
 
 const Move &HistoryModel::operator[](int index) const {
-    return data_[index];
+    return data_[index].second;
 }
