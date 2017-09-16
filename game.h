@@ -45,8 +45,9 @@ public:
     /* Start the game */
     void start() {
         connect();
-        view.forceResize();
-        model.onReload();
+//        view.forceResize(); // a workaround on Hi-DPI screen
+        view.setModel(&model);
+        model.onLoad(":/resources/levels/QiBuChengShi.klotski");
         view.show();
     }
 

@@ -48,6 +48,12 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     else
         painter->setBrush(QBrush(Qt::gray));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
+
+    static QFont font("Helvetica [Cronyx]", 20);
+    qreal free_space = scale_ * 0.05;
+    painter->setFont(font);
+    painter->drawText(QPointF(2 * free_space, scale_ * piece_.size().height() - 2 * free_space),
+        QString("%1").arg(index_));
 }
 
 QRectF GraphicsPiece::boundingRect() const {

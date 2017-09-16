@@ -16,16 +16,14 @@ const double View::kFinishButtonHorizontalUnit = 2;
 
 View::View(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::View),
-    step_info_(nullptr)
+    ui(new Ui::View)
 {
     ui->setupUi(this);
 
     this->setStyleSheet("* { font-size: 13px; }");
-    ui->statusBar->setStyleSheet("#statusBar { border-top: 2px dashed rgb(220, 220, 220); } * { font-weight:bold; }");
-    step_info_ = new QLabel(ui->statusBar);
-    step_info_->setObjectName("step_info_");
-    ui->statusBar->addPermanentWidget(step_info_);
+    ui->statusBar->setStyleSheet("#statusBar { border-top: 1px solid rgb(220, 220, 220); } * { font-weight:bold; }");
+
+    ui->centralWidget->installEventFilter(this);
 
     scene_ = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(scene_);
@@ -39,8 +37,8 @@ View::View(QWidget *parent) :
 
     connect(ui->actionShow_Statusbar, SIGNAL(toggled(bool)), ui->statusBar, SLOT(setVisible(bool)));
     connect(ui->actionShow_Toolbar, SIGNAL(toggled(bool)), ui->toolBar, SLOT(setVisible(bool)));
-    connect(ui->actionShow_Statusbar, SIGNAL(toggled(bool)), this, SLOT(forceResize()));
-    connect(ui->actionShow_Toolbar, SIGNAL(toggled(bool)), this, SLOT(forceResize()));
+//    connect(ui->actionShow_Statusbar, SIGNAL(toggled(bool)), this, SLOT(forceResize()));
+//    connect(ui->actionShow_Toolbar, SIGNAL(toggled(bool)), this, SLOT(forceResize()));
 
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(onOpenFile()));
     connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(onSaveFile()));
@@ -50,14 +48,19 @@ View::~View()
     delete ui;
 }
 
+void View::setModel(Model *model) {
+    model_ = model;
+    ui->listViewHistory->setModel(model->historyModel());
+}
+
 void View::updateStepCount(int step_count) {
     if (step_count <= model_->bestStepCount())
-        step_info_->setStyleSheet("color: rgb(0, 170, 0);");
+        ui->labelStepInfo->setStyleSheet("color: rgb(0, 170, 0);");
     else {
-        step_info_->setStyleSheet("color: rgb(170, 0, 0);");
+        ui->labelStepInfo->setStyleSheet("color: rgb(170, 0, 0);");
     }
-    step_info_->setText(tr("%1 / %2 steps").arg(step_count).arg(model_->bestStepCount()));
-    qDebug() << "Step Info label changed" << step_info_->text();
+    ui->labelStepInfo->setText(tr("%1/%2<span style=\"font-size: 11px;\">steps</span>").arg(step_count).arg(model_->bestStepCount()));
+    qDebug() << "Step Info label changed" << ui->labelStepInfo->text();
 }
 void View::onCanWinStateChanged(bool can_win) {
     ui->pushButtonFinish->setEnabled(can_win);
@@ -71,7 +74,7 @@ void View::onCanRedoStateChanged(bool can_redo) {
 
 void View::onModelLoaded(const Model *model) {
     qDebug() << "View::onModelLoaded" << model;
-    model_ = model;
+
     scene_->clear();
     graphics_pieces_.clear();
     const std::vector<Piece> &pieces = model->pieces();
@@ -114,13 +117,14 @@ void View::onValidMovesChanged(const std::vector<Move> &valid_moves) {
     }
 }
 
-void View::forceResize() {
-    QResizeEvent *event = new QResizeEvent(size(), size());
-    QCoreApplication::postEvent(this, event);
-}
-void View::resizeEvent(QResizeEvent *event) {
-    QMainWindow::resizeEvent(event);
+//void View::forceResize() {
+//    QResizeEvent *event = new QResizeEvent(size(), size());
+//    QCoreApplication::postEvent(this, event);
+//}
 
+//void View::resizeEvent(QResizeEvent *event) {
+//    QMainWindow::resizeEvent(event);
+void View::resizeView() {
     const double MainAreaHeightWidthRatio =
         (kVerticalUnit + kFinishButtonVerticalUnit) / kHorizontalUnit;
     const double ViewButtonHeightRatio =
@@ -175,6 +179,13 @@ bool View::eventFilter(QObject *watched, QEvent *event) {
         } else if (event->type() == QEvent::Leave) {
             ui->graphicsView->clearFocus();
             qDebug() << "GraphicsView focus clear";
+            return true;
+        } else {
+            return false;
+        }
+    } else if (watched == ui->centralWidget) {
+        if (event->type() == QEvent::Resize) {
+            resizeView();
             return true;
         } else {
             return false;

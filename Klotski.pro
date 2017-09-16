@@ -26,7 +26,9 @@ HEADERS += common.h \
            model.h \
            move.h \
            piece.h \
-           view.h
+           view.h \
+    historymodel.h
 FORMS += view.ui
-SOURCES += common.cpp graphicspiece.cpp main.cpp model.cpp view.cpp
+SOURCES += common.cpp graphicspiece.cpp main.cpp model.cpp view.cpp \
+    historymodel.cpp
 RESOURCES += resources.qrc

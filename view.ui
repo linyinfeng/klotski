@@ -10,6 +10,11 @@
     <height>450</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Klotski</string>
   </property>
@@ -50,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>450</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -117,6 +122,40 @@
    <addaction name="actionRestart"/>
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="styleSheet">
+    <string notr="true">#dockWidgetContents, #labelStepInfo {
+	border: 1px solid rgb(218, 218, 218);
+}
+#labelStepInfo {
+	background-color: white;
+	font-size: 32px;
+}</string>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="labelStepInfo">
+       <property name="text">
+        <string>StepInfo</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListView" name="listViewHistory"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionSave">
    <property name="icon">

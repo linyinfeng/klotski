@@ -7,16 +7,16 @@
 class Piece
 {
 public:
-    Piece(const QRect &rect) : m_geometry(rect) { }
-    explicit Piece(const QSize &size) : m_geometry(QPoint(0, 0), size) { }
+    Piece(const QRect &rect) : geometry_(rect) { }
+    explicit Piece(const QSize &size) : geometry_(QPoint(0, 0), size) { }
 
-    Piece(const Piece &piece) : m_geometry(piece.geometry()) { }
+    Piece(const Piece &piece) : geometry_(piece.geometry()) { }
 
-    QRect  geometry()  const { return m_geometry;           }
-    QPoint position()  const { return m_geometry.topLeft(); }
-    QSize  size()      const { return m_geometry.size();    }
+    QRect  geometry()  const { return geometry_;           }
+    QPoint position()  const { return geometry_.topLeft(); }
+    QSize  size()      const { return geometry_.size();    }
 
-    void moveTo(const QPoint &pos) { m_geometry.moveTo(pos); }
+    void moveTo(const QPoint &pos) { geometry_.moveTo(pos); }
 
     Piece &operator << (const Move &move) {
         QPoint pos(position().x() + move.x(), position().y() + move.y());
@@ -25,7 +25,8 @@ public:
     }
 
 private:
-    QRect m_geometry;
+    QRect geometry_;
+//    QString name_;
 };
 
 #endif // PIECE_H

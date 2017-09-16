@@ -7,8 +7,8 @@
 #include <QFile>
 #include <QTextStream>
 
-Model::Model(QObject *parent) : QObject(parent) {
-    load(QString(":/resources/levels/QiBuChengShi.klotski"));
+Model::Model(QObject *parent) : QObject(parent), history_model_(this) {
+//    load(QString(":/resources/levels/QiBuChengShi.klotski"));
     // Wait for reload
 }
 const std::vector<Piece> &Model::pieces() const {
@@ -26,6 +26,9 @@ int Model::bestStepCount() const {
 const QString &Model::levelName() const {
     return level_name_;
 }
+HistoryModel *Model::historyModel() {
+    return &history_model_;
+}
 
 void Model::onSave(const QString & file_name){
     QFile file(file_name);
@@ -33,7 +36,7 @@ void Model::onSave(const QString & file_name){
         QTextStream stream(&file);
         stream << level_name_ << "\n";
         stream << best_step_count_<<"\n";
-        stream<< static_cast<int>(pieces_.size()) << "\n";
+        stream << static_cast<int>(pieces_.size()) << "\n";
         for(int i = 0; i < static_cast<int>(pieces_.size()); ++i)
         {
             stream << i << "\t" << pieces_[i].position().x() << "\t" << pieces_[i].position().y()
@@ -45,21 +48,6 @@ void Model::onSave(const QString & file_name){
 
 }
 void Model::onLoad(const QString & file_name){
-    load(file_name);
-    onReload();
-}
-void Model::onReload() {
-    qDebug() << "Model::onReload";
-    pieces_ = original_pieces_;
-    history_.clear();
-    last_move_ = -1;
-    setStepCount(0);
-    updateCanUndoRedoState();
-    updateCanWinState();
-    emit modelLoaded(this);
-    updateValidMoves();
-}
-void Model::load(const QString & file_name) {
     qDebug() << "Start Load";
     QFile file(file_name);
     if(file.open(QIODevice::ReadOnly))
@@ -78,9 +66,21 @@ void Model::load(const QString & file_name) {
         }
 
         qDebug() << "Load finish";
+        onReload();
     } else {
         qDebug() << "Failed to open file";
     }
+}
+void Model::onReload() {
+    qDebug() << "Model::onReload";
+    pieces_ = original_pieces_;
+    history_model_.clear();
+
+    emit modelLoaded(this);
+    updateCanUndoRedoState();
+    updateCanWinState();
+    setStepCount(0);
+    updateValidMoves();
 }
 
 void Model::applyMove(const Move &move) {
@@ -89,24 +89,25 @@ void Model::applyMove(const Move &move) {
         emitted = move.id();
         emit syncMove(move);
 
-        // Update history_ step_count_ valid_moves_ pieces_ last_move_
-        if (last_move_ != -1 && move == history_[last_move_].reverse()) {
+        // Update history_ step_count_ valid_moves_ pieces_ history_model->last_move_
+        if (history_model_.lastMoveIndex() != -1 && move == history_model_.lastMove().reverse()) {
             // Undo
             // history_ unchanged
-            --last_move_;
-            if (history_[last_move_].index() != history_[last_move_ + 1].index())
+            history_model_.decLastMove();
+            if (history_model_.lastMove().index() != history_model_.lastMove(1).index())
                 decStepCount();
         } else {
-            if (last_move_ + 1 < static_cast<int>(history_.size()) && move == history_[last_move_ + 1]) {
+            if (history_model_.lastMoveIndex() + 1 < history_model_.size() && move == history_model_.lastMove(1)) {
                 // Redo
                 // history_ unchanged
             } else {
                 // Move forward
-                history_.resize(last_move_ + 1);
-                history_.push_back(move);
+                history_model_.resize(history_model_.lastMoveIndex() + 1);
+                qDebug() << "push move to history_model_";
+                history_model_.push_back(move);
             }
-            ++last_move_;
-            if (last_move_ <= 0 || history_[last_move_].index() != history_[last_move_ - 1].index())
+            history_model_.incLastMove();
+            if (history_model_.lastMoveIndex() <= 0 || history_model_.lastMove().index() != history_model_.lastMove(-1).index())
                 incStepCount();
         }
         updateCanUndoRedoState();
@@ -120,10 +121,10 @@ void Model::applyMove(const Move &move) {
     }
 }
 void Model::onUndo() {
-    applyMove(history_[last_move_].reverse());
+    applyMove(history_model_.lastMove().reverse());
 }
 void Model::onRedo() {
-    applyMove(history_[last_move_ + 1]);
+    applyMove(history_model_.lastMove(1));
 }
 
 void Model::updateValidMoves() {
@@ -238,10 +239,10 @@ void Model::updateCanWinState() {
 }
 void Model::updateCanUndoRedoState() {
     bool can_undo = false, can_redo = false;
-    if (last_move_ != -1) {
+    if (history_model_.lastMoveIndex() != -1) {
         can_undo = true;
     }
-    if (last_move_ + 1 < static_cast<int>(history_.size())) {
+    if (history_model_.lastMoveIndex() + 1 < history_model_.size()) {
         can_redo = true;
     }
     emit canUndoStateChanged(can_undo);

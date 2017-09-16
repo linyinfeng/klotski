@@ -78,15 +78,19 @@ private:
     void updateValidMoves();
 
 public slots:
-    /* post resize event to this object */
-    void forceResize();
+//    /* post resize event to this object */
+//    void forceResize();
+    void setModel(Model *);
+
 protected:
-    /* resize view and scene */
-    virtual void resizeEvent(QResizeEvent *event) override;
+//    /* resize view and scene */
+//    virtual void resizeEvent(QResizeEvent *event) override;
     /* handle graphics view's QEvent::Enter evnet to setting focus when enter */
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
+    void resizeView();
+
     /* define the unit button takes */
     static const double kFinishButtonVerticalUnit;
     static const double kFinishButtonHorizontalUnit;
@@ -103,13 +107,12 @@ private slots:
 private:
     /* UI */
     Ui::View *ui;
-    QLabel *step_info_;
     QGraphicsScene *scene_;
 
     std::vector<GraphicsPiece *> graphics_pieces_;
 
 private:
-    const Model *model_;
+    Model *model_;
 };
 
 #endif // VIEW_H

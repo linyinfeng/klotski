@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QString>
+#include <historymodel.h>
 
 class Model : public QObject
 {
@@ -15,11 +16,18 @@ public:
 public:
     const static Model default_model;
 public:
+    /* get the state of the pieces */
     const std::vector<Piece> &pieces() const;
+    /* get the valid moves of the pieces */
     const std::vector<Move> &validMoves() const;
+    /* get the step count */
     int stepCount() const;
+    /* get the best step count of the level */
     int bestStepCount() const;
+    /* get level name */
     const QString &levelName() const;
+    /* get history model */
+    HistoryModel *historyModel();
 
 signals:
     void canWinStateChanged(bool can_win);
@@ -34,16 +42,23 @@ signals:
     void modelSaved(bool successed);
 
 public slots:
+    /* move and  sync */
     void applyMove(const Move &move);
 
+    /* undo in model */
     void onUndo();
+    /* redo in model */
     void onRedo();
 
+    /* reload the game */
     void onReload();
+    /* do when user reqires load */
     void onLoad(const QString & file_name);
+    /* save to file */
     void onSave(const QString & file_name);
 
 private:
+    /**/
     void load(const QString &file_name);
 
     void updateValidMoves();
@@ -63,8 +78,7 @@ private:
 
     int step_count_;
 
-    std::vector<Move> history_;
-    int last_move_;
+    HistoryModel history_model_;
 };
 
 #endif // MODEL_H
