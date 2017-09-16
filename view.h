@@ -40,6 +40,8 @@ signals:
     void load(const QString &file_name);
     /* emitted when user required save game to a specific file */
     void save(const QString &file_name);
+    /* forward history views' signal */
+    void userSelectedHistory(int selected);
 
 public slots:
     /* update step count on status bar */
@@ -50,6 +52,8 @@ public slots:
     void onCanUndoStateChanged(bool can_undo);
     /* set the redo action's state */
     void onCanRedoStateChanged(bool can_redo);
+    /* update list view slection */
+    void updateCurrentMoveIndex(int index);
 
     /* on model saved
      * promote user if save was successed

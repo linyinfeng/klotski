@@ -2,6 +2,7 @@
 #define MOVE_H
 
 #include <cstddef>
+#include <QMetaType>
 
 class Move
 {
@@ -67,5 +68,8 @@ private:
 
     std::size_t id_;
 };
+
+Q_DECLARE_METATYPE(const Move *)
+Q_DECLARE_METATYPE(Move *)
 
 #endif // MOVE_H

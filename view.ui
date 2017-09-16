@@ -55,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>450</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -152,7 +152,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QListView" name="listViewHistory"/>
+      <widget class="HistoryView" name="historyView"/>
      </item>
     </layout>
    </widget>
@@ -270,6 +270,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>HistoryView</class>
+   <extends>QListView</extends>
+   <header>historyview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QFileInfo>
+#include <QFontMetrics>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -42,6 +43,8 @@ View::View(QWidget *parent) :
 
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(onOpenFile()));
     connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(onSaveFile()));
+
+    connect(ui->historyView, SIGNAL(userSelectedHistory(int)), this, SIGNAL(userSelectedHistory(int)));
 }
 View::~View()
 {
@@ -50,7 +53,8 @@ View::~View()
 
 void View::setModel(Model *model) {
     model_ = model;
-    ui->listViewHistory->setModel(model->historyModel());
+    HistoryModel *history_model = model->historyModel();
+    ui->historyView->setModel(history_model);
 }
 
 void View::updateStepCount(int step_count) {
@@ -61,6 +65,9 @@ void View::updateStepCount(int step_count) {
     }
     ui->labelStepInfo->setText(tr("%1/%2<span style=\"font-size: 11px;\">steps</span>").arg(step_count).arg(model_->bestStepCount()));
     qDebug() << "Step Info label changed" << ui->labelStepInfo->text();
+}
+void View::updateCurrentMoveIndex(int index) {
+    ui->historyView->updateCurrentMoveIndex(index);
 }
 void View::onCanWinStateChanged(bool can_win) {
     ui->pushButtonFinish->setEnabled(can_win);
@@ -90,6 +97,7 @@ void View::onModelLoaded(const Model *model) {
 
     this->setWindowTitle(tr("Klotski - %1 - %2").arg(model_->levelName()).arg(model_->bestStepCount()));
     ui->statusBar->showMessage(tr("Level Loaded"));
+
     updateStepCount(model_->stepCount());
 }
 void View::onModelSaved(bool successed) {
@@ -199,7 +207,7 @@ void View::onFinish() {
     qDebug() << "Finish";
     if (model_->stepCount() > model_->bestStepCount())
         QMessageBox::information(this, tr("You win!"),
-            tr("Your take %1 steps to finish this level\nThe best solution only takes %2 steps")
+            tr("Your take %1 steps to finish this level\nThe best solution of this level takes %2 steps")
                 .arg(model_->stepCount()).arg(model_->bestStepCount()));
     else {
         QMessageBox::information(this, tr("You win!"),

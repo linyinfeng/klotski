@@ -34,6 +34,9 @@ public:
         QObject::connect(&model, SIGNAL(validMovesChanged(const std::vector<Move> &)),
                          &view,  SLOT(onValidMovesChanged(const std::vector<Move> &)));
 
+        QObject::connect(&model, SIGNAL(currentMoveIndexChanged(int)), &view, SLOT(updateCurrentMoveIndex(int)));
+        QObject::connect(&view,  SIGNAL(userSelectedHistory(int)), &model, SLOT(onUserSelectedHistory(int)));
+
         QObject::connect(&view, SIGNAL(undo()), &model, SLOT(onUndo()));
         QObject::connect(&view, SIGNAL(redo()), &model, SLOT(onRedo()));
         QObject::connect(&view, SIGNAL(reload()), &model, SLOT(onReload()));

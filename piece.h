@@ -26,7 +26,6 @@ public:
 
 private:
     QRect geometry_;
-//    QString name_;
 };
 
 #endif // PIECE_H

@@ -29,6 +29,9 @@ const QString &Model::levelName() const {
 HistoryModel *Model::historyModel() {
     return &history_model_;
 }
+int Model::currentMoveIndex() {
+    return current_move_index_;
+}
 
 void Model::onSave(const QString & file_name){
     QFile file(file_name);
@@ -74,7 +77,8 @@ void Model::onLoad(const QString & file_name){
 void Model::onReload() {
     qDebug() << "Model::onReload";
     pieces_ = original_pieces_;
-    history_model_.clear();
+    history_model_.reset();
+    current_move_index_ = -1;
 
     emit modelLoaded(this);
     updateCanUndoRedoState();
@@ -89,28 +93,33 @@ void Model::applyMove(const Move &move) {
         emitted = move.id();
         emit syncMove(move);
 
+        /* History Logic */
         // Update history_ step_count_ valid_moves_ pieces_ history_model->last_move_
-        if (history_model_.lastMoveIndex() != -1 && move == history_model_.lastMove().reverse()) {
+        if (current_move_index_ != -1 && move == history_model_[current_move_index_].reverse()) {
             // Undo
-            // history_ unchanged
-            history_model_.decLastMove();
-            if (history_model_.lastMove().index() != history_model_.lastMove(1).index())
+            decCurrentMoveIndex();
+            if (history_model_[current_move_index_].index() != history_model_[current_move_index_ + 1].index())
+                // current_move_index_ has been decreased
                 decStepCount();
         } else {
-            if (history_model_.lastMoveIndex() + 1 < history_model_.size() && move == history_model_.lastMove(1)) {
+            if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1]) {
                 // Redo
                 // history_ unchanged
             } else {
                 // Move forward
-                history_model_.resize(history_model_.lastMoveIndex() + 1);
+                history_model_.cutToFit(current_move_index_ + 1);
                 qDebug() << "push move to history_model_";
-                history_model_.push_back(move);
+                history_model_.pushBack(move);
             }
-            history_model_.incLastMove();
-            if (history_model_.lastMoveIndex() <= 0 || history_model_.lastMove().index() != history_model_.lastMove(-1).index())
+            incCurrentMoveIndex();
+            if (current_move_index_ <= 0 ||
+                history_model_[current_move_index_].index() !=
+                    history_model_[current_move_index_ - 1].index())
                 incStepCount();
         }
         updateCanUndoRedoState();
+
+        /* Game Logic */
         pieces_[move.index()] << move;
         updateValidMoves();
         updateCanWinState();
@@ -121,10 +130,28 @@ void Model::applyMove(const Move &move) {
     }
 }
 void Model::onUndo() {
-    applyMove(history_model_.lastMove().reverse());
+    applyMove(history_model_[current_move_index_].reverse());
 }
 void Model::onRedo() {
-    applyMove(history_model_.lastMove(1));
+    applyMove(history_model_[current_move_index_ + 1]);
+}
+
+void Model::onUserSelectedHistory(int selected) {
+    if (selected == current_move_index_) {
+        return;
+    }
+    int current_move_index = current_move_index_;
+    if (selected > current_move_index) {
+        // Redo
+        for (int i = current_move_index + 1; i <= selected; ++i) {
+            applyMove(history_model_[i]);
+        }
+    } else {
+        // Undo
+        for (int i = current_move_index; i >= selected + 1; --i) {
+            applyMove(history_model_[i].reverse());
+        }
+    }
 }
 
 void Model::updateValidMoves() {
@@ -239,10 +266,11 @@ void Model::updateCanWinState() {
 }
 void Model::updateCanUndoRedoState() {
     bool can_undo = false, can_redo = false;
-    if (history_model_.lastMoveIndex() != -1) {
+    if (current_move_index_ != -1) {
         can_undo = true;
     }
-    if (history_model_.lastMoveIndex() + 1 < history_model_.size()) {
+    if (current_move_index_ + 1 < history_model_.rowCount()) {
+        // can push more records in
         can_redo = true;
     }
     emit canUndoStateChanged(can_undo);
@@ -250,15 +278,24 @@ void Model::updateCanUndoRedoState() {
 }
 
 void Model::incStepCount() {
-    emit stepCountChanged(++step_count_);
-    qDebug() << "Step Count Changed emitted" << step_count_;
+    setStepCount(step_count_ + 1);
 }
 void Model::decStepCount() {
-    emit stepCountChanged(--step_count_);
-    qDebug() << "Step Count Changed emitted" << step_count_;
+    setStepCount(step_count_ - 1);
 }
 void Model::setStepCount(int step_count) {
     step_count_ = step_count;
     emit stepCountChanged(step_count_);
     qDebug() << "Step Count Changed emitted" << step_count_;
+}
+void Model::incCurrentMoveIndex() {
+    setCurrentMoveIndex(current_move_index_ + 1);
+}
+void Model::decCurrentMoveIndex() {
+    setCurrentMoveIndex(current_move_index_ - 1);
+}
+void Model::setCurrentMoveIndex(int current_move) {
+    current_move_index_ = current_move;
+    emit currentMoveIndexChanged(current_move_index_);
+    qDebug() << "currentMoveChanged Changed emitted" << current_move_index_;
 }

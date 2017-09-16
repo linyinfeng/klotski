@@ -1,39 +1,40 @@
 #ifndef HISTORYMODEL_H
 #define HISTORYMODEL_H
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
+#include <QObject>
 #include <vector>
 #include <QDebug>
 #include "move.h"
 
-class HistoryModel : public QAbstractListModel
+class HistoryModel : public QAbstractItemModel
 {
+    Q_OBJECT
 public:
-    HistoryModel(QObject *parent = 0);
+    HistoryModel(QObject *parent = nullptr);
 
-    Move &operator[](int index);
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 
-    virtual int rowCount(const QModelIndex &parent) const override;
-    virtual int columnCount(const QModelIndex &parent) const override;
-    virtual QVariant data(const QModelIndex &index, int role) const override;
-    virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    void clear();
-    void resize(int size);
-    void push_back(const Move &move);
+    virtual bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    virtual bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
-    int size() const;
+    virtual QModelIndex parent(const QModelIndex &child) const;
 
-    int lastMoveIndex() const;
-    Move &lastMove(int offset = 0);
-    void setLastMove(int last_move);
-    void incLastMove();
-    void decLastMove();
+    // Interface for operating by model
+    void reset();
+    void pushBack(const Move &move);
+    void cutToFit(int size);
+
+    const Move &operator[](int index) const;
 
 private:
-    int indexToRow(int index) const;
     std::vector<Move> data_;
-    int last_move_;
 };
 
 #endif // HISTORYMODEL_H

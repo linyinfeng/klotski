@@ -28,6 +28,8 @@ public:
     const QString &levelName() const;
     /* get history model */
     HistoryModel *historyModel();
+    /* get current move index */
+    int currentMoveIndex();
 
 signals:
     void canWinStateChanged(bool can_win);
@@ -36,6 +38,7 @@ signals:
 
     void syncMove(const Move &move);
     void stepCountChanged(int step_rount);
+    void currentMoveIndexChanged(int current_move);
     void validMovesChanged(const std::vector<Move> &valid_moves);
 
     void modelLoaded(const Model *model);
@@ -49,6 +52,9 @@ public slots:
     void onUndo();
     /* redo in model */
     void onRedo();
+
+    /* move to history */
+    void onUserSelectedHistory(int selected);
 
     /* reload the game */
     void onReload();
@@ -67,8 +73,11 @@ private:
 
     void incStepCount();
     void decStepCount();
-
     void setStepCount(int step_count);
+
+    void incCurrentMoveIndex();
+    void decCurrentMoveIndex();
+    void setCurrentMoveIndex(int current_move);
 
     QString level_name_;
     int best_step_count_;
@@ -79,6 +88,7 @@ private:
     int step_count_;
 
     HistoryModel history_model_;
+    int current_move_index_;
 };
 
 #endif // MODEL_H

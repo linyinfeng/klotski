@@ -1,14 +1,12 @@
 #include <historymodel.h>
 
-#include <QAbstractListModel>
 #include <vector>
 #include <QDebug>
+#include <algorithm>
 #include "move.h"
 
-HistoryModel::HistoryModel(QObject *parent) : QAbstractListModel(parent) { }
-
-Move &HistoryModel::operator[](int index) {
-    return data_[index];
+HistoryModel::HistoryModel(QObject *parent)
+    : QAbstractItemModel(parent) {
 }
 
 int HistoryModel::rowCount(const QModelIndex &parent) const {
@@ -19,82 +17,103 @@ int HistoryModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
     return 1;
 }
+QModelIndex HistoryModel::index(int row, int column, const QModelIndex &parent) const {
+    Q_UNUSED(parent);
+    return createIndex(row, column);
+}
 
-QVariant HistoryModel::data(const QModelIndex &index, int role) const {
-    if (!index.isValid()) {
+QVariant HistoryModel::headerData(int section, Qt::Orientation orientation, int role) const {
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    if (orientation != Qt::Horizontal) {
         return QVariant();
     }
-    if (role == Qt::TextAlignmentRole) {
-        return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
-    } else if (role == Qt::DisplayRole) {
-        QString display(tr("%1 move %2"));
-        qDebug() << "List view reqire row" << index.row();
-        const Move &move = data_[data_.size() - index.row() - 1];
-        QString direction;
-        if (move.x() > 0)
-            direction = "right";
-        else if (move.x() < 0)
-            direction = "left";
-        else if (move.y() > 0)
-            direction = "down";
-        else if (move.y() < 0)
-            direction = "up";
-        else
-            direction = "nowhere";
-        return display.arg(move.index()).arg(direction);
+    switch (section) {
+    case 0:
+        return tr("Piece - Move");
+    default:
+        return QVariant();
     }
-    return QVariant();
 }
-Qt::ItemFlags HistoryModel::flags(const QModelIndex &index) const {
-    if (index.row() == indexToRow(last_move_)) {
-        return Qt::ItemIsEnabled;
-    } else {
-        return Qt::NoItemFlags;
+QVariant HistoryModel::data(const QModelIndex &index, int role) const {
+//    if (role != Qt::DisplayRole || !index.isValid())
+    if (role != Qt::DisplayRole)
+        return QVariant();
+    switch (index.column()) {
+    case 0: // #
+    {
+        QString move_direction;
+        const Move &move = data_[index.row()];
+        if (move.x() == 1)
+            move_direction = tr("Right");
+        else if (move.x() == -1)
+            move_direction = tr("Left");
+        else if (move.y() == 1)
+            move_direction = tr("Down");
+        else if (move.y() == -1)
+            move_direction = tr("Up");
+        return tr("#%1 - %2").arg(data_[index.row()].index()).arg(move_direction);
+    }
+    default:
+        return QVariant();
     }
 }
 
-void HistoryModel::clear() {
+bool HistoryModel::insertRows(int row, int count, const QModelIndex &parent) {
+    Q_UNUSED(parent);
+    beginInsertRows(QModelIndex(), row, row + count - 1);
+    std::vector<Move>::iterator last = data_.begin();
+    std::advance(last, row);
+    data_.insert(last, count, Move(-1, 0, 0));
+    endInsertRows();
+    return true;
+}
+bool HistoryModel::removeRows(int row, int count, const QModelIndex &parent) {
+    Q_UNUSED(parent);
+    if (count == 0) return false;
+    beginRemoveRows(QModelIndex(), row, row + count -1);
+    std::vector<Move>::iterator first = data_.begin(), last;
+    std::advance(first, row);
+    last = first;
+    std::advance(last, count);
+    data_.erase(first, last);
+    endRemoveRows();
+    return true;
+}
+
+bool HistoryModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+//    if (!index.isValid() || role != Qt::EditRole)
+    if (role != Qt::EditRole)
+        return false;
+    const Move *move = value.value<const Move *>();
+    data_[index.row()] = *move;
+    emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), columnCount() - 1));
+    return true;
+}
+
+QModelIndex HistoryModel::parent(const QModelIndex &child) const {
+    Q_UNUSED(child);
+    return QModelIndex();
+}
+
+void HistoryModel::reset() {
     beginResetModel();
     data_.clear();
-    last_move_ = -1;
     endResetModel();
 }
-void HistoryModel::resize(int size) {
-    beginRemoveColumns(QModelIndex(), indexToRow(size), indexToRow(data_.size() - 1));
-    data_.resize(size);
-    endRemoveColumns();
-}
-void HistoryModel::push_back(const Move &move) {
-    beginInsertRows(QModelIndex(), indexToRow(data_.size()), indexToRow(data_.size() + 1));
-    data_.push_back(move);
-    endInsertRows();
+
+void HistoryModel::pushBack(const Move &move) {
+    insertRow(rowCount());
+    qDebug() << "setData at" << createIndex(rowCount() - 1, 0);
+    QVariant variant;
+    variant.setValue(&move);
+    setData(createIndex(rowCount() - 1, 0), variant);
 }
 
-int HistoryModel::size() const {
-    return static_cast<int>(data_.size());
+void HistoryModel::cutToFit(int size) {
+    removeRows(size, rowCount() - size);
 }
 
-int HistoryModel::lastMoveIndex() const {
-    return last_move_;
-}
-Move &HistoryModel::lastMove(int offset) {
-    return data_[last_move_ + offset];
-}
-void HistoryModel::setLastMove(int last_move) {
-    beginResetModel();
-    last_move_ = last_move;
-    endResetModel();
-}
-void HistoryModel::incLastMove() {
-    setLastMove(last_move_ + 1);
-}
-void HistoryModel::decLastMove() {
-    setLastMove(last_move_ - 1);
-}
-
-int HistoryModel::indexToRow(int index) const {
-    int res = data_.size() - index - 1;
-    if (res < 0)
-        res = 0;
-    return res;
+const Move &HistoryModel::operator[](int index) const {
+    return data_[index];
 }
