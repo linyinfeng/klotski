@@ -4,6 +4,10 @@
 #include <cstddef>
 #include <QMetaType>
 
+enum class Direction {
+    up, down, left, right, invalid
+};
+
 class Move
 {
 public:
@@ -22,6 +26,20 @@ public:
         x_ = move.x_;
         y_ = move.y_;
         return *this;
+    }
+
+    Direction direction() {
+        if (x_ > 0) {
+            return Direction::right;
+        } else if (x_ < 0) {
+            return Direction::left;
+        } else if (y_ < 0) {
+            return Direction::up;
+        } else if (y_ > 0) {
+            return Direction::down;
+        } else {
+            return Direction::invalid;
+        }
     }
 
     bool operator == (const Move &move) const {

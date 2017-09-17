@@ -168,6 +168,7 @@ void GraphicsPiece::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     pressed_ = true;
     update(); // update color
     if (event->button() & Qt::LeftButton) {
+        moving_direction_ = Direction::invalid;
         virtual_initial_mouse_pos_ = event->scenePos();
     }
     qDebug() << this << "mousePressEvent" << event->button();
@@ -180,11 +181,13 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     QPointF current_mouse_pos = event->scenePos();
     QPointF mouse_move = current_mouse_pos - virtual_initial_mouse_pos_;
     QPointF piece_move = QPointF(0, 0);
-    if (std::abs(mouse_move.y()) > std::abs(mouse_move.x())) {
+    if ((moving_direction_ == Direction::invalid && std::abs(mouse_move.y()) > std::abs(mouse_move.x()))
+            || moving_direction_ == Direction::up || moving_direction_ == Direction::down) {
         if (mouse_move.y() < 0) {
             if (can_move_up_) {
                 piece_move = QPointF(0, mouse_move.y());
                 if (abs(piece_move.y()) > scale_ * MOVE_THRESHOLD) {
+                    moving_direction_ = Direction::up;
                     applyMove(Move(index_, 0, -1), false);
                     virtual_initial_mouse_pos_.setY(virtual_initial_mouse_pos_.y() - scale_);
                     piece_move = QPointF(0, scale_ + mouse_move.y());
@@ -194,6 +197,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             if (can_move_down_) {
                 piece_move = QPointF(0, mouse_move.y());
                 if (abs(piece_move.y()) > scale_ * MOVE_THRESHOLD) {
+                    moving_direction_ = Direction::down;
                     applyMove(Move(index_, 0, 1), false);
                     virtual_initial_mouse_pos_.setY(virtual_initial_mouse_pos_.y() + scale_);
                     piece_move = QPointF(0, -scale_ + mouse_move.y());
@@ -206,6 +210,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             if (can_move_left_) {
                 piece_move = QPointF(mouse_move.x(), 0);
                 if (abs(piece_move.x()) > scale_ * MOVE_THRESHOLD) {
+                    moving_direction_ = Direction::left;
                     applyMove(Move(index_, -1, 0), false);
                     virtual_initial_mouse_pos_.setX(virtual_initial_mouse_pos_.x() - scale_);
                     piece_move = QPointF(scale_ + mouse_move.x(), 0);
@@ -215,6 +220,7 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             if (can_move_right_) {
                 piece_move = QPointF(mouse_move.x(), 0);
                 if (abs(piece_move.x()) > scale_ * MOVE_THRESHOLD) {
+                    moving_direction_ = Direction::right;
                     applyMove(Move(index_, 1, 0), false);
                     virtual_initial_mouse_pos_.setX(virtual_initial_mouse_pos_.x() + scale_);
                     piece_move = QPointF(- scale_ + mouse_move.x(), 0);
@@ -231,12 +237,14 @@ void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << "mouse_move" << mouse_move;
     qDebug() << "piece_move" << piece_move;
     setPos(piece_base_pos_ + piece_move);
+    update();
 //    QGraphicsObject::mouseMoveEvent(event);
     qDebug() << this << "mouseMoveEvent" << event->button();
 }
 void GraphicsPiece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
     pressed_ = false;
+    moving_direction_ = Direction::invalid;
     update();
     applyMove(Move(-1, 0, 0));
     qDebug() << this << "mouseReleaseEvent" << event->button();
