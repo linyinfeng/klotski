@@ -28,7 +28,8 @@ HEADERS += common.h \
            model.h \
            move.h \
            piece.h \
-           view.h
+           view.h \
+    fileselector.h
 FORMS += view.ui \
     levelselector.ui
 SOURCES += common.cpp \
@@ -37,7 +38,8 @@ SOURCES += common.cpp \
            historyview.cpp \
            main.cpp \
            model.cpp \
-           view.cpp
+           view.cpp \
+    fileselector.cpp
 RESOURCES += resources.qrc
 TRANSLATIONS += klotski.ts zh_CN.ts
 RC_ICONS = klotski.ico
