@@ -168,107 +168,78 @@ void Model::onUserSelectedHistory(int selected) {
 void Model::updateValidMoves() {
     valid_moves_.clear();
     Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
-
-    for (int i = 0; i < static_cast<int>(pieces_.size()); i++)
+for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
+ {
+    int x, y;
+    x = pieces_[i].position().x();
+    y = pieces_[i].position().y();
+    for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
+        for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
+            matrix.at(j, k) = 1;
+        }
+   }
+}
+for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
     {
         int x, y;
         x = pieces_[i].position().x();
         y = pieces_[i].position().y();
-        matrix.at(x, y) = 1;
-        if (pieces_[i].size().width() == 2)
-            matrix.at(x + 1, y) = 1;
-        if (pieces_[i].size().height() == 2)
-            matrix.at(x, y + 1) = 1;
-        if (pieces_[i].size().width() == 2 && pieces_[i].size().height() == 2)
-            matrix.at(x + 1, y + 1) = 1;
-    }
-    for (int i = 0; i < static_cast<int>(pieces_.size()); i++)
-    {
-        if (pieces_[i].size().width() == 1 && pieces_[i].size().height() == 1)//1*1
+        int width, height;
+        width = pieces_[i].size().width();
+        height = pieces_[i].size().height();
+
+    if(y>0){
+    bool canup = true;//move up
+    for (int j = 0; j <= width - 1; j++) {
+        if (matrix.at(x + j, y - 1) != 0)
         {
-            if (pieces_[i].position().x() > 0 &&
-                matrix.at(pieces_[i].position().x() - 1, pieces_[i].position().y()) == 0)
-                valid_moves_.push_back(Move(i, -1, 0));//move left
-
-            if (pieces_[i].position().x() < kHorizontalUnit - 1 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y()) == 0)
-                valid_moves_.push_back(Move(i, 1, 0));//move right
-
-            if (pieces_[i].position().y() > 0 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() - 1) == 0)
-                valid_moves_.push_back(Move(i, 0, -1));//move up
-
-            if (pieces_[i].position().y() < kVerticalUnit - 1 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() + 1) == 0)
-                valid_moves_.push_back(Move(i, 0, 1));//move down
-        }
-
-        if (pieces_[i].size().width() == 1 && pieces_[i].size().height() == 2)//1*2
-        {
-            if (pieces_[i].position().x() > 0 &&
-                matrix.at(pieces_[i].position().x() - 1, pieces_[i].position().y()) == 0 &&
-                matrix.at(pieces_[i].position().x() - 1, pieces_[i].position().y() + 1) == 0)
-                valid_moves_.push_back(Move(i, -1, 0));//move left
-
-            if (pieces_[i].position().x() < kHorizontalUnit - 1 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y()) == 0 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y() + 1) == 0)
-                valid_moves_.push_back(Move(i, 1, 0));//move right
-
-            if (pieces_[i].position().y() > 0 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() - 1) == 0)
-                valid_moves_.push_back(Move(i, 0, -1));//move up
-
-            if (pieces_[i].position().y() < kVerticalUnit - 2 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() + 2) == 0)
-                valid_moves_.push_back(Move(i, 0, 1));//move down
-        }
-
-        if (pieces_[i].size().width() == 2 && pieces_[i].size().height() == 1)//2*1
-        {
-            if (pieces_[i].position().x() > 0 &&
-                matrix.at(pieces_[i].position().x() - 1, pieces_[i].position().y()) == 0)
-                valid_moves_.push_back(Move(i, -1, 0));//move left
-
-            if (pieces_[i].position().x() < kHorizontalUnit - 2 &&
-                matrix.at(pieces_[i].position().x() + 2, pieces_[i].position().y()) == 0)
-                valid_moves_.push_back(Move(i, 1, 0));//move right
-
-            if (pieces_[i].position().y() > 0 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() - 1) == 0 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y() - 1) == 0)
-                valid_moves_.push_back(Move(i, 0, -1));//move up
-
-            if (pieces_[i].position().y() < kVerticalUnit - 1 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() + 1) == 0 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y() + 1) == 0)
-                valid_moves_.push_back(Move(i, 0, 1));//move down
-        }
-
-        if (pieces_[i].size().width() == 2 && pieces_[i].size().height() == 2)//2*2
-        {
-            if (pieces_[i].position().x() > 0 &&
-                matrix.at(pieces_[i].position().x() - 1, pieces_[i].position().y()) == 0 &&
-                matrix.at(pieces_[i].position().x() - 1, pieces_[i].position().y() + 1) == 0)
-                valid_moves_.push_back(Move(i, -1, 0));//move left
-
-            if (pieces_[i].position().x() < kHorizontalUnit - 2 &&
-                matrix.at(pieces_[i].position().x() + 2, pieces_[i].position().y()) == 0 &&
-                matrix.at(pieces_[i].position().x() + 2, pieces_[i].position().y() + 1) == 0)
-                valid_moves_.push_back(Move(i, 1, 0));//move right
-
-            if (pieces_[i].position().y() > 0 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() - 1) == 0 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y() - 1) == 0)
-                valid_moves_.push_back(Move(i, 0, -1));//move up
-
-            if (pieces_[i].position().y() < kVerticalUnit - 2 &&
-                matrix.at(pieces_[i].position().x(), pieces_[i].position().y() + 2) == 0 &&
-                matrix.at(pieces_[i].position().x() + 1, pieces_[i].position().y() + 2) == 0)
-                valid_moves_.push_back(Move(i, 0, 1));//move down
+            canup = false;
+            break;
         }
     }
-    qDebug() << "[emit] validMovesChanged(valid_moves_)";
+    if (canup)
+        valid_moves_.push_back(Move(i, 0, -1));
+   }
+
+    if(y < kVerticalUnit - height){
+    bool candown = true;//move down
+    for (int j = 0; j <= width - 1; j++)
+   {
+        if (matrix.at(x + j, y + height) != 0)
+        {
+            candown = false;
+            break;
+        }
+   }
+    if (candown)
+        valid_moves_.push_back(Move(i, 0, 1));
+    }
+
+    if(x > 0){
+    bool canleft = true;//move left
+    for (int j = 0; j <= height - 1; j++) {
+        if (matrix.at(x - 1, y + j) != 0)
+        {
+            canleft = false;
+            break;
+        }
+    }
+    if (canleft)
+        valid_moves_.push_back(Move(i, -1, 0));
+ }
+    if(x + width < kHorizontalUnit){
+        bool canright = true;
+        for(int j = 0; j <= height - 1; j++)
+        {
+            if(matrix.at(x + width, y + j) != 0){
+                canright = false;
+                break;
+            }
+        }
+        if(canright)
+            valid_moves_.push_back(Move(i, 1, 0));
+    }
+    }
     emit validMovesChanged(valid_moves_);
 }
 void Model::updateCanWinState() {
