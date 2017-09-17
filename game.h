@@ -1,4 +1,4 @@
-/* Define the game object
+﻿/* Define the game object
  */
 
 #ifndef GAME_H
@@ -56,7 +56,7 @@ public:
         connect();
 //        view.forceResize(); // a workaround on Hi-DPI screen
         view->setModel(model);
-        model->onLoad(":/resources/levels/QiBuChengShi.klotski");
+        model->onLoad(":/resources/levels/七步成诗.klotski");
         view->forceResize();
         view->show();
     }
