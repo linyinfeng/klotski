@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QTimer>
+#include <QTextCodec>
 
 Model::Model(QObject *parent) : QObject(parent), history_model_(this) {
 //    load(QString(":/resources/levels/QiBuChengShi.klotski"));
@@ -39,6 +40,8 @@ void Model::onSave(const QString & file_name){
     QFile file(file_name);
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
+        stream.setCodec(QTextCodec::codecForName("UTF-8"));
+        stream.setGenerateByteOrderMark(true);
         stream << level_name_ << "\n";
         stream << best_step_count_<<"\n";
         stream << static_cast<int>(pieces_.size()) << "\n";

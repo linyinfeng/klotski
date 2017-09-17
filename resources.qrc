@@ -7,5 +7,6 @@
         <file>resources/icons/save.svg</file>
         <file>resources/icons/undo.svg</file>
         <file>resources/icons/exit.svg</file>
+        <file>resources/translate/zh_CN.qm</file>
     </qresource>
 </RCC>

@@ -1,0 +1,13 @@
+To build klotski
+you need
+    qmake
+    make
+
+Use qt lingist release
+    zh_CN.ts
+to resources/translate
+
+Create ico file from
+    icon/klotski_512.png
+to
+    icon/klotski.icon

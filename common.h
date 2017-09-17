@@ -12,5 +12,6 @@ extern const int kHorizontalUnit;
 extern const int kVerticalUnit;
 extern const int kWinPieceIndex;
 extern const QPoint kWinPosition;
+extern const QString kSaveSuffix;
 
 #endif

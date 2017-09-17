@@ -11,6 +11,9 @@
 #include <QString>
 #include <QFileInfo>
 #include <QFontMetrics>
+#include <QMimeData>
+#include <QList>
+#include <QUrl>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -20,6 +23,9 @@ View::View(QWidget *parent) :
     ui(new Ui::View)
 {
     ui->setupUi(this);
+    QApplication::instance()->installTranslator(&translator);
+
+    setAcceptDrops(true);
 
     this->setStyleSheet("* { font-size: 13px; }");
     ui->statusBar->setStyleSheet("#statusBar { border-top: 1px solid rgb(220, 220, 220); } * { font-weight:bold; }");
@@ -45,6 +51,12 @@ View::View(QWidget *parent) :
     connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(onSaveFile()));
 
     connect(ui->historyView, SIGNAL(userSelectedHistory(int)), this, SIGNAL(userSelectedHistory(int)));
+
+    connect(ui->actionEnglish, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToEnglish()));
+    connect(ui->actionChinese_Simplified, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToChineseSimplified()));
+//    connect(ui->actionChinese_Traditional, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToChineseTraditional()));
+
+    connect(ui->actionAbout_Klotski, SIGNAL(triggered(bool)), this, SLOT(showAbout()));
 }
 View::~View()
 {
@@ -202,6 +214,27 @@ bool View::eventFilter(QObject *watched, QEvent *event) {
         return QMainWindow::eventFilter(watched, event);
     }
 }
+void View::dragEnterEvent(QDragEnterEvent *event) {
+    const QMimeData *mime_data = event->mimeData();
+    qDebug() << mime_data;
+    if (mime_data) {
+        QList<QUrl> urls = mime_data->urls();
+        qDebug() << urls;
+        if (urls.length() > 0) {
+            QUrl url = urls[0];
+            qDebug() << url;
+            QFileInfo info(url.toLocalFile());
+            if (info.suffix() == kSaveSuffix) {
+                event->acceptProposedAction();
+                return;
+            }
+        }
+    }
+    event->ignore();
+}
+void View::dropEvent(QDropEvent *event) {
+    emit load(event->mimeData()->urls()[0].toLocalFile());
+}
 
 void View::onFinish() {
     qDebug() << "Finish";
@@ -220,7 +253,7 @@ void View::onOpenFile() {
         this,
         tr("Open Saved game"),
         ".",
-        tr("Klotski Save Files (*.klotski)"));
+        tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
     qDebug() << "Attempt to open file" << file_name;
     if (!file_name.isEmpty()) {
         QFileInfo file_info(file_name);
@@ -236,7 +269,7 @@ void View::onSaveFile() {
         this,
         tr("Open Save file"),
         ".",
-        tr("Klotski Save Files (*.klotski)"));
+        tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
     qDebug() << "Attempt to save file" << file_name;
     if (!file_name.isEmpty())
         emit save(file_name);
@@ -244,3 +277,35 @@ void View::onSaveFile() {
         ui->statusBar->showMessage(tr("No file specified"));
 }
 
+void View::onChangeTranslateToChineseSimplified() {
+    qDebug() << "onChangeTranslateToChineseSimplified";
+    if (!translator.load(":/resources/translate/zh_CN.qm")) {
+        QMessageBox::warning(this, tr("Warning"), tr("Failed to load translate file"));
+    } else {
+        emit viewReload();
+    }
+}
+
+//void View::onChangeTranslateToChineseTraditional() {
+//    qDebug() << "onChangeTranslateToChineseTraditional";
+//}
+void View::onChangeTranslateToEnglish() {
+    qDebug() << "onChangeTranslateToEnglish";
+    if (!translator.load("")) {
+        QMessageBox::warning(this, tr("Warning"), tr("Failed to load translate file"));
+    } else {
+        emit viewReload();
+    }
+}
+
+void View::showAbout() {
+    QMessageBox::about(this, tr("About Klotski"),
+        tr("Developed by\n"
+           "\tYinfeng Lin\n"
+           "\tNianyi Wang\n"
+           "\tZhuanjie Ma\n"
+           "\tYaodanjun Ren\n"
+           "\tYutong Deng\n"
+           "Github: github.com/0yinf/klotski\n"
+           "Using Qt in LGPLv3"));
+}

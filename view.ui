@@ -76,14 +76,13 @@
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Setti&amp;ngs</string>
+     <string>&amp;Settings</string>
     </property>
     <widget class="QMenu" name="menuSwitch_Application_Language">
      <property name="title">
       <string>Switch Application &amp;Language</string>
      </property>
      <addaction name="actionChinese_Simplified"/>
-     <addaction name="actionChinese_Traditional"/>
      <addaction name="actionEnglish"/>
     </widget>
     <addaction name="actionShow_Toolbar"/>
@@ -93,7 +92,7 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>He&amp;lp</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionKlotski_Handbook"/>
     <addaction name="separator"/>
@@ -219,11 +218,6 @@
     <string>&amp;English</string>
    </property>
   </action>
-  <action name="actionChinese_Traditional">
-   <property name="text">
-    <string>Chinese (&amp;Traditional)</string>
-   </property>
-  </action>
   <action name="actionRestart">
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -239,7 +233,7 @@
      <normaloff>:/resources/icons/open.svg</normaloff>:/resources/icons/open.svg</iconset>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -250,6 +244,9 @@
    <property name="text">
     <string>&amp;Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
    <property name="icon">
@@ -258,6 +255,9 @@
    </property>
    <property name="text">
     <string>&amp;Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionShow_Statusbar">

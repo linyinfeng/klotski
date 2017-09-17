@@ -12,6 +12,9 @@
 #include <QLabel>
 #include <QGraphicsScene>
 #include <vector>
+#include <QTranslator>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 namespace Ui {
 class View;
@@ -43,6 +46,9 @@ signals:
     /* forward history views' signal */
     void userSelectedHistory(int selected);
 
+    /* send to Game to reload hold view */
+    void viewReload();
+
 public slots:
     /* update step count on status bar */
     void updateStepCount(int step_count); // RENAMED
@@ -66,6 +72,7 @@ public slots:
      */
     void onModelLoaded(const Model *model);
 
+
 signals:
     /* forward graphics pieces' syncMove signal */
     void syncMove(const Move &move);
@@ -84,13 +91,27 @@ private:
 public slots:
     /* post resize event to this object */
     void forceResize();
+
+public slots:
     void setModel(Model *);
+
+private slots:
+    /* About translate  */
+    void onChangeTranslateToEnglish();
+    void onChangeTranslateToChineseSimplified();
+//    void onChangeTranslateToChineseTraditional();
+
+    void showAbout();
 
 protected:
 //    /* resize view and scene */
 //    virtual void resizeEvent(QResizeEvent *event) override;
     /* handle graphics view's QEvent::Enter evnet to setting focus when enter */
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
+
+    /* drop to open file */
+    virtual void dragEnterEvent(QDragEnterEvent *event) override;
+    virtual void dropEvent(QDropEvent *event) override;
 
 private:
     void resizeView();
@@ -114,6 +135,8 @@ private:
     QGraphicsScene *scene_;
 
     std::vector<GraphicsPiece *> graphics_pieces_;
+
+    QTranslator translator;
 
 private:
     Model *model_;
