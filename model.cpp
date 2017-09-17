@@ -112,12 +112,11 @@ void Model::applyMove(const Move &move) {
             if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1]) {
                 // Redo
                 // history_ unchanged
-
+                incCurrentMoveIndex();
                 if (current_move_index_ <= 0 ||
                     history_model_[current_move_index_].index() !=
                         history_model_[current_move_index_ - 1].index())
                     incStepCount();
-                incCurrentMoveIndex();
             } else {
                 // Move forward
                 if (current_move_index_ == -1 ||

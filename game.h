@@ -36,6 +36,7 @@ public:
         QObject::connect(model, &Model::validMovesChanged,          view, &View::updateValidMoves);
         QObject::connect(model, &Model::canWinStateChanged,         view, &View::updateCanWinStateChanged);
         QObject::connect(model, &Model::stepCountChanged,           view, &View::updateStepCount);
+        QObject::connect(model, &Model::bestStepCountChanged,       view, &View::updateBestStepCount);
         QObject::connect(model, &Model::canUndoStateChanged,        view, &View::updateCanUndoStateChanged);
         QObject::connect(model, &Model::canRedoStateChanged,        view, &View::updateCanRedoStateChanged);
         QObject::connect(model, &Model::historyModelChanged,        view, &View::updateHistoryModel);
