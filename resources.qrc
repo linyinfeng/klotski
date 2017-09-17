@@ -7,18 +7,18 @@
         <file>resources/icons/undo.svg</file>
         <file>resources/icons/exit.svg</file>
         <file>resources/translate/zh_CN.qm</file>
-        <file>resources/levels/一路顺风.klotski</file>
-        <file>resources/levels/七步成诗.klotski</file>
-        <file>resources/levels/兵分三路.klotski</file>
-        <file>resources/levels/夹道藏兵.klotski</file>
-        <file>resources/levels/层层设防1.klotski</file>
-        <file>resources/levels/层层设防2.klotski</file>
-        <file>resources/levels/捷足先登.klotski</file>
-        <file>resources/levels/桃花园中.klotski</file>
-        <file>resources/levels/横刀立马.klotski</file>
-        <file>resources/levels/比翼横空.klotski</file>
-        <file>resources/levels/水泄不通.klotski</file>
-        <file>resources/levels/齐头并进.klotski</file>
         <file>resources/icons/level-select.svg</file>
+        <file>resources/levels/一路顺风 - 39.klotski</file>
+        <file>resources/levels/七步成诗 - 7.klotski</file>
+        <file>resources/levels/兵分三路 - 72.klotski</file>
+        <file>resources/levels/夹道藏兵 - 75.klotski</file>
+        <file>resources/levels/层层设防1 - 102.klotski</file>
+        <file>resources/levels/层层设防2 - 120.klotski</file>
+        <file>resources/levels/捷足先登 - 32.klotski</file>
+        <file>resources/levels/桃花园中 - 70.klotski</file>
+        <file>resources/levels/横刀立马 - 81.klotski</file>
+        <file>resources/levels/比翼横空 - 28.klotski</file>
+        <file>resources/levels/水泄不通 - 79.klotski</file>
+        <file>resources/levels/齐头并进 - 60.klotski</file>
     </qresource>
 </RCC>

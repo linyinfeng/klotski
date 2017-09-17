@@ -58,10 +58,11 @@ public slots:
 
     /* reload the game */
     void onReload();
+
     /* do when user reqires load */
-    void onLoad(const QString & file_name);
+    void onLoadFile(const QString & file_name);
     /* save to file */
-    void onSave(const QString & file_name);
+    void onSaveToFile(const QString & file_name);
 
 private:
     /**/

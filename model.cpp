@@ -36,7 +36,7 @@ int Model::currentMoveIndex() {
     return current_move_index_;
 }
 
-void Model::onSave(const QString & file_name){
+void Model::onSaveToFile(const QString & file_name){
     QFile file(file_name);
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
@@ -55,7 +55,7 @@ void Model::onSave(const QString & file_name){
         emit modelSaved(false);
 
 }
-void Model::onLoad(const QString & file_name){
+void Model::onLoadFile(const QString & file_name){
     qDebug() << "Start Load";
     QFile file(file_name);
     if(file.open(QIODevice::ReadOnly))

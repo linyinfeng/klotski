@@ -41,16 +41,27 @@ signals:
     /* emitted when user required reload */
     void reload();
     /* emitted when user required load a specific file */
-    void load(const QString &file_name);
+    void loadFile(const QString &file_name);
     /* emitted when user required save game to a specific file */
-    void save(const QString &file_name);
+    void saveToFile(const QString &file_name);
     /* forward history views' signal */
     void userSelectedHistory(int selected);
-
-    /* send to Game to reload hold view */
+    /* send to Game Class to reload hold view */
     void viewReload();
+    /* forward graphics pieces' syncMove signal */
+    void syncMove(const Move &move);
+
+    /* About translate */
+    void changeTranslateToEnglish();
+    void changeTranslateToChineseSimplified();
 
 public slots:
+    /* forward syncMove signal to specified graphics pieces */
+    void applyMove(const Move &move);
+    /* forward validMovesChanged signal to spcified graphics pieces
+     */
+    void onValidMovesChanged(const std::vector<Move> &move);
+
     /* update step count on status bar */
     void updateStepCount(int step_count); // RENAMED
     /* set the finish button's state */
@@ -59,76 +70,57 @@ public slots:
     void onCanUndoStateChanged(bool can_undo);
     /* set the redo action's state */
     void onCanRedoStateChanged(bool can_redo);
+    /* do when finish button clicked */
+    void onFinish();
+
     /* update list view slection */
     void updateCurrentMoveIndex(int index);
-
     /* on model saved
      * promote user if save was successed
      */
-    void onModelSaved(bool successed);
 
-public slots:
+    void onModelSaved(bool successed);
     /* on model loaded
      * reload every data about model(mostly graphics pieces)
      */
     void onModelLoaded(const Model *model);
 
 
-signals:
-    /* forward graphics pieces' syncMove signal */
-    void syncMove(const Move &move);
-public slots:
-    /* forward syncMove signal to specified graphics pieces
-     */
-    void applyMove(const Move &move);
-    /* forward validMovesChanged signal to spcified graphics pieces
-     */
-    void onValidMovesChanged(const std::vector<Move> &move);
-private:
-    /* force update valid moves
-     */
-    void updateValidMoves();
-
-public slots:
     /* post resize event to this object */
     void forceResize();
 
+
 public slots:
     void setModel(Model *);
-
-private slots:
-    /* About translate  */
-    void onChangeTranslateToEnglish();
-    void onChangeTranslateToChineseSimplified();
-//    void onChangeTranslateToChineseTraditional();
-
-    void showAbout();
 
 protected:
 //    /* resize view and scene */
 //    virtual void resizeEvent(QResizeEvent *event) override;
     /* handle graphics view's QEvent::Enter evnet to setting focus when enter */
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
-
     /* drop to open file */
     virtual void dragEnterEvent(QDragEnterEvent *event) override;
     virtual void dropEvent(QDropEvent *event) override;
 
-private:
-    void resizeView();
-
-    /* define the unit button takes */
-    static const double kFinishButtonVerticalUnit;
-    static const double kFinishButtonHorizontalUnit;
-
 private slots:
-    /* do when finish button clicked */
-    void onFinish();
-
     /* do when user requires open a save */
     void onOpenFile();
     /* do when user requires save */
     void onSaveFile();
+    /* About */
+    void showAbout();
+
+private:
+    /* the main resize function */
+    void resizeView();
+
+    /* force update valid moves
+     */
+    void updateValidMoves();
+
+    /* define the unit button takes */
+    static const double kFinishButtonVerticalUnit;
+    static const double kFinishButtonHorizontalUnit;
 
 private:
     /* UI */

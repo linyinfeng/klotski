@@ -23,15 +23,15 @@ View::View(QWidget *parent) :
     ui(new Ui::View)
 {
     ui->setupUi(this);
-    QApplication::instance()->installTranslator(&translator);
 
     level_selector = new LevelSelector;
     // Only show when user take action
     connect(ui->actionSelect_Level, SIGNAL(triggered(bool)), level_selector, SLOT(show()));
 
     setAcceptDrops(true);
+    ui->graphicsView->setAcceptDrops(true);
 
-    this->setStyleSheet("* { font-size: 13px; }");
+//    this->setStyleSheet("* { font-size: 13px; }");
     ui->statusBar->setStyleSheet("#statusBar { border-top: 1px solid rgb(220, 220, 220); } * { font-weight:bold; }");
 
     ui->centralWidget->installEventFilter(this);
@@ -39,29 +39,26 @@ View::View(QWidget *parent) :
     scene_ = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(scene_);
     ui->graphicsView->installEventFilter(this);
-    ui->graphicsView->setBackgroundBrush(QBrush(Qt::white));
+//    ui->graphicsView->setBackgroundBrush(QBrush(Qt::white));
 
-    connect(ui->actionUndo, SIGNAL(triggered()), this, SIGNAL(undo()));
-    connect(ui->actionRedo, SIGNAL(triggered()), this, SIGNAL(redo()));
-    connect(ui->actionRestart, SIGNAL(triggered()), this, SIGNAL(reload()));
-    connect(ui->pushButtonFinish, SIGNAL(clicked(bool)), this, SLOT(onFinish()));
+    connect(level_selector, &LevelSelector::loadFile, this, &View::loadFile);
 
-    connect(ui->actionShow_Statusbar, SIGNAL(toggled(bool)), ui->statusBar, SLOT(setVisible(bool)));
-    connect(ui->actionShow_Toolbar, SIGNAL(toggled(bool)), ui->toolBar, SLOT(setVisible(bool)));
-//    connect(ui->actionShow_Statusbar, SIGNAL(toggled(bool)), this, SLOT(forceResize()));
-//    connect(ui->actionShow_Toolbar, SIGNAL(toggled(bool)), this, SLOT(forceResize()));
+    connect(ui->actionUndo, &QAction::triggered, this, &View::undo);
+    connect(ui->actionRedo, &QAction::triggered, this, &View::redo);
+    connect(ui->actionRestart, &QAction::triggered, this, &View::reload);
+    connect(ui->pushButtonFinish, &QPushButton::clicked, this, &View::onFinish);
 
-    connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(onOpenFile()));
-    connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(onSaveFile()));
+    connect(ui->actionShow_Statusbar, &QAction::triggered, ui->statusBar,&QToolBar::setVisible);
+    connect(ui->actionShow_Toolbar, &QAction::triggered, ui->toolBar, &QToolBar::setVisible);
 
-    connect(ui->historyView, SIGNAL(userSelectedHistory(int)), this, SIGNAL(userSelectedHistory(int)));
+    connect(ui->actionOpen, &QAction::triggered, this, &View::onOpenFile);
+    connect(ui->actionSave, &QAction::triggered, this, &View::onSaveFile);
 
-    connect(ui->actionEnglish, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToEnglish()));
-    connect(ui->actionChinese_Simplified, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToChineseSimplified()));
-//    connect(ui->actionChinese_Traditional, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToChineseTraditional()));
+    connect(ui->historyView, &HistoryView::userSelectedHistory, this, &View::userSelectedHistory);
 
-    connect(ui->actionAbout_Klotski, SIGNAL(triggered(bool)), this, SLOT(showAbout()));
-    connect(level_selector, SIGNAL(loadFile(QString)), this, SIGNAL(load(QString)));
+    connect(ui->actionEnglish, &QAction::triggered, this, &View::changeTranslateToEnglish);
+    connect(ui->actionChinese_Simplified, &QAction::triggered, this, &View::changeTranslateToChineseSimplified);
+    connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAbout);
 }
 View::~View()
 {
@@ -238,7 +235,7 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
     event->ignore();
 }
 void View::dropEvent(QDropEvent *event) {
-    emit load(event->mimeData()->urls()[0].toLocalFile());
+    emit loadFile(event->mimeData()->urls()[0].toLocalFile());
 }
 
 void View::onFinish() {
@@ -263,7 +260,7 @@ void View::onOpenFile() {
     if (!file_name.isEmpty()) {
         QFileInfo file_info(file_name);
         if (file_info.isFile())
-            emit load(file_name);
+            emit loadFile(file_name);
         else
             QMessageBox::warning(this, "Warning", tr("\"%1\" can't be find or is not a file ").arg(file_name));
     } else
@@ -277,30 +274,9 @@ void View::onSaveFile() {
         tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
     qDebug() << "Attempt to save file" << file_name;
     if (!file_name.isEmpty())
-        emit save(file_name);
+        emit saveToFile(file_name);
     else
         ui->statusBar->showMessage(tr("No file specified"));
-}
-
-void View::onChangeTranslateToChineseSimplified() {
-    qDebug() << "onChangeTranslateToChineseSimplified";
-    if (!translator.load(":/resources/translate/zh_CN.qm")) {
-        QMessageBox::warning(this, tr("Warning"), tr("Failed to load translate file"));
-    } else {
-        emit viewReload();
-    }
-}
-
-//void View::onChangeTranslateToChineseTraditional() {
-//    qDebug() << "onChangeTranslateToChineseTraditional";
-//}
-void View::onChangeTranslateToEnglish() {
-    qDebug() << "onChangeTranslateToEnglish";
-    if (!translator.load("")) {
-        QMessageBox::warning(this, tr("Warning"), tr("Failed to load translate file"));
-    } else {
-        emit viewReload();
-    }
 }
 
 void View::showAbout() {

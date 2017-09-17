@@ -6,9 +6,9 @@
 
 #include "view.h"
 #include "model.h"
-#include "move.h"
 
 #include <QObject>
+#include <QTranslator>
 
 /* Game Object
  * Own view and model object.
@@ -21,31 +21,33 @@ public:
     Game() {
         view = new View();
         model = new Model();
+        translator = new QTranslator();
+        QApplication::instance()->installTranslator(translator);
     }
 
     /* Connect model and view */
     void connect() {
-        QObject::connect(model, SIGNAL(canWinStateChanged(bool)),  view, SLOT(onCanWinStateChanged(bool)));
-        QObject::connect(model, SIGNAL(stepCountChanged(int)),     view, SLOT(updateStepCount(int)));
-        QObject::connect(model, SIGNAL(canUndoStateChanged(bool)), view, SLOT(onCanUndoStateChanged(bool)));
-        QObject::connect(model, SIGNAL(canRedoStateChanged(bool)), view, SLOT(onCanRedoStateChanged(bool)));
+        QObject::connect(model, &Model::canWinStateChanged,  view, &View::onCanWinStateChanged);
+        QObject::connect(model, &Model::stepCountChanged,    view, &View::updateStepCount);
+        QObject::connect(model, &Model::canUndoStateChanged, view, &View::onCanUndoStateChanged);
+        QObject::connect(model, &Model::canRedoStateChanged, view, &View::onCanRedoStateChanged);
 
-        QObject::connect(model, SIGNAL(modelLoaded(const Model*)), view, SLOT(onModelLoaded(const Model*)));
+        QObject::connect(model, &Model::modelLoaded, view, &View::onModelLoaded);
 
-        QObject::connect(model, SIGNAL(syncMove(const Move &)), view,  SLOT(applyMove(const Move &)));
-        QObject::connect(view,  SIGNAL(syncMove(const Move &)), model, SLOT(applyMove(const Move &)));
+        QObject::connect(model, &Model::syncMove, view,  &View::applyMove);
+        QObject::connect(view,  &View::syncMove, model, &Model::applyMove);
 
-        QObject::connect(model, SIGNAL(validMovesChanged(const std::vector<Move> &)),
-                         view,  SLOT(onValidMovesChanged(const std::vector<Move> &)));
+        QObject::connect(model, &Model::validMovesChanged,
+                         view,  &View::onValidMovesChanged);
 
-        QObject::connect(model, SIGNAL(currentMoveIndexChanged(int)), view, SLOT(updateCurrentMoveIndex(int)));
-        QObject::connect(view,  SIGNAL(userSelectedHistory(int)), model, SLOT(onUserSelectedHistory(int)));
+        QObject::connect(model, &Model::currentMoveIndexChanged, view, &View::updateCurrentMoveIndex);
+        QObject::connect(view,  &View::userSelectedHistory, model, &Model::onUserSelectedHistory);
 
-        QObject::connect(view, SIGNAL(undo()), model, SLOT(onUndo()));
-        QObject::connect(view, SIGNAL(redo()), model, SLOT(onRedo()));
-        QObject::connect(view, SIGNAL(reload()), model, SLOT(onReload()));
+        QObject::connect(view, &View::undo, model, &Model::onUndo);
+        QObject::connect(view, &View::redo, model, &Model::onRedo);
+        QObject::connect(view, &View::reload, model, &Model::onReload);
 
-        QObject::connect(view, SIGNAL(load(const QString &)), model, SLOT(onLoad(const QString &)));
+        QObject::connect(view, &View::loadFile, model, &Model::onLoadFile);
         QObject::connect(view, SIGNAL(save(const QString &)), model, SLOT(onSave(const QString &)));
         QObject::connect(model, SIGNAL(modelSaved(bool)), view, SLOT(onModelSaved(bool)));
 
@@ -56,7 +58,7 @@ public:
         connect();
 //        view.forceResize(); // a workaround on Hi-DPI screen
         view->setModel(model);
-        model->onLoad(":/resources/levels/七步成诗.klotski");
+        model->onLoadFile(":/resources/levels/七步成诗 - 7.klotski");
         view->forceResize();
         view->show();
     }
@@ -70,10 +72,18 @@ private slots:
         view->forceResize();
         view->show();
     }
+    /* About translate  */
+    void onChangeTranslateToEnglish() {
+        translator->load("");
+    }
+    void onChangeTranslateToChineseSimplified() {
+        translator->load(":/resources/translate/zh_CN.qm");
+    }
 
 private:
     View *view;
     Model *model;
+    QTranslator *translator;
 };
 
 #endif // GAME_H
