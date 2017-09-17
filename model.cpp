@@ -168,18 +168,18 @@ void Model::onUserSelectedHistory(int selected) {
 void Model::updateValidMoves() {
     valid_moves_.clear();
     Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
-for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
- {
-    int x, y;
-    x = pieces_[i].position().x();
-    y = pieces_[i].position().y();
-    for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
-        for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
-            matrix.at(j, k) = 1;
+    for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
+    {
+        int x, y;
+        x = pieces_[i].position().x();
+        y = pieces_[i].position().y();
+        for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
+            for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
+                matrix.at(j, k) = 1;
+            }
         }
-   }
-}
-for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
+    }
+    for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
     {
         int x, y;
         x = pieces_[i].position().x();
@@ -188,57 +188,57 @@ for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
         width = pieces_[i].size().width();
         height = pieces_[i].size().height();
 
-    if(y>0){
-    bool canup = true;//move up
-    for (int j = 0; j <= width - 1; j++) {
-        if (matrix.at(x + j, y - 1) != 0)
-        {
-            canup = false;
-            break;
-        }
-    }
-    if (canup)
-        valid_moves_.push_back(Move(i, 0, -1));
-   }
-
-    if(y < kVerticalUnit - height){
-    bool candown = true;//move down
-    for (int j = 0; j <= width - 1; j++)
-   {
-        if (matrix.at(x + j, y + height) != 0)
-        {
-            candown = false;
-            break;
-        }
-   }
-    if (candown)
-        valid_moves_.push_back(Move(i, 0, 1));
-    }
-
-    if(x > 0){
-    bool canleft = true;//move left
-    for (int j = 0; j <= height - 1; j++) {
-        if (matrix.at(x - 1, y + j) != 0)
-        {
-            canleft = false;
-            break;
-        }
-    }
-    if (canleft)
-        valid_moves_.push_back(Move(i, -1, 0));
- }
-    if(x + width < kHorizontalUnit){
-        bool canright = true;
-        for(int j = 0; j <= height - 1; j++)
-        {
-            if(matrix.at(x + width, y + j) != 0){
-                canright = false;
-                break;
+        if(y>0){
+            bool canup = true;//move up
+            for (int j = 0; j <= width - 1; j++) {
+                if (matrix.at(x + j, y - 1) != 0)
+                {
+                    canup = false;
+                    break;
+                }
             }
+            if (canup)
+                valid_moves_.push_back(Move(i, 0, -1));
         }
-        if(canright)
-            valid_moves_.push_back(Move(i, 1, 0));
-    }
+
+        if(y < kVerticalUnit - height){
+            bool candown = true;//move down
+            for (int j = 0; j <= width - 1; j++)
+            {
+                if (matrix.at(x + j, y + height) != 0)
+                {
+                    candown = false;
+                    break;
+                }
+            }
+            if (candown)
+                valid_moves_.push_back(Move(i, 0, 1));
+        }
+
+        if(x > 0){
+            bool canleft = true;//move left
+            for (int j = 0; j <= height - 1; j++) {
+                if (matrix.at(x - 1, y + j) != 0)
+                {
+                    canleft = false;
+                    break;
+                }
+            }
+            if (canleft)
+                valid_moves_.push_back(Move(i, -1, 0));
+        }
+        if(x + width < kHorizontalUnit){
+            bool canright = true;
+            for(int j = 0; j <= height - 1; j++)
+            {
+                if(matrix.at(x + width, y + j) != 0){
+                    canright = false;
+                    break;
+                }
+            }
+            if(canright)
+                valid_moves_.push_back(Move(i, 1, 0));
+        }
     }
     emit validMovesChanged(valid_moves_);
 }
