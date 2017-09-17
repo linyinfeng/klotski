@@ -11,29 +11,18 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Select Level</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="pushButtonOpen">
-       <property name="text">
-        <string>Open</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonCancel">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="QListWidget" name="listWidget"/>
    </item>
    <item row="0" column="0">
-    <widget class="QListWidget" name="listWidget"/>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Double click to open level</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

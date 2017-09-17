@@ -29,7 +29,7 @@ HEADERS += common.h \
            move.h \
            piece.h \
            view.h \
-    fileselector.h
+           levelselector.h
 FORMS += view.ui \
     levelselector.ui
 SOURCES += common.cpp \
@@ -39,7 +39,7 @@ SOURCES += common.cpp \
            main.cpp \
            model.cpp \
            view.cpp \
-    fileselector.cpp
+    levelselector.cpp
 RESOURCES += resources.qrc
 TRANSLATIONS += klotski.ts zh_CN.ts
 RC_ICONS = klotski.ico

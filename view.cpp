@@ -25,6 +25,10 @@ View::View(QWidget *parent) :
     ui->setupUi(this);
     QApplication::instance()->installTranslator(&translator);
 
+    level_selector = new LevelSelector;
+    // Only show when user take action
+    connect(ui->actionSelect_Level, SIGNAL(triggered(bool)), level_selector, SLOT(show()));
+
     setAcceptDrops(true);
 
     this->setStyleSheet("* { font-size: 13px; }");
@@ -57,6 +61,7 @@ View::View(QWidget *parent) :
 //    connect(ui->actionChinese_Traditional, SIGNAL(triggered(bool)), this, SLOT(onChangeTranslateToChineseTraditional()));
 
     connect(ui->actionAbout_Klotski, SIGNAL(triggered(bool)), this, SLOT(showAbout()));
+    connect(level_selector, SIGNAL(loadFile(QString)), this, SIGNAL(load(QString)));
 }
 View::~View()
 {

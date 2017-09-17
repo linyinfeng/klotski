@@ -280,7 +280,7 @@
      <normaloff>:/resources/icons/level-select.svg</normaloff>:/resources/icons/level-select.svg</iconset>
    </property>
    <property name="text">
-    <string>Select Level</string>
+    <string>Select &amp;Level</string>
    </property>
   </action>
  </widget>

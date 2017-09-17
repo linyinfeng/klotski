@@ -7,6 +7,7 @@
 #include "model.h"
 #include "move.h"
 #include "graphicspiece.h"
+#include "levelselector.h"
 
 #include <QMainWindow>
 #include <QLabel>
@@ -132,11 +133,13 @@ private slots:
 private:
     /* UI */
     Ui::View *ui;
-    QGraphicsScene *scene_;
 
+    QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
 
     QTranslator translator;
+
+    LevelSelector *level_selector;
 
 private:
     Model *model_;
