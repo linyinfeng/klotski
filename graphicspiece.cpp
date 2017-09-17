@@ -1,6 +1,6 @@
 //#define IGNORE_VALID_MOVES
 
-#define MOVE_THRESHOLD 0.6
+#define MOVE_THRESHOLD 0.8
 
 #include "common.h"
 #include "graphicspiece.h"
@@ -13,6 +13,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 #include <QPropertyAnimation>
+#include <QFont>
 #include <cmath>
 
 GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
@@ -38,14 +39,14 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     QPen pen;
 
     pen.setColor(Qt::black);
+    pen.setJoinStyle(Qt::RoundJoin);
+    pen.setCapStyle(Qt::RoundCap);
     if (focused_) {
         pen.setWidth(3);
     } else {
         pen.setWidth(2);
     }
-    pen.setJoinStyle(Qt::RoundJoin);
-    pen.setCapStyle(Qt::RoundCap);
-
+    // Background
     painter->setPen(pen);
     if (pressed_)
         painter->setBrush(QBrush(QColor(200, 200, 200)));
@@ -53,11 +54,53 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setBrush(QBrush(Qt::gray));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
 
-    // TODO Draw to central
-    static QFont font("Helvetica [Cronyx]", 20);
+    pen.setWidth(1);
+    painter->setPen(pen);
+    if (focused_) {
+        painter->setBrush(QBrush(Qt::white));
+    } else {
+        painter->setBrush(QBrush(Qt::black));
+    }
     qreal free_space = scale_ * 0.05;
+    QRectF bounding_rect = boundingRect();
+    if (can_move_up_) {
+        QPolygonF polygon;
+        polygon << QPointF(bounding_rect.width() / 2, free_space * 2)
+                << QPointF(bounding_rect.width() / 2 - free_space * 2, free_space * 4)
+                << QPointF(bounding_rect.width() / 2 + free_space * 2, free_space * 4);
+        painter->drawPolygon(polygon);
+    }
+    if (can_move_down_) {
+        QPolygonF polygon;
+        polygon << QPointF(bounding_rect.width() / 2, bounding_rect.height() - free_space * 2)
+                << QPointF(bounding_rect.width() / 2 - free_space * 2, bounding_rect.height() - free_space * 4)
+                << QPointF(bounding_rect.width() / 2 + free_space * 2, bounding_rect.height() - free_space * 4);
+        painter->drawPolygon(polygon);
+    }
+    if (can_move_left_) {
+        QPolygonF polygon;
+        polygon << QPointF(free_space * 2, bounding_rect.height() / 2)
+                << QPointF(free_space * 4, bounding_rect.height() / 2 - free_space * 2)
+                << QPointF(free_space * 4, bounding_rect.height() / 2 + free_space * 2);
+        painter->drawPolygon(polygon);
+    }
+    if (can_move_right_) {
+        QPolygonF polygon;
+        polygon << QPointF(bounding_rect.width() - free_space * 2, bounding_rect.height() / 2)
+                << QPointF(bounding_rect.width() - free_space * 4, bounding_rect.height() / 2 - free_space * 2)
+                << QPointF(bounding_rect.width() - free_space * 4, bounding_rect.height() / 2 + free_space * 2);
+        painter->drawPolygon(polygon);
+    }
+
+    // Text
+    static QFont font("Helvetica", 20);
+    QFontMetrics font_metrics(font);
+    QSize text_size = font_metrics.size(Qt::TextSingleLine, tr("%1").arg(index_));
     painter->setFont(font);
-    painter->drawText(QPointF(2 * free_space, scale_ * piece_.size().height() - 2 * free_space),
+//    painter->drawText(QPointF(bounding_rect.width() / 2 - font_width_ / 2, bounding_rect.height() / 2 + font_height_ / 2),
+//        QString("%1").arg(index_));
+    painter->drawText(QPointF(bounding_rect.width() / 2 - text_size.width() / 2,
+                              bounding_rect.height() / 2 + text_size.height() / 2),
         QString("%1").arg(index_));
 }
 
@@ -256,6 +299,7 @@ void GraphicsPiece::focusOutEvent(QFocusEvent *event) {
 void GraphicsPiece::clearValidMoveDirection() {
     can_move_up_ = can_move_down_ = can_move_right_ = can_move_left_ = false;
     qDebug() << "Piece" << index_ << "clearValidMoveDirection";
+    update();
 }
 void GraphicsPiece::addValidMoveDirection(const Move &valid_move) {
     qDebug() << "Piece" << index_ << "adding valid move direction";
@@ -267,6 +311,7 @@ void GraphicsPiece::addValidMoveDirection(const Move &valid_move) {
         can_move_left_ = true;
     else if (valid_move.x() == 1)
         can_move_right_ = true;
+    update();
 }
 
 void GraphicsPiece::applyMove(const Move &move, bool animate) {

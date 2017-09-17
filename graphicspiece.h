@@ -7,6 +7,7 @@
 #include <QRectF>
 #include <QPointF>
 #include <QObject>
+#include <QFont>
 
 class GraphicsPiece : public QGraphicsObject
 {
