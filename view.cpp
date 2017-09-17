@@ -20,101 +20,117 @@ const double View::kFinishButtonHorizontalUnit = 2;
 
 View::View(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::View)
+    ui(new Ui::View),
+    level_selector(new LevelSelector),
+    step_count_(0),
+    best_step_count_(0)
 {
     ui->setupUi(this);
 
-    level_selector = new LevelSelector;
-    // Only show when user take action
-    connect(ui->actionSelect_Level, SIGNAL(triggered(bool)), level_selector, SLOT(show()));
-
     setAcceptDrops(true);
-    ui->graphicsView->setAcceptDrops(true);
-
-//    this->setStyleSheet("* { font-size: 13px; }");
-    ui->statusBar->setStyleSheet("#statusBar { border-top: 1px solid rgb(220, 220, 220); } * { font-weight:bold; }");
-
+    ui->graphicsView->installEventFilter(this);
     ui->centralWidget->installEventFilter(this);
 
+    // can't be initialized in initialize list
     scene_ = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(scene_);
-    ui->graphicsView->installEventFilter(this);
-//    ui->graphicsView->setBackgroundBrush(QBrush(Qt::white));
 
+    connect(ui->actionSelect_Level, &QAction::triggered, level_selector, &LevelSelector::show);
     connect(level_selector, &LevelSelector::loadFile, this, &View::loadFile);
 
     connect(ui->actionUndo, &QAction::triggered, this, &View::undo);
     connect(ui->actionRedo, &QAction::triggered, this, &View::redo);
-    connect(ui->actionRestart, &QAction::triggered, this, &View::reload);
+    connect(ui->actionRestart, &QAction::triggered, this, &View::reset);
     connect(ui->pushButtonFinish, &QPushButton::clicked, this, &View::onFinish);
 
     connect(ui->actionShow_Statusbar, &QAction::triggered, ui->statusBar,&QToolBar::setVisible);
     connect(ui->actionShow_Toolbar, &QAction::triggered, ui->toolBar, &QToolBar::setVisible);
 
-    connect(ui->actionOpen, &QAction::triggered, this, &View::onOpenFile);
-    connect(ui->actionSave, &QAction::triggered, this, &View::onSaveFile);
+    connect(ui->actionOpen, &QAction::triggered, this, &View::promoteToOpenFile);
+    connect(ui->actionSave, &QAction::triggered, this, &View::promoteToSaveFile);
 
     connect(ui->historyView, &HistoryView::userSelectedHistory, this, &View::userSelectedHistory);
 
     connect(ui->actionEnglish, &QAction::triggered, this, &View::changeTranslateToEnglish);
     connect(ui->actionChinese_Simplified, &QAction::triggered, this, &View::changeTranslateToChineseSimplified);
-    connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAbout);
+    connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAboutDialog);
+
+    connect(ui->actionQuit, &QAction::triggered, this, &View::close);
 }
 View::~View()
 {
+    // Other object will be delete by qt
     delete ui;
+    delete level_selector;
 }
 
-void View::setModel(Model *model) {
-    model_ = model;
-    HistoryModel *history_model = model->historyModel();
+void View::refresh() {
+    qDebug() << "[emit] requireModelDataRefresh()";
+    emit requireModelDataRefresh();
+}
+
+void View::updateHistoryModel(HistoryModel *history_model) {
     ui->historyView->setModel(history_model);
-}
-
-void View::updateStepCount(int step_count) {
-    if (step_count <= model_->bestStepCount())
-        ui->labelStepInfo->setStyleSheet("color: rgb(0, 170, 0);");
-    else {
-        ui->labelStepInfo->setStyleSheet("color: rgb(170, 0, 0);");
-    }
-    ui->labelStepInfo->setText(tr("%1/%2<span style=\"font-size: 11px;\">steps</span>").arg(step_count).arg(model_->bestStepCount()));
-    qDebug() << "Step Info label changed" << ui->labelStepInfo->text();
 }
 void View::updateCurrentMoveIndex(int index) {
     ui->historyView->updateCurrentMoveIndex(index);
 }
-void View::onCanWinStateChanged(bool can_win) {
+
+void View::updateCanWinStateChanged(bool can_win) {
     ui->pushButtonFinish->setEnabled(can_win);
 }
-void View::onCanUndoStateChanged(bool can_undo) {
+void View::updateCanUndoStateChanged(bool can_undo) {
     ui->actionUndo->setEnabled(can_undo);
 }
-void View::onCanRedoStateChanged(bool can_redo) {
+void View::updateCanRedoStateChanged(bool can_redo) {
     ui->actionRedo->setEnabled(can_redo);
 }
+void View::updateStepCount(int step_count) {
+    step_count_ = step_count;
+    updateStepCountInfo();
+}
+void View::updateBestStepCount(int best_step_count) {
+    best_step_count_ = best_step_count;
+    updateStepCountInfo();
+}
 
-void View::onModelLoaded(const Model *model) {
-    qDebug() << "View::onModelLoaded" << model;
+void View::updateStepCountInfo() {
+    if (step_count_ <= best_step_count_)
+        ui->labelStepInfo->setStyleSheet("color: rgb(0, 170, 0);");
+    else {
+        ui->labelStepInfo->setStyleSheet("color: rgb(170, 0, 0);");
+    }
+    ui->labelStepInfo->setText(tr("%1/%2<span style=\"font-size: 11px;\">steps</span>").arg(step_count_).arg(best_step_count_));
+}
 
+void View::updatePieces(const std::vector<Piece> &pieces) {
     scene_->clear();
     graphics_pieces_.clear();
-    const std::vector<Piece> &pieces = model->pieces();
     int size = pieces.size();
     for (int i = 0; i < size; ++i) {
         GraphicsPiece *graphics_piece = new GraphicsPiece(i, pieces[i]);
         graphics_pieces_.push_back(graphics_piece);
-        connect(graphics_piece, SIGNAL(syncMove(Move)), this, SIGNAL(syncMove(Move)));
+        connect(graphics_piece, &GraphicsPiece::syncMove, this, &View::syncMove);
         scene_->addItem(graphics_piece);
         graphics_piece->onSceneResize();
     }
-//    updateValidMoves();
-
-    this->setWindowTitle(tr("Klotski - %1 - %2").arg(model_->levelName()).arg(model_->bestStepCount()));
-    ui->statusBar->showMessage(tr("Level Loaded"));
-
-    updateStepCount(model_->stepCount());
+    qDebug() << "Level Loaded";
 }
-void View::onModelSaved(bool successed) {
+void View::updateValidMoves(const std::vector<Move> &valid_moves) {
+    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+        graphics_piece->clearValidMoveDirection();
+    }
+    for (const Move &valid_move : valid_moves) {
+        qDebug() << "addValidMoveDirection" << valid_move.index() << valid_move.x() << valid_move.y();
+        graphics_pieces_[valid_move.index()]->addValidMoveDirection(valid_move);
+    }
+}
+
+void View::updateWindowTitle(const QString &additional_title) {
+    this->setWindowTitle(tr("Klotski - %1").arg(additional_title));
+}
+
+void View::onSavedToFile(bool successed) {
     if (successed)
         ui->statusBar->showMessage(tr("Game saved"));
     else
@@ -124,28 +140,11 @@ void View::onModelSaved(bool successed) {
 void View::applyMove(const Move &move) {
     graphics_pieces_[move.index()]->applyMove(move);
 }
-void View::updateValidMoves() {
-    onValidMovesChanged(model_->validMoves());
-}
-void View::onValidMovesChanged(const std::vector<Move> &valid_moves) {
-    if (model_ != nullptr) {
-        for (GraphicsPiece *graphics_piece : graphics_pieces_) {
-            graphics_piece->clearValidMoveDirection();
-        }
-        for (const Move &valid_move : valid_moves) {
-            qDebug() << "addValidMoveDirection" << valid_move.index() << valid_move.x() << valid_move.y();
-            graphics_pieces_[valid_move.index()]->addValidMoveDirection(valid_move);
-        }
-    }
-}
 
 void View::forceResize() {
     QResizeEvent *event = new QResizeEvent(size(), size());
     QCoreApplication::postEvent(this, event);
 }
-
-//void View::resizeEvent(QResizeEvent *event) {
-//    QMainWindow::resizeEvent(event);
 void View::resizeView() {
     const double MainAreaHeightWidthRatio =
         (kVerticalUnit + kFinishButtonVerticalUnit) / kHorizontalUnit;
@@ -192,6 +191,7 @@ void View::resizeView() {
     ui->pushButtonFinish->setGeometry(button_rect);
     qDebug() << "ui->pushButtonFinish->setGeometry" << button_rect;
 }
+
 bool View::eventFilter(QObject *watched, QEvent *event) {
     if (watched == ui->graphicsView) {
         if (event->type() == QEvent::Enter) {
@@ -235,22 +235,22 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
     event->ignore();
 }
 void View::dropEvent(QDropEvent *event) {
+    qDebug() << "[emit] loadFile(event->mimeData()->urls()[0].toLocalFile())";
     emit loadFile(event->mimeData()->urls()[0].toLocalFile());
 }
 
 void View::onFinish() {
     qDebug() << "Finish";
-    if (model_->stepCount() > model_->bestStepCount())
+    if (step_count_ > best_step_count_)
         QMessageBox::information(this, tr("You win!"),
             tr("Your take %1 steps to finish this level\nThe best solution of this level takes %2 steps")
-                .arg(model_->stepCount()).arg(model_->bestStepCount()));
+                .arg(step_count_).arg(best_step_count_));
     else {
         QMessageBox::information(this, tr("You win!"),
             tr("Congratulations!\nYou find the best solution!"));
     }
 }
-
-void View::onOpenFile() {
+void View::promoteToOpenFile() {
     QString file_name = QFileDialog::getOpenFileName(
         this,
         tr("Open Saved game"),
@@ -259,27 +259,29 @@ void View::onOpenFile() {
     qDebug() << "Attempt to open file" << file_name;
     if (!file_name.isEmpty()) {
         QFileInfo file_info(file_name);
-        if (file_info.isFile())
+        if (file_info.isFile()) {
+            qDebug() << "[emit] loadFile(file_name)";
             emit loadFile(file_name);
-        else
+        } else
             QMessageBox::warning(this, "Warning", tr("\"%1\" can't be find or is not a file ").arg(file_name));
     } else
         ui->statusBar->showMessage(tr("No file specified"));
 }
-void View::onSaveFile() {
+void View::promoteToSaveFile() {
     QString file_name = QFileDialog::getSaveFileName(
         this,
         tr("Open Save file"),
         ".",
         tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
     qDebug() << "Attempt to save file" << file_name;
-    if (!file_name.isEmpty())
+    if (!file_name.isEmpty()) {
+        qDebug() << "[EMIT] saveToFile(file_name)";
         emit saveToFile(file_name);
-    else
+    } else {
         ui->statusBar->showMessage(tr("No file specified"));
+    }
 }
-
-void View::showAbout() {
+void View::showAboutDialog() {
     QMessageBox::about(this, tr("About Klotski"),
         tr("Developed by\n"
            "\tYinfeng Lin\n"

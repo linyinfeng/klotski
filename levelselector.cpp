@@ -20,7 +20,7 @@ LevelSelector::LevelSelector(QWidget *parent)
     for (const QFileInfo &file_info : file_info_list) {
         addListItem(file_info.baseName());
     }
-    connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(onItemDoubleClicked(QListWidgetItem*)));
+    connect(ui->listWidget,&QListWidget::itemDoubleClicked, this, &LevelSelector::onItemDoubleClicked);
 }
 
 void LevelSelector::addListItem(const QString &item) {

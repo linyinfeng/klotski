@@ -10,30 +10,27 @@
 #include <QTimer>
 #include <QTextCodec>
 
-Model::Model(QObject *parent) : QObject(parent), history_model_(this) {
-//    load(QString(":/resources/levels/QiBuChengShi.klotski"));
-    // Wait for reload
-}
-const std::vector<Piece> &Model::pieces() const {
-    return pieces_;
-}
-const std::vector<Move> &Model::validMoves() const {
-    return valid_moves_;
-}
-int Model::stepCount() const {
-    return step_count_;
-}
-int Model::bestStepCount() const {
-    return best_step_count_;
-}
-const QString &Model::levelName() const {
-    return level_name_;
-}
-HistoryModel *Model::historyModel() {
-    return &history_model_;
-}
-int Model::currentMoveIndex() {
-    return current_move_index_;
+Model::Model(QObject *parent) : QObject(parent), history_model_(this) { }
+
+void Model::onViewRequireDataRefresh() {
+    qDebug() << "[EMIT] emit piecesChanged(pieces_)";
+    emit piecesChanged(pieces_);
+    qDebug() << "[EMIT] updateValidMoves()";
+    updateValidMoves(); // auto emitted
+    qDebug() << "[EMIT] historyModelChanged(&history_model_)";
+    emit historyModelChanged(&history_model_);
+    qDebug() << "[EMIT] emit currentMoveIndexChanged(current_move_index_)";
+    emit currentMoveIndexChanged(current_move_index_);
+    qDebug() << "[EMIT] emit levelNameChanged(level_name_)";
+    emit levelNameChanged(level_name_);
+    qDebug() << "[EMIT] emit bestStepCountChanged(best_step_count_)";
+    emit bestStepCountChanged(best_step_count_);
+    qDebug() << "[EMIT] emit stepCountChanged(step_count_)";
+    emit stepCountChanged(step_count_);
+    qDebug() << "[EMIT] updateCanUndoRedoState()";
+    updateCanUndoRedoState();
+    qDebug() << "[EMIT] updateCanWinState()";
+    updateCanWinState();
 }
 
 void Model::onSaveToFile(const QString & file_name){
@@ -50,9 +47,11 @@ void Model::onSaveToFile(const QString & file_name){
             stream << i << "\t" << pieces_[i].position().x() << "\t" << pieces_[i].position().y()
                    << "\t" << pieces_[i].size().width() << "\t" << pieces_[i].size().height() << "\n";
         }
-        emit modelSaved(true);
+        qDebug() << "[emit] savedToFile(true)";
+        emit savedToFile(true);
     } else
-        emit modelSaved(false);
+        qDebug() << "[emit] savedToFile(false)";
+        emit savedToFile(false);
 
 }
 void Model::onLoadFile(const QString & file_name){
@@ -74,28 +73,31 @@ void Model::onLoadFile(const QString & file_name){
         }
 
         qDebug() << "Load finish";
-        onReload();
+        onReset();
     } else {
         qDebug() << "Failed to open file";
     }
 }
-void Model::onReload() {
+void Model::onReset() {
     qDebug() << "Model::onReload";
     pieces_ = original_pieces_;
     history_model_.reset();
     current_move_index_ = -1;
+    step_count_ = 0;
 
-    emit modelLoaded(this);
-    updateCanUndoRedoState();
-    updateCanWinState();
-    setStepCount(0);
-    updateValidMoves();
+    onViewRequireDataRefresh();
+//    emit modelReset(this);
+//    updateCanUndoRedoState();
+//    updateCanWinState();
+//    setStepCount(0);
+//    updateValidMoves();
 }
 
 void Model::applyMove(const Move &move) {
     static std::size_t emitted = 0;
     if (move.id() != emitted) {
         emitted = move.id();
+        qDebug() << "[emit] syncMove(move)";
         emit syncMove(move);
 
         /* History Logic */
@@ -110,11 +112,12 @@ void Model::applyMove(const Move &move) {
             if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1]) {
                 // Redo
                 // history_ unchanged
-                incCurrentMoveIndex();
+
                 if (current_move_index_ <= 0 ||
                     history_model_[current_move_index_].index() !=
                         history_model_[current_move_index_ - 1].index())
                     incStepCount();
+                incCurrentMoveIndex();
             } else {
                 // Move forward
                 if (current_move_index_ == -1 ||
@@ -266,6 +269,7 @@ void Model::updateValidMoves() {
                 valid_moves_.push_back(Move(i, 0, 1));//move down
         }
     }
+    qDebug() << "[emit] validMovesChanged(valid_moves_)";
     emit validMovesChanged(valid_moves_);
 }
 void Model::updateCanWinState() {
@@ -280,7 +284,9 @@ void Model::updateCanUndoRedoState() {
         // can push more records in
         can_redo = true;
     }
+    qDebug() << "[EMIT] canUndoStateChanged(can_undo)";
     emit canUndoStateChanged(can_undo);
+    qDebug() << "[EMIT] canRedoStateChanged(can_redo)";
     emit canRedoStateChanged(can_redo);
 }
 
@@ -292,8 +298,8 @@ void Model::decStepCount() {
 }
 void Model::setStepCount(int step_count) {
     step_count_ = step_count;
+    qDebug() << "[emit] stepCountChanged(step_count_)";
     emit stepCountChanged(step_count_);
-    qDebug() << "Step Count Changed emitted" << step_count_;
 }
 void Model::incCurrentMoveIndex() {
     setCurrentMoveIndex(current_move_index_ + 1);
@@ -303,6 +309,6 @@ void Model::decCurrentMoveIndex() {
 }
 void Model::setCurrentMoveIndex(int current_move) {
     current_move_index_ = current_move;
+    qDebug() << "[emit] currentMoveIndexChanged(current_move_index_)";
     emit currentMoveIndexChanged(current_move_index_);
-    qDebug() << "currentMoveChanged Changed emitted" << current_move_index_;
 }

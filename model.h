@@ -13,38 +13,28 @@ class Model : public QObject
 public:
     explicit Model(QObject *parent = nullptr);
 // Interface
-public:
-    const static Model default_model;
-public:
-    /* get the state of the pieces */
-    const std::vector<Piece> &pieces() const;
-    /* get the valid moves of the pieces */
-    const std::vector<Move> &validMoves() const;
-    /* get the step count */
-    int stepCount() const;
-    /* get the best step count of the level */
-    int bestStepCount() const;
-    /* get level name */
-    const QString &levelName() const;
-    /* get history model */
-    HistoryModel *historyModel();
-    /* get current move index */
-    int currentMoveIndex();
-
 signals:
+    void levelNameChanged(const QString &name);
+
     void canWinStateChanged(bool can_win);
     void canUndoStateChanged(bool can_undo);
     void canRedoStateChanged(bool can_redo);
 
     void syncMove(const Move &move);
-    void stepCountChanged(int step_rount);
+    void stepCountChanged(int step_count);
+    void bestStepCountChanged(int best_step_count);
+
+    void historyModelChanged(HistoryModel *history_model);
     void currentMoveIndexChanged(int current_move);
+
+    void piecesChanged(const std::vector<Piece> &pieces);
     void validMovesChanged(const std::vector<Move> &valid_moves);
 
-    void modelLoaded(const Model *model);
-    void modelSaved(bool successed);
+    void savedToFile(bool successed);
 
 public slots:
+    /* emit changed for everything */
+    void onViewRequireDataRefresh();
     /* move and  sync */
     void applyMove(const Move &move);
 
@@ -57,7 +47,7 @@ public slots:
     void onUserSelectedHistory(int selected);
 
     /* reload the game */
-    void onReload();
+    void onReset();
 
     /* do when user reqires load */
     void onLoadFile(const QString & file_name);

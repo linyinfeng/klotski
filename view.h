@@ -39,59 +39,58 @@ signals:
     /* emitted when user required redo */
     void redo();
     /* emitted when user required reload */
-    void reload();
+    void reset();
     /* emitted when user required load a specific file */
     void loadFile(const QString &file_name);
     /* emitted when user required save game to a specific file */
     void saveToFile(const QString &file_name);
     /* forward history views' signal */
     void userSelectedHistory(int selected);
-    /* send to Game Class to reload hold view */
-    void viewReload();
     /* forward graphics pieces' syncMove signal */
     void syncMove(const Move &move);
+
+    /* require model send data refresh signals */
+    void requireModelDataRefresh();
 
     /* About translate */
     void changeTranslateToEnglish();
     void changeTranslateToChineseSimplified();
 
 public slots:
+    /* update piece, generate graphics pieces */
+    void updatePieces(const std::vector<Piece> &pieces);
     /* forward syncMove signal to specified graphics pieces */
     void applyMove(const Move &move);
     /* forward validMovesChanged signal to spcified graphics pieces
      */
-    void onValidMovesChanged(const std::vector<Move> &move);
+    void updateValidMoves(const std::vector<Move> &move);
 
+    /* update best step count */
+    void updateBestStepCount(int best_step_count);
     /* update step count on status bar */
     void updateStepCount(int step_count); // RENAMED
     /* set the finish button's state */
-    void onCanWinStateChanged(bool can_win);
+    void updateCanWinStateChanged(bool can_win);
     /* set the undo action's state */
-    void onCanUndoStateChanged(bool can_undo);
+    void updateCanUndoStateChanged(bool can_undo);
     /* set the redo action's state */
-    void onCanRedoStateChanged(bool can_redo);
-    /* do when finish button clicked */
-    void onFinish();
+    void updateCanRedoStateChanged(bool can_redo);
+    /* update window title */
+    void updateWindowTitle(const QString &title);
 
+    /* update history model */
+    void updateHistoryModel(HistoryModel *history_model);
     /* update list view slection */
     void updateCurrentMoveIndex(int index);
     /* on model saved
      * promote user if save was successed
      */
-
-    void onModelSaved(bool successed);
-    /* on model loaded
-     * reload every data about model(mostly graphics pieces)
-     */
-    void onModelLoaded(const Model *model);
-
+    void onSavedToFile(bool successed);
 
     /* post resize event to this object */
     void forceResize();
-
-
 public slots:
-    void setModel(Model *);
+    void refresh();
 
 protected:
 //    /* resize view and scene */
@@ -104,19 +103,19 @@ protected:
 
 private slots:
     /* do when user requires open a save */
-    void onOpenFile();
+    void promoteToOpenFile();
     /* do when user requires save */
-    void onSaveFile();
+    void promoteToSaveFile();
     /* About */
-    void showAbout();
+    void showAboutDialog();
+    /* do when finish button clicked */
+    void onFinish();
 
 private:
     /* the main resize function */
     void resizeView();
-
-    /* force update valid moves
-     */
-    void updateValidMoves();
+    /* update step count info label */
+    void updateStepCountInfo();
 
     /* define the unit button takes */
     static const double kFinishButtonVerticalUnit;
@@ -125,16 +124,12 @@ private:
 private:
     /* UI */
     Ui::View *ui;
+    LevelSelector *level_selector;
 
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
 
-    QTranslator translator;
-
-    LevelSelector *level_selector;
-
-private:
-    Model *model_;
+    int step_count_, best_step_count_;
 };
 
 #endif // VIEW_H

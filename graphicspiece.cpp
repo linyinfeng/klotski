@@ -335,6 +335,7 @@ void GraphicsPiece::applyMove(const Move &move, bool animate) {
 
         if (move.index() != -1) {
             emitted = move.id();
+            qDebug() << "[EMIT] syncMove(move)";
             emit syncMove(move);
         }
     } else {

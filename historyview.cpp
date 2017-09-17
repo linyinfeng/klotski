@@ -1,5 +1,6 @@
 #include "historyview.h"
 #include <QListView>
+#include <QDebug>
 
 HistoryView::HistoryView(QWidget *parent) : QListView(parent)
 {
@@ -8,7 +9,10 @@ HistoryView::HistoryView(QWidget *parent) : QListView(parent)
 }
 
 void HistoryView::updateCurrentMoveIndex(int index) {
-    setCurrentIndex(model()->index(index, 0));
+    if (index != -1)
+        setCurrentIndex(model()->index(index, 0));
+    else
+        clearSelection();
 }
 
 void HistoryView::rowsInserted(const QModelIndex &parent, int start, int end) {
@@ -25,6 +29,7 @@ void HistoryView::selectionChanged(const QItemSelection &selected, const QItemSe
         QModelIndex index = selected_indexs[0];
         if (index.isValid()) {
             int aim = index.row();
+            qDebug() << "[EMIT] duserSelectedHistory(aim)";
             emit userSelectedHistory(aim);
         }
     }

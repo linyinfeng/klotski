@@ -97,6 +97,7 @@ bool HistoryModel::setData(const QModelIndex &index, const QVariant &value, int 
     QPair<int, const Move *> pair = value.value<QPair<int, const Move *>>();
     data_[index.row()].second = *pair.second;
     data_[index.row()].first = pair.first;
+    qDebug() << "[EMIT] dataChanged(createIndex(index.row(), 0), createIndex(index.row(), columnCount() - 1))";
     emit dataChanged(createIndex(index.row(), 0), createIndex(index.row(), columnCount() - 1));
     return true;
 }
