@@ -53,6 +53,7 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     else
         painter->setBrush(QBrush(Qt::gray));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
+//    painter->drawRoundRect(boundingRect(), scale_ * 0.05, scale_ * 0.05);
 
     pen.setWidth(1);
     painter->setPen(pen);
