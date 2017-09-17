@@ -62,7 +62,9 @@
     <property name="title">
      <string>&amp;Game</string>
     </property>
+    <addaction name="actionSelect_Level"/>
     <addaction name="actionOpen"/>
+    <addaction name="separator"/>
     <addaction name="actionRestart"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
@@ -116,6 +118,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionSelect_Level"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="actionRestart"/>
@@ -269,6 +272,15 @@
    </property>
    <property name="text">
     <string>Show &amp;Statusbar</string>
+   </property>
+  </action>
+  <action name="actionSelect_Level">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resources/icons/level-select.svg</normaloff>:/resources/icons/level-select.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select Level</string>
    </property>
   </action>
  </widget>

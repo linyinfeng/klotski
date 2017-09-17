@@ -19,5 +19,6 @@
         <file>resources/levels/比翼横空.klotski</file>
         <file>resources/levels/水泄不通.klotski</file>
         <file>resources/levels/齐头并进.klotski</file>
+        <file>resources/icons/level-select.svg</file>
     </qresource>
 </RCC>

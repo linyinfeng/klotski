@@ -1,6 +1,7 @@
 #ifndef FILESELECTOR_H
 #define FILESELECTOR_H
 
+#include <ui_levelselector.h>
 #include <QWidget>
 
 class fileselector : public QWidget
@@ -12,6 +13,9 @@ public:
 signals:
 
 public slots:
+
+private:
+    Ui::levelSelectorView *ui;
 };
 
 #endif // FILESELECTOR_H
