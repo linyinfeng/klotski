@@ -125,10 +125,10 @@ void View::onValidMovesChanged(const std::vector<Move> &valid_moves) {
     }
 }
 
-//void View::forceResize() {
-//    QResizeEvent *event = new QResizeEvent(size(), size());
-//    QCoreApplication::postEvent(this, event);
-//}
+void View::forceResize() {
+    QResizeEvent *event = new QResizeEvent(size(), size());
+    QCoreApplication::postEvent(this, event);
+}
 
 //void View::resizeEvent(QResizeEvent *event) {
 //    QMainWindow::resizeEvent(event);

@@ -82,8 +82,8 @@ private:
     void updateValidMoves();
 
 public slots:
-//    /* post resize event to this object */
-//    void forceResize();
+    /* post resize event to this object */
+    void forceResize();
     void setModel(Model *);
 
 protected:

@@ -53,6 +53,7 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setBrush(QBrush(Qt::gray));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
 
+    // TODO Draw to central
     static QFont font("Helvetica [Cronyx]", 20);
     qreal free_space = scale_ * 0.05;
     painter->setFont(font);

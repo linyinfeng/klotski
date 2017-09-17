@@ -51,6 +51,7 @@ public:
 //        view.forceResize(); // a workaround on Hi-DPI screen
         view.setModel(&model);
         model.onLoad(":/resources/levels/QiBuChengShi.klotski");
+        view.forceResize();
         view.show();
     }
 

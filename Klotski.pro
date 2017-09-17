@@ -28,8 +28,7 @@ HEADERS += common.h \
            model.h \
            move.h \
            piece.h \
-           view.h \
-           historymodel.h
+           view.h
 FORMS += view.ui
 SOURCES += common.cpp \
            graphicspiece.cpp \
@@ -39,3 +38,4 @@ SOURCES += common.cpp \
            model.cpp \
            view.cpp
 RESOURCES += resources.qrc
+RC_ICONS = icon/klotski.ico
