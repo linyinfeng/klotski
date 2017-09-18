@@ -49,14 +49,31 @@ void Model::onSaveToFile(const QString & file_name){
         QTextStream stream(&file);
         stream.setCodec(QTextCodec::codecForName("UTF-8"));
         stream.setGenerateByteOrderMark(true);
+        // Level Basic Infomation
         stream << level_name_ << "\n";
-        stream << best_step_count_<<"\n";
+        stream << best_step_count_ << "\n";
         stream << static_cast<int>(pieces_.size()) << "\n";
-        for(int i = 0; i < static_cast<int>(pieces_.size()); ++i)
+        for (int i = 0; i < static_cast<int>(pieces_.size()); ++i)
         {
-            stream << i << "\t" << pieces_[i].position().x() << "\t" << pieces_[i].position().y()
-                   << "\t" << pieces_[i].size().width() << "\t" << pieces_[i].size().height() << "\n";
+            stream << i << "\t" << original_pieces_[i] << "\n";
         }
+        stream << "\n";
+        for (int i = 0; i < static_cast<int>(pieces_.size()); ++i)
+        {
+            stream << i << "\t" << pieces_[i] << "\n";
+        }
+        stream << "\n";
+        stream << step_count_ << "\n";
+        int history_count = history_model_.rowCount();
+        stream << history_count << "\n";
+        for (int i = 0; i < history_count; ++i) {
+            const Move &move = history_model_[i].second;
+            stream << history_model_[i].first << "\t" // step
+                   << move << "\n";
+        }
+        stream << current_move_index_ << "\n";
+
+        stream << flush;
         qDebug() << "[emit] savedToFile(true)";
         emit savedToFile(true);
     } else {
@@ -70,20 +87,42 @@ void Model::onLoadFile(const QString & file_name){
     if(file.open(QIODevice::ReadOnly))
     {
         original_pieces_.clear();
+        pieces_.clear();
+        history_model_.reset();
+
         QTextStream stream(&file);
-        int pieces_count;
-        int index, x, y, width, height;
+
         stream >> level_name_;
         stream >> best_step_count_;
+        int pieces_count;
         stream >> pieces_count;
+        int index, x, y, width, height;
+
         for(int i = 0; i < pieces_count; ++i)
         {
             stream >> index >> x >> y >> width >> height;
-            original_pieces_.push_back(QRect(x,y,width,height));
+            original_pieces_.push_back(QRect(x, y, width, height));
         }
 
-        qDebug() << "Load finish";
-        onReset();
+        for(int i = 0; i < pieces_count; ++i)
+        {
+            stream >> index >> x >> y >> width >> height;
+            pieces_.push_back(QRect(x, y, width, height));
+        }
+
+        stream >> step_count_;
+        int history_count;
+        stream >> history_count;
+        for (int i = 0; i < history_count; ++i) {
+            int step_count;
+            Move move;
+            stream >> step_count >> move;
+            history_model_.pushBack(step_count, move);
+        }
+        stream >> current_move_index_;
+
+        qDebug() << "Start refresh";
+        onViewRequireDataRefresh();
     } else {
         qDebug() << "Failed to open file";
     }
@@ -107,25 +146,25 @@ void Model::applyMove(const Move &move) {
 
         /* History Logic */
         // Update history_ step_count_ valid_moves_ pieces_ history_model->last_move_
-        if (current_move_index_ != -1 && move == history_model_[current_move_index_].reverse()) {
+        if (current_move_index_ != -1 && move == history_model_[current_move_index_].second.reverse()) {
             // Undo
             decCurrentMoveIndex();
-            if (history_model_[current_move_index_].index() != history_model_[current_move_index_ + 1].index())
+            if (history_model_[current_move_index_].second.index() != history_model_[current_move_index_ + 1].second.index())
                 // current_move_index_ has been decreased
                 decStepCount();
         } else {
-            if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1]) {
+            if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1].second) {
                 // Redo
                 // history_ unchanged
                 incCurrentMoveIndex();
                 if (current_move_index_ <= 0 ||
-                    history_model_[current_move_index_].index() !=
-                        history_model_[current_move_index_ - 1].index())
+                    history_model_[current_move_index_].second.index() !=
+                        history_model_[current_move_index_ - 1].second.index())
                     incStepCount();
             } else {
                 // Move forward
                 if (current_move_index_ == -1 ||
-                    move.index() != history_model_[current_move_index_].index())
+                    move.index() != history_model_[current_move_index_].second.index())
                     incStepCount();
                 history_model_.cutToFit(current_move_index_ + 1);
                 qDebug() << "push move to history_model_";
@@ -146,10 +185,10 @@ void Model::applyMove(const Move &move) {
     }
 }
 void Model::onUndo() {
-    applyMove(history_model_[current_move_index_].reverse());
+    applyMove(history_model_[current_move_index_].second.reverse());
 }
 void Model::onRedo() {
-    applyMove(history_model_[current_move_index_ + 1]);
+    applyMove(history_model_[current_move_index_ + 1].second);
 }
 void Model::onUserSelectedHistory(int selected) {
     if (selected == current_move_index_) {
@@ -159,12 +198,12 @@ void Model::onUserSelectedHistory(int selected) {
     if (selected > current_move_index) {
         // Redo
         for (int i = current_move_index + 1; i <= selected; ++i) {
-            applyMove(history_model_[i]);
+            applyMove(history_model_[i].second);
         }
     } else {
         // Undo
         for (int i = current_move_index; i >= selected + 1; --i) {
-            applyMove(history_model_[i].reverse());
+            applyMove(history_model_[i].second.reverse());
         }
     }
 }

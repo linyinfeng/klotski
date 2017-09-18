@@ -32,7 +32,7 @@ public:
     void pushBack(int step_count, const Move &move);
     void cutToFit(int size);
 
-    const Move &operator[](int index) const;
+    const QPair<int, Move> &operator[](int index) const;
 
 private:
     std::vector<QPair<int, Move>> data_;

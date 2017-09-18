@@ -4,25 +4,28 @@
 #include "move.h"
 #include <QRect>
 
+class Piece;
+
+QTextStream &operator << (QTextStream &stream, const Piece &move);
+QTextStream &operator >> (QTextStream &stream, Piece &move);
+
 class Piece
 {
+    friend QTextStream &operator >> (QTextStream &stream, Piece &piece);
+
 public:
-    Piece(const QRect &rect) : geometry_(rect) { }
-    explicit Piece(const QSize &size) : geometry_(QPoint(0, 0), size) { }
+    Piece(const QRect &rect);
+    explicit Piece(const QSize &size);
 
-    Piece(const Piece &piece) : geometry_(piece.geometry()) { }
+    Piece(const Piece &piece);
 
-    QRect  geometry()  const { return geometry_;           }
-    QPoint position()  const { return geometry_.topLeft(); }
-    QSize  size()      const { return geometry_.size();    }
+    QRect  geometry()  const;
+    QPoint position()  const;
+    QSize  size()      const;
 
-    void moveTo(const QPoint &pos) { geometry_.moveTo(pos); }
+    void moveTo(const QPoint &pos);
 
-    Piece &operator << (const Move &move) {
-        QPoint pos(position().x() + move.x(), position().y() + move.y());
-        moveTo(pos);
-        return *this;
-    }
+    Piece &operator << (const Move &move);
 
 private:
     QRect geometry_;

@@ -39,7 +39,9 @@ SOURCES += common.cpp \
            main.cpp \
            model.cpp \
            view.cpp \
-    levelselector.cpp
+    levelselector.cpp \
+    move.cpp \
+    piece.cpp
 RESOURCES += resources.qrc
 TRANSLATIONS += klotski.ts zh_CN.ts
 RC_ICONS = klotski.ico

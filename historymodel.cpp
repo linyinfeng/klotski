@@ -125,6 +125,6 @@ void HistoryModel::cutToFit(int size) {
     removeRows(size, rowCount() - size);
 }
 
-const Move &HistoryModel::operator[](int index) const {
-    return data_[index].second;
+const QPair<int, Move> &HistoryModel::operator[](int index) const {
+    return data_[index];
 }
