@@ -206,10 +206,6 @@ void Model::updateValidMoves() {
             if (canup)
                 valid_moves_.push_back(Move(i, 0, -1));
         }
-    }
-    if (canup)
-        valid_moves_.push_back(Move(i, 0, -1));
-   }
 
         if(y < kVerticalUnit - height){
             bool candown = true;//move down
@@ -224,10 +220,6 @@ void Model::updateValidMoves() {
             if (candown)
                 valid_moves_.push_back(Move(i, 0, 1));
         }
-   }
-    if (candown)
-        valid_moves_.push_back(Move(i, 0, 1));
-    }
 
         if(x > 0){
             bool canleft = true;//move left
@@ -253,9 +245,6 @@ void Model::updateValidMoves() {
             if(canright)
                 valid_moves_.push_back(Move(i, 1, 0));
         }
-        if(canright)
-            valid_moves_.push_back(Move(i, 1, 0));
-    }
     }
     emit validMovesChanged(valid_moves_);
 }
