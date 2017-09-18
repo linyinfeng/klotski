@@ -10,7 +10,17 @@
 #include <QTimer>
 #include <QTextCodec>
 
-Model::Model(QObject *parent) : QObject(parent), history_model_(this) { }
+Model::Model(QObject *parent)
+    : QObject(parent),
+      level_name_(),
+      best_step_count_(0),
+      pieces_(),
+      original_pieces_(),
+      valid_moves_(),
+      step_count_(),
+      history_model_(this),
+      current_move_index_(-1)
+{ }
 
 void Model::onViewRequireDataRefresh() {
     qDebug() << "[EMIT] emit piecesChanged(pieces_)";
@@ -83,14 +93,10 @@ void Model::onReset() {
     pieces_ = original_pieces_;
     history_model_.reset();
     current_move_index_ = -1;
+    valid_moves_.clear();
     step_count_ = 0;
 
     onViewRequireDataRefresh();
-//    emit modelReset(this);
-//    updateCanUndoRedoState();
-//    updateCanWinState();
-//    setStepCount(0);
-//    updateValidMoves();
 }
 
 void Model::applyMove(const Move &move) {
@@ -112,12 +118,11 @@ void Model::applyMove(const Move &move) {
             if (current_move_index_ + 1 < history_model_.rowCount() && move == history_model_[current_move_index_ + 1]) {
                 // Redo
                 // history_ unchanged
-
+                incCurrentMoveIndex();
                 if (current_move_index_ <= 0 ||
                     history_model_[current_move_index_].index() !=
                         history_model_[current_move_index_ - 1].index())
                     incStepCount();
-                incCurrentMoveIndex();
             } else {
                 // Move forward
                 if (current_move_index_ == -1 ||
@@ -169,18 +174,18 @@ void Model::onUserSelectedHistory(int selected) {
 void Model::updateValidMoves() {
     valid_moves_.clear();
     Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
-for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
- {
-    int x, y;
-    x = pieces_[i].position().x();
-    y = pieces_[i].position().y();
-    for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
-        for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
-            matrix.at(j, k) = 1;
+    for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
+    {
+        int x, y;
+        x = pieces_[i].position().x();
+        y = pieces_[i].position().y();
+        for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
+            for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
+                matrix.at(j, k) = 1;
+            }
         }
-   }
-}
-for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
+    }
+    for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
     {
         int x, y;
         x = pieces_[i].position().x();
@@ -189,53 +194,64 @@ for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
         width = pieces_[i].size().width();
         height = pieces_[i].size().height();
 
-    if(y>0){
-    bool canup = true;//move up
-    for (int j = 0; j <= width - 1; j++) {
-        if (matrix.at(x + j, y - 1) != 0)
-        {
-            canup = false;
-            break;
+        if(y>0){
+            bool canup = true;//move up
+            for (int j = 0; j <= width - 1; j++) {
+                if (matrix.at(x + j, y - 1) != 0)
+                {
+                    canup = false;
+                    break;
+                }
+            }
+            if (canup)
+                valid_moves_.push_back(Move(i, 0, -1));
         }
     }
     if (canup)
         valid_moves_.push_back(Move(i, 0, -1));
    }
 
-    if(y < kVerticalUnit - height){
-    bool candown = true;//move down
-    for (int j = 0; j <= width - 1; j++)
-   {
-        if (matrix.at(x + j, y + height) != 0)
-        {
-            candown = false;
-            break;
+        if(y < kVerticalUnit - height){
+            bool candown = true;//move down
+            for (int j = 0; j <= width - 1; j++)
+            {
+                if (matrix.at(x + j, y + height) != 0)
+                {
+                    candown = false;
+                    break;
+                }
+            }
+            if (candown)
+                valid_moves_.push_back(Move(i, 0, 1));
         }
    }
     if (candown)
         valid_moves_.push_back(Move(i, 0, 1));
     }
 
-    if(x > 0){
-    bool canleft = true;//move left
-    for (int j = 0; j <= height - 1; j++) {
-        if (matrix.at(x - 1, y + j) != 0)
-        {
-            canleft = false;
-            break;
-        }
-    }
-    if (canleft)
-        valid_moves_.push_back(Move(i, -1, 0));
- }
-    if(x + width < kHorizontalUnit){
-        bool canright = true;
-        for(int j = 0; j <= height - 1; j++)
-        {
-            if(matrix.at(x + width, y + j) != 0){
-                canright = false;
-                break;
+        if(x > 0){
+            bool canleft = true;//move left
+            for (int j = 0; j <= height - 1; j++) {
+                if (matrix.at(x - 1, y + j) != 0)
+                {
+                    canleft = false;
+                    break;
+                }
             }
+            if (canleft)
+                valid_moves_.push_back(Move(i, -1, 0));
+        }
+        if(x + width < kHorizontalUnit){
+            bool canright = true;
+            for(int j = 0; j <= height - 1; j++)
+            {
+                if(matrix.at(x + width, y + j) != 0){
+                    canright = false;
+                    break;
+                }
+            }
+            if(canright)
+                valid_moves_.push_back(Move(i, 1, 0));
         }
         if(canright)
             valid_moves_.push_back(Move(i, 1, 0));
@@ -244,7 +260,11 @@ for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
     emit validMovesChanged(valid_moves_);
 }
 void Model::updateCanWinState() {
-    emit canWinStateChanged(pieces_[kWinPieceIndex].position() == kWinPosition);
+    if (kWinPieceIndex >= static_cast<int>(pieces_.size())) {
+        emit canWinStateChanged(false);
+    } else {
+        emit canWinStateChanged(pieces_[kWinPieceIndex].position() == kWinPosition);
+    }
 }
 void Model::updateCanUndoRedoState() {
     bool can_undo = false, can_redo = false;

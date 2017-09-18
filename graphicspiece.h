@@ -50,7 +50,7 @@ private:
     bool can_move_left_;
     bool can_move_right_;
 
-    Direction moving_direction_;
+//    Direction moving_direction_;
 
     QPointF virtual_initial_mouse_pos_;
     QPointF piece_base_pos_; // Cached

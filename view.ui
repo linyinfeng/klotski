@@ -61,16 +61,15 @@
      <string>&amp;Game</string>
     </property>
     <addaction name="actionSelect_Level"/>
-    <addaction name="actionOpen"/>
     <addaction name="separator"/>
-    <addaction name="actionRestart"/>
+    <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="actionRestart"/>
     <addaction name="separator"/>
     <addaction name="actionShow_Optimal_solution"/>
-    <addaction name="actionShow_High_Scores"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
