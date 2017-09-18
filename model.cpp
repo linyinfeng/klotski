@@ -10,7 +10,17 @@
 #include <QTimer>
 #include <QTextCodec>
 
-Model::Model(QObject *parent) : QObject(parent), history_model_(this) { }
+Model::Model(QObject *parent)
+    : QObject(parent),
+      level_name_(),
+      best_step_count_(0),
+      pieces_(),
+      original_pieces_(),
+      valid_moves_(),
+      step_count_(),
+      history_model_(this),
+      current_move_index_(-1)
+{ }
 
 void Model::onViewRequireDataRefresh() {
     qDebug() << "[EMIT] emit piecesChanged(pieces_)";
@@ -83,14 +93,10 @@ void Model::onReset() {
     pieces_ = original_pieces_;
     history_model_.reset();
     current_move_index_ = -1;
+    valid_moves_.clear();
     step_count_ = 0;
 
     onViewRequireDataRefresh();
-//    emit modelReset(this);
-//    updateCanUndoRedoState();
-//    updateCanWinState();
-//    setStepCount(0);
-//    updateValidMoves();
 }
 
 void Model::applyMove(const Move &move) {
@@ -243,7 +249,11 @@ void Model::updateValidMoves() {
     emit validMovesChanged(valid_moves_);
 }
 void Model::updateCanWinState() {
-    emit canWinStateChanged(pieces_[kWinPieceIndex].position() == kWinPosition);
+    if (kWinPieceIndex >= static_cast<int>(pieces_.size())) {
+        emit canWinStateChanged(false);
+    } else {
+        emit canWinStateChanged(pieces_[kWinPieceIndex].position() == kWinPosition);
+    }
 }
 void Model::updateCanUndoRedoState() {
     bool can_undo = false, can_redo = false;

@@ -24,7 +24,7 @@ public:
         translator = new QTranslator();
         QApplication::instance()->installTranslator(translator);
 
-        model->onLoadFile(":/resources/levels/七步成诗 - 7.klotski");
+        model->onLoadFile(":/resources/levels/七步成诗(7).klotski");
     }
 
     /* Connect model and view */

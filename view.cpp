@@ -263,7 +263,7 @@ void View::promoteToOpenFile() {
             qDebug() << "[emit] loadFile(file_name)";
             emit loadFile(file_name);
         } else
-            QMessageBox::warning(this, "Warning", tr("\"%1\" can't be find or is not a file ").arg(file_name));
+            QMessageBox::warning(this, "Warning", tr("\"%1\" can't be find or is not a file").arg(file_name));
     } else
         ui->statusBar->showMessage(tr("No file specified"));
 }

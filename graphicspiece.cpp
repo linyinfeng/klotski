@@ -53,7 +53,9 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setBrush(QBrush(QColor(200, 200, 200)));
     else
         painter->setBrush(QBrush(Qt::gray));
+//    painter->setBrush(QBrush(Qt::white));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
+
 //    painter->drawRoundRect(boundingRect(), scale_ * 0.05, scale_ * 0.05);
 
     pen.setWidth(1);
