@@ -28,15 +28,13 @@ GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
     focused_ = false;
     in_animation_ = false;
 
-    onSceneResize();
     virtual_initial_mouse_pos_ = QPointF(0, 0);
     piece_base_pos_ = QPointF(0, 0);
 
-//    qDebug() << "Piece" << index_ << "piece_base_pose_ initialized" << piece_base_pos_;
-//    qDebug() << "New GraphicsPiece" << index_ << piece_.geometry();
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
-//    onSceneResize(); // set scale_ and rect_ and position_
+
+    qDebug() << "New GraphicsPiece" << index << piece_.geometry();
 }
 
 void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -126,17 +124,17 @@ QRectF GraphicsPiece::calcRect(const Piece &piece) {
     QRectF res(0, 0, 0, 0);
     res.setSize(QSizeF(space_width - 2 * free_space, space_height - 2 * free_space));
     res.moveTopLeft(QPointF( free_space, free_space));
-    qDebug() << "calcRect" << "piece" << piece.geometry() << "calculated" << res;
+//    qDebug() << "calcRect" << "piece" << piece.geometry() << "calculated" << res;
     return res;
 }
 QPointF GraphicsPiece::calcPosition(const Piece &piece) {
     QPointF pos(piece.position().x() * scale_, piece.position().y() * scale_);
-    qDebug() << "calcPosition" << "piece" << piece.geometry() << "calculated" << pos;
+//    qDebug() << "calcPosition" << "piece" << piece.geometry() << "calculated" << pos;
     return pos;
 }
 QPointF GraphicsPiece::calcPosition(const QPoint &point) {
     QPointF pos(point.x() * scale_, point.y() * scale_);
-    qDebug() << "calcPosition" << "point" << point << "calculated" << pos;
+//    qDebug() << "calcPosition" << "point" << point << "calculated" << pos;
     return pos;
 }
 
@@ -147,7 +145,7 @@ void GraphicsPiece::onSceneResize() {
         piece_base_pos_ = calcPosition(piece_);
         setPos(piece_base_pos_);
 
-        qDebug() << "GraphicsPiece" << index_ << "boundingRect" << boundingRect() << "pos" << pos();
+        qDebug() << "GraphicsPiece" << index_ << "Resize boundingRect" << boundingRect() << "pos" << pos();
         update();
     } else {
         qDebug() << "Invalid" << "scene_";
@@ -327,16 +325,15 @@ void GraphicsPiece::applyMove(const Move &move, bool animate) {
 
         if (animate) {
             QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+            animation->setEndValue(piece_base_pos_);
+            animation->setDuration(200);
             if (move.isNull()) {
                 animation->setStartValue(pos());
+                animation->start(QPropertyAnimation::DeleteWhenStopped);
             } else {
                 animation->setStartValue(last_piece_base_pos);
+                addAnimation(animation);
             }
-            animation->setEndValue(piece_base_pos_);
-//            animation->setDuration((piece_base_pos_ - pos()).manhattanLength() / scale_ * 200);
-            animation->setDuration(200);
-//            qDebug() << "Animation" << "start" << pos() << "end" << piece_base_pos_;
-            addAnimation(animation);
         }
 
         qDebug() << "Move" << &move << "Finished on View";
@@ -357,5 +354,5 @@ void GraphicsPiece::animationFinished() {
 }
 void GraphicsPiece::animationStarted() {
     in_animation_ = true;
-    update();
+    // no update
 }

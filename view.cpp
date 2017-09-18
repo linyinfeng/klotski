@@ -58,6 +58,9 @@ View::View(QWidget *parent) :
     connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAboutDialog);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
+
+    qDebug() << "Resize View at View created";
+    resizeView();
 }
 View::~View()
 {
@@ -188,12 +191,12 @@ void View::resizeView() {
     ui->graphicsView->fitInView(scene_->sceneRect());
 
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
-        qDebug() << "Try resize" << graphics_piece;
+//        qDebug() << "Try resize" << graphics_piece;
         graphics_piece->onSceneResize();
     }
 
     ui->pushButtonFinish->setGeometry(button_rect);
-    qDebug() << "ui->pushButtonFinish->setGeometry" << button_rect;
+//    qDebug() << "ui->pushButtonFinish->setGeometry" << button_rect;
 }
 
 bool View::eventFilter(QObject *watched, QEvent *event) {
