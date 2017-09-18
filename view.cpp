@@ -131,10 +131,11 @@ void View::updateWindowTitle(const QString &additional_title) {
 }
 
 void View::onSavedToFile(bool successed) {
-    if (successed)
+    if (successed) {
         ui->statusBar->showMessage(tr("Game saved"));
-    else
+    } else {
         QMessageBox::warning(this, tr("Warning"), tr("Failed to open file"));
+    }
 }
 
 void View::applyMove(const Move &move) {

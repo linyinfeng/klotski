@@ -59,10 +59,10 @@ void Model::onSaveToFile(const QString & file_name){
         }
         qDebug() << "[emit] savedToFile(true)";
         emit savedToFile(true);
-    } else
+    } else {
         qDebug() << "[emit] savedToFile(false)";
         emit savedToFile(false);
-
+    }
 }
 void Model::onLoadFile(const QString & file_name){
     qDebug() << "Start Load";
