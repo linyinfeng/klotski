@@ -1,6 +1,6 @@
 //#define IGNORE_VALID_MOVES
 
-#define MOVE_SYNC_THRESHOLD 0.8
+#define MOVE_SYNC_THRESHOLD 0.6
 //#define MOVE_DIRECTION_LIMIT_CANCEL_THRESHOLD 0.03
 
 #include "common.h"
