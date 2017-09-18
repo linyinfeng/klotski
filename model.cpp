@@ -98,7 +98,6 @@ void Model::onReset() {
 
     onViewRequireDataRefresh();
 }
-
 void Model::applyMove(const Move &move) {
     static std::size_t emitted = 0;
     if (move.id() != emitted) {
@@ -152,7 +151,6 @@ void Model::onUndo() {
 void Model::onRedo() {
     applyMove(history_model_[current_move_index_ + 1]);
 }
-
 void Model::onUserSelectedHistory(int selected) {
     if (selected == current_move_index_) {
         return;
@@ -171,6 +169,7 @@ void Model::onUserSelectedHistory(int selected) {
     }
 }
 
+/* private functions to update */
 void Model::updateValidMoves() {
     valid_moves_.clear();
     Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
@@ -270,6 +269,7 @@ void Model::updateCanUndoRedoState() {
     emit canRedoStateChanged(can_redo);
 }
 
+/* private function to update step count */
 void Model::incStepCount() {
     setStepCount(step_count_ + 1);
 }
@@ -281,6 +281,8 @@ void Model::setStepCount(int step_count) {
     qDebug() << "[emit] stepCountChanged(step_count_)";
     emit stepCountChanged(step_count_);
 }
+
+/* private function to update current move index */
 void Model::incCurrentMoveIndex() {
     setCurrentMoveIndex(current_move_index_ + 1);
 }

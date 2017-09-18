@@ -18,13 +18,17 @@
 #include <cmath>
 
 GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
-    : can_move_up_(false), can_move_down_(false),
-      can_move_left_(false), can_move_right_(false),
-      piece_(piece), index_(index)
+    : piece_(piece), index_(index)
 {
+    clearValidMoveDirection();
+
     hovered_ = false;
     pressed_ = false;
     focused_ = false;
+
+    onSceneResize();
+    virtual_initial_mouse_pos_ = QPointF(0, 0);
+    piece_base_pos_ = QPointF(0, 0);
 
     qDebug() << "Piece" << index_ << "piece_base_pose_ initialized" << piece_base_pos_;
     qDebug() << "New GraphicsPiece" << index_ << piece_.geometry();
@@ -113,6 +117,27 @@ QRectF GraphicsPiece::boundingRect() const {
     // ignore free space for easy drawing
 }
 
+QRectF GraphicsPiece::calcRect(const Piece &piece) {
+    qreal space_height = scale_ * piece.size().height();
+    qreal space_width  = scale_ * piece.size().width();
+    qreal free_space = scale_ * 0.05;
+    QRectF res(0, 0, 0, 0);
+    res.setSize(QSizeF(space_width - 2 * free_space, space_height - 2 * free_space));
+    res.moveTopLeft(QPointF( free_space, free_space));
+    qDebug() << "calcRect" << "piece" << piece.geometry() << "calculated" << res;
+    return res;
+}
+QPointF GraphicsPiece::calcPosition(const Piece &piece) {
+    QPointF pos(piece.position().x() * scale_, piece.position().y() * scale_);
+    qDebug() << "calcPosition" << "piece" << piece.geometry() << "calculated" << pos;
+    return pos;
+}
+QPointF GraphicsPiece::calcPosition(const QPoint &point) {
+    QPointF pos(point.x() * scale_, point.y() * scale_);
+    qDebug() << "calcPosition" << "point" << point << "calculated" << pos;
+    return pos;
+}
+
 void GraphicsPiece::onSceneResize() {
     if (scene() != nullptr) {
         scale_ = scene()->sceneRect().width() / kHorizontalUnit;
@@ -128,29 +153,6 @@ void GraphicsPiece::onSceneResize() {
     }
 }
 
-QRectF GraphicsPiece::calcRect(const Piece &piece) {
-    qreal space_height = scale_ * piece.size().height();
-    qreal space_width  = scale_ * piece.size().width();
-    qreal free_space = scale_ * 0.05;
-    QRectF res(0, 0, 0, 0);
-    res.setSize(QSizeF(space_width - 2 * free_space, space_height - 2 * free_space));
-    res.moveTopLeft(QPointF( free_space, free_space));
-    qDebug() << "calcRect" << "piece" << piece.geometry() << "calculated" << res;
-    return res;
-}
-
-QPointF GraphicsPiece::calcPosition(const Piece &piece) {
-    QPointF pos(piece.position().x() * scale_, piece.position().y() * scale_);
-    qDebug() << "calcPosition" << "piece" << piece.geometry() << "calculated" << pos;
-    return pos;
-}
-
-QPointF GraphicsPiece::calcPosition(const QPoint &point) {
-    QPointF pos(point.x() * scale_, point.y() * scale_);
-    qDebug() << "calcPosition" << "point" << point << "calculated" << pos;
-    return pos;
-}
-
 void GraphicsPiece::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
     setFocus();
@@ -162,10 +164,6 @@ void GraphicsPiece::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     hovered_ = false;
     qDebug() << this << "hoverLeaveEvent";
 }
-//void GraphicsPiece::hoverMoveEvent(QGraphicsSceneHoverEvent *event) {
-//    QGraphicsObject::hoverMoveEvent(event);
-//    qDebug() << this << "hoverMoveEvent";
-//}
 void GraphicsPiece::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
     pressed_ = true;
@@ -289,13 +287,11 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
     }
     qDebug() << this << "keyPressEvent";
 }
-
 void GraphicsPiece::focusInEvent(QFocusEvent *event) {
     qDebug() << index_ << event;
     focused_ = true;
     // gain focus will auto update
 }
-
 void GraphicsPiece::focusOutEvent(QFocusEvent *event) {
     qDebug() << index_ << event;
     focused_ = false;

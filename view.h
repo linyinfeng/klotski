@@ -61,8 +61,7 @@ public slots:
     void updatePieces(const std::vector<Piece> &pieces);
     /* forward syncMove signal to specified graphics pieces */
     void applyMove(const Move &move);
-    /* forward validMovesChanged signal to spcified graphics pieces
-     */
+    /* forward validMovesChanged signal to spcified graphics pieces */
     void updateValidMoves(const std::vector<Move> &move);
 
     /* update best step count */
@@ -82,13 +81,12 @@ public slots:
     void updateHistoryModel(HistoryModel *history_model);
     /* update list view slection */
     void updateCurrentMoveIndex(int index);
-    /* on model saved
-     * promote user if save was successed
-     */
+    /* on model saved, promote user if save was successed */
     void onSavedToFile(bool successed);
 
     /* post resize event to this object */
     void forceResize();
+
 public slots:
     void refresh();
 

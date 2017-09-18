@@ -61,7 +61,6 @@ public:
     void start() {
         connect();
         view->refresh();
-        view->forceResize();
         view->show();
     }
 
