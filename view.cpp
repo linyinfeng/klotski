@@ -22,8 +22,10 @@ View::View(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::View),
     level_selector(new LevelSelector),
+    animation_group_(nullptr),
     step_count_(0),
     best_step_count_(0)
+
 {
     ui->setupUi(this);
 
@@ -111,6 +113,7 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
         GraphicsPiece *graphics_piece = new GraphicsPiece(i, pieces[i]);
         graphics_pieces_.push_back(graphics_piece);
         connect(graphics_piece, &GraphicsPiece::syncMove, this, &View::syncMove);
+        connect(graphics_piece, &GraphicsPiece::addAnimation, this, &View::addSequencedAnimation);
         scene_->addItem(graphics_piece);
         graphics_piece->onSceneResize();
     }
@@ -287,9 +290,46 @@ void View::showAboutDialog() {
         tr("Developed by\n"
            "\tYinfeng Lin\n"
            "\tNianyi Wang\n"
-           "\tZhuanjie Ma\n"
+           "\tZuanjie Ma\n"
            "\tYaodanjun Ren\n"
            "\tYutong Deng\n"
            "Github: github.com/0yinf/klotski\n"
            "Using Qt in LGPLv3"));
+}
+
+void View::addSequencedAnimation(QPropertyAnimation *animation) {
+    if (animation_group_ == nullptr) {
+        animation_group_ = new QSequentialAnimationGroup(this);
+        connect(animation_group_, &QSequentialAnimationGroup::finished, this, &View::onAnimationGroupFinished);
+    } else if (animation_group_->state() == QSequentialAnimationGroup::Stopped) {
+        animation_group_ = new QSequentialAnimationGroup(this);
+    } else {
+        animation_group_->pause();
+        qDebug() << animation_group_->animationCount() << "animation are processing";
+    }
+
+    // Fast animation
+//    int current_animation_count = animation_group_->animationCount();
+//    if (current_animation_count != 0 && current_animation_count != 1) {
+//        animation->setDuration(animation->duration() / current_animation_count);
+//    }
+    animation_group_->addAnimation(animation);
+
+    for (GraphicsPiece *piece : graphics_pieces_) {
+        piece->animationStarted();
+    }
+
+    if (animation_group_->state() == QSequentialAnimationGroup::Stopped) {
+        animation_group_->start();
+    } else if (animation_group_->state() == QSequentialAnimationGroup::Paused) {
+        animation_group_->resume();
+    }
+}
+
+void View::onAnimationGroupFinished() {
+    animation_group_->deleteLater();
+    animation_group_ = nullptr;
+    for (GraphicsPiece *piece : graphics_pieces_) {
+        piece->animationFinished();
+    }
 }

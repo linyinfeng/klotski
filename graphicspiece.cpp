@@ -12,6 +12,7 @@
 #include <QGraphicsScene>
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
+#include <QSequentialAnimationGroup>
 #include <QKeyEvent>
 #include <QPropertyAnimation>
 #include <QFont>
@@ -25,13 +26,14 @@ GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
     hovered_ = false;
     pressed_ = false;
     focused_ = false;
+    in_animation_ = false;
 
     onSceneResize();
     virtual_initial_mouse_pos_ = QPointF(0, 0);
     piece_base_pos_ = QPointF(0, 0);
 
-    qDebug() << "Piece" << index_ << "piece_base_pose_ initialized" << piece_base_pos_;
-    qDebug() << "New GraphicsPiece" << index_ << piece_.geometry();
+//    qDebug() << "Piece" << index_ << "piece_base_pose_ initialized" << piece_base_pos_;
+//    qDebug() << "New GraphicsPiece" << index_ << piece_.geometry();
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
 //    onSceneResize(); // set scale_ and rect_ and position_
@@ -57,47 +59,47 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setBrush(QBrush(QColor(200, 200, 200)));
     else
         painter->setBrush(QBrush(Qt::gray));
-//    painter->setBrush(QBrush(Qt::white));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
 
-//    painter->drawRoundRect(boundingRect(), scale_ * 0.05, scale_ * 0.05);
-
-    pen.setWidth(1);
-    painter->setPen(pen);
-    if (focused_) {
-        painter->setBrush(QBrush(Qt::white));
-    } else {
-        painter->setBrush(QBrush(Qt::black));
-    }
-    qreal free_space = scale_ * 0.05;
+    // Arrows
     QRectF bounding_rect = boundingRect();
-    if (can_move_up_) {
-        QPolygonF polygon;
-        polygon << QPointF(bounding_rect.width() / 2, free_space * 2)
-                << QPointF(bounding_rect.width() / 2 - free_space * 2, free_space * 4)
-                << QPointF(bounding_rect.width() / 2 + free_space * 2, free_space * 4);
-        painter->drawPolygon(polygon);
-    }
-    if (can_move_down_) {
-        QPolygonF polygon;
-        polygon << QPointF(bounding_rect.width() / 2, bounding_rect.height() - free_space * 2)
-                << QPointF(bounding_rect.width() / 2 - free_space * 2, bounding_rect.height() - free_space * 4)
-                << QPointF(bounding_rect.width() / 2 + free_space * 2, bounding_rect.height() - free_space * 4);
-        painter->drawPolygon(polygon);
-    }
-    if (can_move_left_) {
-        QPolygonF polygon;
-        polygon << QPointF(free_space * 2, bounding_rect.height() / 2)
-                << QPointF(free_space * 4, bounding_rect.height() / 2 - free_space * 2)
-                << QPointF(free_space * 4, bounding_rect.height() / 2 + free_space * 2);
-        painter->drawPolygon(polygon);
-    }
-    if (can_move_right_) {
-        QPolygonF polygon;
-        polygon << QPointF(bounding_rect.width() - free_space * 2, bounding_rect.height() / 2)
-                << QPointF(bounding_rect.width() - free_space * 4, bounding_rect.height() / 2 - free_space * 2)
-                << QPointF(bounding_rect.width() - free_space * 4, bounding_rect.height() / 2 + free_space * 2);
-        painter->drawPolygon(polygon);
+    if (!in_animation_) {
+        pen.setWidth(1);
+        painter->setPen(pen);
+        if (focused_) {
+            painter->setBrush(QBrush(Qt::white));
+        } else {
+            painter->setBrush(QBrush(Qt::black));
+        }
+        qreal free_space = scale_ * 0.05;
+        if (can_move_up_) {
+            QPolygonF polygon;
+            polygon << QPointF(bounding_rect.width() / 2, free_space * 2)
+                    << QPointF(bounding_rect.width() / 2 - free_space * 2, free_space * 4)
+                    << QPointF(bounding_rect.width() / 2 + free_space * 2, free_space * 4);
+            painter->drawPolygon(polygon);
+        }
+        if (can_move_down_) {
+            QPolygonF polygon;
+            polygon << QPointF(bounding_rect.width() / 2, bounding_rect.height() - free_space * 2)
+                    << QPointF(bounding_rect.width() / 2 - free_space * 2, bounding_rect.height() - free_space * 4)
+                    << QPointF(bounding_rect.width() / 2 + free_space * 2, bounding_rect.height() - free_space * 4);
+            painter->drawPolygon(polygon);
+        }
+        if (can_move_left_) {
+            QPolygonF polygon;
+            polygon << QPointF(free_space * 2, bounding_rect.height() / 2)
+                    << QPointF(free_space * 4, bounding_rect.height() / 2 - free_space * 2)
+                    << QPointF(free_space * 4, bounding_rect.height() / 2 + free_space * 2);
+            painter->drawPolygon(polygon);
+        }
+        if (can_move_right_) {
+            QPolygonF polygon;
+            polygon << QPointF(bounding_rect.width() - free_space * 2, bounding_rect.height() / 2)
+                    << QPointF(bounding_rect.width() - free_space * 4, bounding_rect.height() / 2 - free_space * 2)
+                    << QPointF(bounding_rect.width() - free_space * 4, bounding_rect.height() / 2 + free_space * 2);
+            painter->drawPolygon(polygon);
+        }
     }
 
     // Text
@@ -105,11 +107,11 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     QFontMetrics font_metrics(font);
     QSize text_size = font_metrics.size(Qt::TextSingleLine, tr("%1").arg(index_));
     painter->setFont(font);
-//    painter->drawText(QPointF(bounding_rect.width() / 2 - font_width_ / 2, bounding_rect.height() / 2 + font_height_ / 2),
-//        QString("%1").arg(index_));
-    painter->drawText(QPointF(bounding_rect.width() / 2 - text_size.width() / 2,
-                              bounding_rect.height() / 2 + text_size.height() / 2),
-        QString("%1").arg(index_));
+    painter->drawText(
+        QPointF(bounding_rect.width() / 2 - text_size.width() / 2,
+                bounding_rect.height() / 2 + text_size.height() / 2),
+        QString("%1").arg(index_)
+    );
 }
 
 QRectF GraphicsPiece::boundingRect() const {
@@ -320,16 +322,21 @@ void GraphicsPiece::applyMove(const Move &move, bool animate) {
     static std::size_t emitted = 0;
     if (move.id() != emitted) {
         piece_ << move;
+        QPointF last_piece_base_pos = piece_base_pos_;
         piece_base_pos_ = calcPosition(piece_);
 
         if (animate) {
             QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
-            animation->setStartValue(pos());
+            if (move.isNull()) {
+                animation->setStartValue(pos());
+            } else {
+                animation->setStartValue(last_piece_base_pos);
+            }
             animation->setEndValue(piece_base_pos_);
 //            animation->setDuration((piece_base_pos_ - pos()).manhattanLength() / scale_ * 200);
             animation->setDuration(200);
-            qDebug() << "Animation" << "start" << pos() << "end" << piece_base_pos_;
-            animation->start();
+//            qDebug() << "Animation" << "start" << pos() << "end" << piece_base_pos_;
+            addAnimation(animation);
         }
 
         qDebug() << "Move" << &move << "Finished on View";
@@ -342,4 +349,13 @@ void GraphicsPiece::applyMove(const Move &move, bool animate) {
     } else {
         qDebug() << "Move" << &move << "required on View but have be down";
     }
+}
+
+void GraphicsPiece::animationFinished() {
+    in_animation_ = false;
+    update();
+}
+void GraphicsPiece::animationStarted() {
+    in_animation_ = true;
+    update();
 }

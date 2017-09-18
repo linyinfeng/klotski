@@ -8,6 +8,8 @@
 #include <QPointF>
 #include <QObject>
 #include <QFont>
+#include <QSequentialAnimationGroup>
+#include <QPropertyAnimation>
 
 class GraphicsPiece : public QGraphicsObject
 {
@@ -17,13 +19,15 @@ public:
 public:
     void addValidMoveDirection(const Move &valid_move);
     void clearValidMoveDirection();
+    void animationFinished();
+    void animationStarted();
 
 signals:
     void syncMove(const Move &move);
+    void addAnimation(QPropertyAnimation *animation);
 
 public slots:
     void onSceneResize();
-
     void applyMove(const Move &move, bool animate = true);
 
 protected:
@@ -57,6 +61,7 @@ private:
     bool focused_;
     bool hovered_;
     bool pressed_;
+    bool in_animation_;
 
     qreal scale_;
     QRectF rect_; // topLeft vertex is always (0, 0)

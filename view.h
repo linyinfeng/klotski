@@ -16,6 +16,7 @@
 #include <QTranslator>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QSequentialAnimationGroup>
 
 namespace Ui {
 class View;
@@ -109,6 +110,10 @@ private slots:
     /* do when finish button clicked */
     void onFinish();
 
+    /* animation control */
+    void addSequencedAnimation(QPropertyAnimation *animation);
+    void onAnimationGroupFinished();
+
 private:
     /* the main resize function */
     void resizeView();
@@ -126,6 +131,8 @@ private:
 
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
+
+    QSequentialAnimationGroup *animation_group_;
 
     int step_count_, best_step_count_;
 };

@@ -4,7 +4,7 @@
 <context>
     <name>GraphicsPiece</name>
     <message>
-        <location filename="graphicspiece.cpp" line="100"/>
+        <location filename="graphicspiece.cpp" line="106"/>
         <source>%1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65,113 +65,113 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="79"/>
+        <location filename="view.ui" line="78"/>
         <source>&amp;Settings</source>
         <oldsource>Setti&amp;ngs</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="83"/>
+        <location filename="view.ui" line="82"/>
         <source>Switch Application &amp;Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="95"/>
+        <location filename="view.ui" line="94"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="112"/>
+        <location filename="view.ui" line="111"/>
         <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="154"/>
+        <location filename="view.ui" line="153"/>
         <source>StepInfo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="173"/>
+        <location filename="view.ui" line="172"/>
         <source>&amp;Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="178"/>
+        <location filename="view.ui" line="177"/>
         <source>Show &amp;High Scores</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="187"/>
+        <location filename="view.ui" line="186"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="192"/>
+        <location filename="view.ui" line="191"/>
         <source>Show &amp;Optimal solution</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="203"/>
+        <location filename="view.ui" line="202"/>
         <source>Show &amp;Toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="208"/>
+        <location filename="view.ui" line="207"/>
         <source>&amp;Klotski Handbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="213"/>
+        <location filename="view.ui" line="212"/>
         <source>&amp;About Klotski</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="218"/>
+        <location filename="view.ui" line="217"/>
         <source>&amp;Chinese (Simplified)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="223"/>
+        <location filename="view.ui" line="222"/>
         <source>&amp;English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="241"/>
+        <location filename="view.ui" line="240"/>
         <source>&amp;Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="285"/>
+        <location filename="view.ui" line="284"/>
         <source>Select &amp;Level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="232"/>
+        <location filename="view.ui" line="231"/>
         <source>&amp;Restart</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="250"/>
+        <location filename="view.ui" line="249"/>
         <source>&amp;Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="253"/>
+        <location filename="view.ui" line="252"/>
         <source>Ctrl+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="262"/>
+        <location filename="view.ui" line="261"/>
         <source>&amp;Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="265"/>
+        <location filename="view.ui" line="264"/>
         <source>Ctrl+Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.ui" line="276"/>
+        <location filename="view.ui" line="275"/>
         <source>Show &amp;Statusbar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -201,45 +201,45 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="245"/>
-        <location filename="view.cpp" line="249"/>
+        <location filename="view.cpp" line="246"/>
+        <location filename="view.cpp" line="250"/>
         <source>You win!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="246"/>
+        <location filename="view.cpp" line="247"/>
         <source>Your take %1 steps to finish this level
 The best solution of this level takes %2 steps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="250"/>
+        <location filename="view.cpp" line="251"/>
         <source>Congratulations!
 You find the best solution!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="256"/>
+        <location filename="view.cpp" line="257"/>
         <source>Open Saved game</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="258"/>
-        <location filename="view.cpp" line="275"/>
+        <location filename="view.cpp" line="259"/>
+        <location filename="view.cpp" line="276"/>
         <source>Klotski Save Files (*.%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="285"/>
+        <location filename="view.cpp" line="286"/>
         <source>About Klotski</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="286"/>
+        <location filename="view.cpp" line="287"/>
         <source>Developed by
 	Yinfeng Lin
 	Nianyi Wang
-	Zhuanjie Ma
+	Zuanjie Ma
 	Yaodanjun Ren
 	Yutong Deng
 Github: github.com/0yinf/klotski
@@ -247,19 +247,19 @@ Using Qt in LGPLv3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="266"/>
+        <location filename="view.cpp" line="267"/>
         <source>&quot;%1&quot; can&apos;t be find or is not a file</source>
         <oldsource>&quot;%1&quot; can&apos;t be find or is not a file </oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="268"/>
-        <location filename="view.cpp" line="281"/>
+        <location filename="view.cpp" line="269"/>
+        <location filename="view.cpp" line="282"/>
         <source>No file specified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view.cpp" line="273"/>
+        <location filename="view.cpp" line="274"/>
         <source>Open Save file</source>
         <translation type="unfinished"></translation>
     </message>

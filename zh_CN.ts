@@ -4,7 +4,7 @@
 <context>
     <name>GraphicsPiece</name>
     <message>
-        <location filename="graphicspiece.cpp" line="100"/>
+        <location filename="graphicspiece.cpp" line="106"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
@@ -76,7 +76,7 @@
         <translation type="vanished">&amp;设置</translation>
     </message>
     <message>
-        <location filename="view.ui" line="83"/>
+        <location filename="view.ui" line="82"/>
         <source>Switch Application &amp;Language</source>
         <translation>切换语言(&amp;L)</translation>
     </message>
@@ -85,77 +85,77 @@
         <translation type="vanished">帮助</translation>
     </message>
     <message>
-        <location filename="view.ui" line="79"/>
+        <location filename="view.ui" line="78"/>
         <source>&amp;Settings</source>
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="95"/>
+        <location filename="view.ui" line="94"/>
         <source>&amp;Help</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="112"/>
+        <location filename="view.ui" line="111"/>
         <source>toolBar</source>
         <translation>工具栏</translation>
     </message>
     <message>
-        <location filename="view.ui" line="154"/>
+        <location filename="view.ui" line="153"/>
         <source>StepInfo</source>
         <translation>步数信息</translation>
     </message>
     <message>
-        <location filename="view.ui" line="173"/>
+        <location filename="view.ui" line="172"/>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="178"/>
+        <location filename="view.ui" line="177"/>
         <source>Show &amp;High Scores</source>
         <translation>显示高分榜(&amp;H)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="187"/>
+        <location filename="view.ui" line="186"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="192"/>
+        <location filename="view.ui" line="191"/>
         <source>Show &amp;Optimal solution</source>
         <translation>显示最优解(&amp;O)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="203"/>
+        <location filename="view.ui" line="202"/>
         <source>Show &amp;Toolbar</source>
         <translation>显示工具栏(&amp;T)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="208"/>
+        <location filename="view.ui" line="207"/>
         <source>&amp;Klotski Handbook</source>
         <translation>华容道指南(&amp;K)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="213"/>
+        <location filename="view.ui" line="212"/>
         <source>&amp;About Klotski</source>
         <translation>关于华容道(&amp;A)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="218"/>
+        <location filename="view.ui" line="217"/>
         <source>&amp;Chinese (Simplified)</source>
         <translation>简体中文(&amp;C)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="223"/>
+        <location filename="view.ui" line="222"/>
         <source>&amp;English</source>
         <translation>英文(&amp;E)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="241"/>
+        <location filename="view.ui" line="240"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="285"/>
+        <location filename="view.ui" line="284"/>
         <source>Select &amp;Level</source>
         <translation>选择关卡(&amp;L)</translation>
     </message>
@@ -164,7 +164,7 @@
         <translation type="vanished">中文（繁体）</translation>
     </message>
     <message>
-        <location filename="view.ui" line="232"/>
+        <location filename="view.ui" line="231"/>
         <source>&amp;Restart</source>
         <translation>重新开始(&amp;R)</translation>
     </message>
@@ -173,27 +173,27 @@
         <translation type="vanished">新关卡</translation>
     </message>
     <message>
-        <location filename="view.ui" line="250"/>
+        <location filename="view.ui" line="249"/>
         <source>&amp;Undo</source>
         <translation>撤销(&amp;U)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="253"/>
+        <location filename="view.ui" line="252"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="view.ui" line="262"/>
+        <location filename="view.ui" line="261"/>
         <source>&amp;Redo</source>
         <translation>重做(&amp;R)</translation>
     </message>
     <message>
-        <location filename="view.ui" line="265"/>
+        <location filename="view.ui" line="264"/>
         <source>Ctrl+Y</source>
         <translation>Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="view.ui" line="276"/>
+        <location filename="view.ui" line="275"/>
         <source>Show &amp;Statusbar</source>
         <translation>显示状态栏(&amp;S)</translation>
     </message>
@@ -235,36 +235,56 @@
         <translation>打开文件失败</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="245"/>
-        <location filename="view.cpp" line="249"/>
+        <location filename="view.cpp" line="246"/>
+        <location filename="view.cpp" line="250"/>
         <source>You win!</source>
         <translation>你赢了！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="246"/>
+        <location filename="view.cpp" line="247"/>
         <source>Your take %1 steps to finish this level
 The best solution of this level takes %2 steps</source>
-        <translation>你用了%1步完成本关\n本关最优解为%2步</translation>
+        <translation>你用了%1步完成本关
+本关最优解为%2步</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="250"/>
+        <location filename="view.cpp" line="251"/>
         <source>Congratulations!
 You find the best solution!</source>
-        <translation>恭喜，你找到了最优解！</translation>
+        <translation>恭喜！
+你找到了最优解！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="258"/>
-        <location filename="view.cpp" line="275"/>
+        <location filename="view.cpp" line="259"/>
+        <location filename="view.cpp" line="276"/>
         <source>Klotski Save Files (*.%1)</source>
         <translation>华容道存档文件 (*.%1)</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="285"/>
+        <location filename="view.cpp" line="286"/>
         <source>About Klotski</source>
         <translation>关于华容道</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="286"/>
+        <location filename="view.cpp" line="287"/>
+        <source>Developed by
+	Yinfeng Lin
+	Nianyi Wang
+	Zuanjie Ma
+	Yaodanjun Ren
+	Yutong Deng
+Github: github.com/0yinf/klotski
+Using Qt in LGPLv3</source>
+        <translation>开发者：
+	林吟风
+	王年翼
+	马钻杰
+	任姚丹珺
+	邓宇彤
+GitHub： github.com/0yinf/klotski
+使用 LGPL 协议的 Qt</translation>
+    </message>
+    <message>
         <source>Developed by
 	Yinfeng Lin
 	Nianyi Wang
@@ -273,7 +293,7 @@ You find the best solution!</source>
 	Yutong Deng
 Github: github.com/0yinf/klotski
 Using Qt in LGPLv3</source>
-        <translation>开发者：
+        <translation type="vanished">开发者：
 	林吟风
 	王年翼
 	马钻杰
@@ -293,7 +313,7 @@ The best solution only takes %2 steps</source>
         <translation type="vanished">祝贺！你找到了最优解法！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="256"/>
+        <location filename="view.cpp" line="257"/>
         <source>Open Saved game</source>
         <translation>打开存档</translation>
     </message>
@@ -302,19 +322,19 @@ The best solution only takes %2 steps</source>
         <translation type="vanished">华容道存档(*.klotski)</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="266"/>
+        <location filename="view.cpp" line="267"/>
         <source>&quot;%1&quot; can&apos;t be find or is not a file</source>
         <oldsource>&quot;%1&quot; can&apos;t be find or is not a file </oldsource>
         <translation>&quot;%1&quot; 不是一个有效的文件</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="268"/>
-        <location filename="view.cpp" line="281"/>
+        <location filename="view.cpp" line="269"/>
+        <location filename="view.cpp" line="282"/>
         <source>No file specified</source>
         <translation>没有选择文件</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="273"/>
+        <location filename="view.cpp" line="274"/>
         <source>Open Save file</source>
         <translation>打开存档文件</translation>
     </message>
