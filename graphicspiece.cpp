@@ -215,6 +215,9 @@ void GraphicsPiece::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << this << "mousePressEvent" << event->button();
 }
 void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+    if (in_animation_) {
+        return;
+    }
     if (event->button() & Qt::LeftButton) {
         QGraphicsObject::mouseMoveEvent(event);
         return;
@@ -281,7 +284,9 @@ void GraphicsPiece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
     pressed_ = false;
     update();
-    applyMove(Move(-1, 0, 0));
+    if (!in_animation_) {
+        applyMove(Move(-1, 0, 0));
+    }
     qDebug() << this << "mouseReleaseEvent" << event->button();
 }
 void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
