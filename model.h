@@ -33,6 +33,8 @@ signals:
 
     void savedToFile(bool successed);
 
+    void isValidPieces(bool is_valid);
+
 public slots:
     /* emit changed for everything */
     void onViewRequireDataRefresh();
@@ -55,6 +57,8 @@ public slots:
     /* save to file */
     void onSaveToFile(const QString & file_name);
 
+    void onPieceRotated(int index);
+
 private:
     /**/
     void load(const QString &file_name);
@@ -70,6 +74,7 @@ private:
     void incCurrentMoveIndex();
     void decCurrentMoveIndex();
     void setCurrentMoveIndex(int current_move);
+    void validatePieces();
 
     QString file_name_;
     QString level_name_;

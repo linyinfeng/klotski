@@ -336,3 +336,38 @@ void Model::setCurrentMoveIndex(int current_move) {
     qDebug() << "[emit] currentMoveIndexChanged(current_move_index_)";
     emit currentMoveIndexChanged(current_move_index_);
 }
+
+/* check if the pieces is correctly edited */
+void Model::validatePieces()
+{
+    Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
+    for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
+    {
+        int x, y;
+        x = pieces_[i].position().x();
+        y = pieces_[i].position().y();
+        if(x >= 0 && y >= 0 && y + pieces_[i].size().height() <= kVerticalUnit && x + pieces_[i].size().width() <= kHorizontalUnit)
+        {for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
+            for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
+                if(matrix.at(j,k) == 0) {
+                    matrix.at(j, k) = 1;
+                } else {
+                    emit isValidPieces(false);
+                    return;
+                }
+            }
+          }
+        } else{
+            emit isValidPieces(false);
+            return;
+        }
+
+    }
+    emit isValidPieces(true);
+}
+
+void Model::onPieceRotated(int index){
+    int temp = pieces_[index].size().width();
+
+
+}
