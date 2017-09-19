@@ -43,5 +43,5 @@ SOURCES += common.cpp \
     move.cpp \
     piece.cpp
 RESOURCES += resources.qrc
-TRANSLATIONS += klotski.ts zh_CN.ts
+TRANSLATIONS += zh_CN.ts
 RC_ICONS = klotski.ico

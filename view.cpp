@@ -195,7 +195,7 @@ void View::onSavedToFile(bool successed) {
     if (successed) {
         ui->statusBar->showMessage(tr("Game saved"));
     } else {
-        QMessageBox::warning(this, tr("Warning"), tr("Failed to open file"));
+        QMessageBox::warning(this, tr("Warning"), tr("Failed to save file!"));
     }
 }
 
@@ -418,12 +418,14 @@ void View::showHandbook() {
 void View::toggleEditMode() {
     if (edit_mode_) {
         edit_mode_ = false;
-        emit editModeExited();
     } else {
         edit_mode_ = true;
     }
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
         graphics_piece->setEditMode(edit_mode_);
         graphics_piece->clearValidMoveDirection();
+    }
+    if (!edit_mode_) {
+        emit editModeExited();
     }
 }
