@@ -55,6 +55,10 @@ public slots:
     /* save to file */
     void onSaveToFile(const QString & file_name);
 
+    /* edit mode */
+    void onPieceRotated(int index);
+    void onEditModeExited();
+
 private:
     /**/
     void load(const QString &file_name);

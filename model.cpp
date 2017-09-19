@@ -130,6 +130,25 @@ void Model::onLoadFile(const QString & file_name){
         qDebug() << "Failed to open file";
     }
 }
+void Model::onPieceRotated(int index) {
+    Piece &piece = pieces_[index];
+    QRect old_rect = piece.geometry();
+    piece = Piece(QRect(old_rect.x(), old_rect.y(), old_rect.height(), old_rect.width()));
+    qDebug() << "[EMIT] updateValidMoves()";
+    updateValidMoves(); // auto emitted
+}
+void Model::onEditModeExited() {
+    history_model_.reset();
+    current_move_index_ = -1;
+    original_pieces_ = pieces_;
+    step_count_ = 0;
+    best_step_count_ = 0;
+    level_name_ = tr("Undefined");
+    valid_moves_.clear();
+
+    onViewRequireDataRefresh();
+}
+
 void Model::onReset() {
     qDebug() << "Model::onReload";
     pieces_ = original_pieces_;

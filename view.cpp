@@ -65,9 +65,6 @@ View::View(QWidget *parent) :
     connect(ui->actionKlotski_Handbook, &QAction::triggered, this, &View::showHandbook);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
-
-    connect(ui->actionEdit_Mode, &QAction::triggered, this, &View::toggleEditMode);
-
     qDebug() << "Resize View at View created";
     resizeView();
 }
@@ -136,6 +133,7 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
                         getPieceBackgroundImage(graphics_piece->index(), graphics_piece->piece())
             );
         }
+        graphics_piece->setEditMode(edit_mode_);
         connect(graphics_piece, &GraphicsPiece::syncMove, this, &View::syncMove);
         connect(graphics_piece, &GraphicsPiece::addAnimation, this, &View::addSequencedAnimation);
         connect(graphics_piece, &GraphicsPiece::pieceRotated, this, &View::pieceRotated);
@@ -304,6 +302,14 @@ void View::dropEvent(QDropEvent *event) {
     emit loadFile(event->mimeData()->urls()[0].toLocalFile());
 }
 
+void View::keyPressEvent(QKeyEvent *event) {
+    QMainWindow::keyPressEvent(event);
+    qDebug() << event->modifiers() << event->key();
+    if (event->modifiers() & Qt::ShiftModifier && event->key() == Qt::Key_F11) {
+        toggleEditMode();
+    }
+}
+
 void View::onFinish() {
     qDebug() << "Finish";
     if (step_count_ > best_step_count_)
@@ -412,7 +418,12 @@ void View::showHandbook() {
 void View::toggleEditMode() {
     if (edit_mode_) {
         edit_mode_ = false;
+        emit editModeExited();
     } else {
         edit_mode_ = true;
+    }
+    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+        graphics_piece->setEditMode(edit_mode_);
+        graphics_piece->clearValidMoveDirection();
     }
 }

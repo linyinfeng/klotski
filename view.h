@@ -59,6 +59,8 @@ signals:
 
     /* edit mode */
     void pieceRotated(int index);
+    /* call model clean history and step */
+    void editModeExited();
 
 public slots:
     /* update piece, generate graphics pieces */
@@ -104,6 +106,7 @@ protected:
     /* drop to open file */
     virtual void dragEnterEvent(QDragEnterEvent *event) override;
     virtual void dropEvent(QDropEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
     void onLoadOptimalSolution();

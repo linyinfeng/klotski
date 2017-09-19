@@ -296,10 +296,10 @@
   </action>
   <action name="actionEdit_Mode">
    <property name="text">
-    <string>Edit Mode</string>
+    <string>&amp;Edit Mode(Experimental)</string>
    </property>
    <property name="shortcut">
-    <string>Shift+F11</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
  </widget>

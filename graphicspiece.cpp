@@ -153,7 +153,8 @@ void GraphicsPiece::scaleBackgroundImageToBrush() {
 
 void GraphicsPiece::setEditMode(bool edit_mode) {
     edit_mode_ = edit_mode;
-//    update();
+    addValidMoveDirection(Move()); // force refresh valid moves
+    update();
 }
 
 QRectF GraphicsPiece::boundingRect() const {
@@ -317,7 +318,9 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
         x = can_move_right_ ? 1 : 0;
         break;
     case Qt::Key_R:
-        rotatePiece();
+        if (edit_mode_) {
+            rotatePiece();
+        }
         break;
     }
 
@@ -340,20 +343,26 @@ void GraphicsPiece::focusOutEvent(QFocusEvent *event) {
 }
 
 void GraphicsPiece::clearValidMoveDirection() {
-    can_move_up_ = can_move_down_ = can_move_right_ = can_move_left_ = false;
+    if(!edit_mode_) {
+        can_move_up_ = can_move_down_ = can_move_right_ = can_move_left_ = false;
+    }
     qDebug() << "Piece" << index_ << "clearValidMoveDirection";
     update();
 }
 void GraphicsPiece::addValidMoveDirection(const Move &valid_move) {
     qDebug() << "Piece" << index_ << "adding valid move direction";
-    if (valid_move.y() == -1)
-        can_move_up_ = true;
-    else if (valid_move.y() == 1)
-        can_move_down_ = true;
-    else if (valid_move.x() == -1)
-        can_move_left_ = true;
-    else if (valid_move.x() == 1)
-        can_move_right_ = true;
+    if(!edit_mode_) {
+        if (valid_move.y() == -1)
+            can_move_up_ = true;
+        else if (valid_move.y() == 1)
+            can_move_down_ = true;
+        else if (valid_move.x() == -1)
+            can_move_left_ = true;
+        else if (valid_move.x() == 1)
+            can_move_right_ = true;
+    } else {
+        can_move_down_ = can_move_right_ = can_move_left_ = can_move_up_ = true;
+    }
     update();
 }
 
