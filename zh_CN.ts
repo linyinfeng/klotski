@@ -297,7 +297,7 @@ All picture are from Koei Tecmo Games&apos;s
 	Romance of the Three Kingdoms 13
 Using Qt in LGPLv3
 This software should not be used for any commercial purposes</source>
-        <translation type="unfinished">开发者：
+        <translation>开发者：
 	林吟风
 	王年翼
 	马钻杰
