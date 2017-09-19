@@ -366,8 +366,3 @@ void Model::validatePieces()
     emit isValidPieces(true);
 }
 
-void Model::onPieceRotated(int index){
-    int temp = pieces_[index].size().width();
-
-
-}

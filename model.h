@@ -57,7 +57,7 @@ public slots:
     /* save to file */
     void onSaveToFile(const QString & file_name);
 
-    void onPieceRotated(int index);
+
 
 private:
     /**/
