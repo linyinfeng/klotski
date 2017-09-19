@@ -338,7 +338,9 @@ void View::showAboutDialog() {
            "\tYaodanjun Ren\n"
            "\tYutong Deng\n"
            "Github: github.com/0yinf/klotski\n"
-           "Using Qt in LGPLv3"));
+           "All picture are from Koei Tecmo Games's Romance of the Three Kingdoms 13\n"
+           "Using Qt in LGPLv3\n"
+           "This software should not be used for any commercial purposes"));
 }
 
 void View::addSequencedAnimation(QPropertyAnimation *animation) {

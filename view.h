@@ -109,13 +109,13 @@ private slots:
     void showAboutDialog();
     /* do when finish button clicked */
     void onFinish();
-
     /* animation control */
     void addSequencedAnimation(QPropertyAnimation *animation);
     void onAnimationGroupFinished();
-
     /* set skins */
     void onToggleSkins(bool use_skin);
+    /* load optimal solution save */
+//    void onLoadOptimalSolution();
 
 private:
     /* the main resize function */
