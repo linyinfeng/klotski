@@ -294,6 +294,14 @@
     <string>Toggle Skins</string>
    </property>
   </action>
+  <action name="actionEdit_Mode">
+   <property name="text">
+    <string>Edit Mode</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F11</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

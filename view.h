@@ -57,6 +57,9 @@ signals:
     void changeTranslateToEnglish();
     void changeTranslateToChineseSimplified();
 
+    /* edit mode */
+    void pieceRotated(int index);
+
 public slots:
     /* update piece, generate graphics pieces */
     void updatePieces(const std::vector<Piece> &pieces);
@@ -119,6 +122,8 @@ private slots:
     void onToggleSkins(bool use_skin);
     /* show handbook */
     void showHandbook();
+    /* edit mode */
+    void toggleEditMode();
 
 private:
     /* the main resize function */
@@ -140,6 +145,7 @@ private:
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
     bool use_skins_;
+    bool edit_mode_;
 
     QSequentialAnimationGroup *animation_group_;
 

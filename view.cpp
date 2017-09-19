@@ -24,6 +24,7 @@ View::View(QWidget *parent) :
     ui(new Ui::View),
     level_selector(new LevelSelector),
     use_skins_(false),
+    edit_mode_(false),
     animation_group_(nullptr),
     step_count_(0),
     best_step_count_(0)
@@ -64,6 +65,8 @@ View::View(QWidget *parent) :
     connect(ui->actionKlotski_Handbook, &QAction::triggered, this, &View::showHandbook);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
+
+    connect(ui->actionEdit_Mode, &QAction::triggered, this, &View::toggleEditMode);
 
     qDebug() << "Resize View at View created";
     resizeView();
@@ -128,9 +131,6 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
     for (int i = 0; i < size; ++i) {
         GraphicsPiece *graphics_piece = new GraphicsPiece(i, pieces[i]);
         graphics_pieces_.push_back(graphics_piece);
-        // Image
-        // default images
-//        graphics_piece->setBackgroundImage(getPieceBackgroundImage(i, pieces[i]));
         if (use_skins_) {
             graphics_piece->setBackgroundImage(
                         getPieceBackgroundImage(graphics_piece->index(), graphics_piece->piece())
@@ -138,6 +138,7 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
         }
         connect(graphics_piece, &GraphicsPiece::syncMove, this, &View::syncMove);
         connect(graphics_piece, &GraphicsPiece::addAnimation, this, &View::addSequencedAnimation);
+        connect(graphics_piece, &GraphicsPiece::pieceRotated, this, &View::pieceRotated);
         scene_->addItem(graphics_piece);
         graphics_piece->onSceneResize();
     }
@@ -406,4 +407,12 @@ void View::showHandbook() {
     QDesktopServices::openUrl(QUrl(
         QString("file:///") + QCoreApplication::applicationDirPath() + "/help/index.html")
     );
+}
+
+void View::toggleEditMode() {
+    if (edit_mode_) {
+        edit_mode_ = false;
+    } else {
+        edit_mode_ = true;
+    }
 }
