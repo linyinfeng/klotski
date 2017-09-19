@@ -113,6 +113,8 @@ void View::updateStepCountInfo() {
 }
 
 void View::updatePieces(const std::vector<Piece> &pieces) {
+    if (animation_group_)
+        animation_group_->deleteLater();
     scene_->clear();
     graphics_pieces_.clear();
     int size = pieces.size();
