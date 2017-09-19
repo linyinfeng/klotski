@@ -31,7 +31,7 @@ HEADERS += common.h \
            view.h \
            levelselector.h
 FORMS += view.ui \
-    levelselector.ui
+         levelselector.ui
 SOURCES += common.cpp \
            graphicspiece.cpp \
            historymodel.cpp \
@@ -39,9 +39,9 @@ SOURCES += common.cpp \
            main.cpp \
            model.cpp \
            view.cpp \
-    levelselector.cpp \
-    move.cpp \
-    piece.cpp
-RESOURCES += resources.qrc
+           levelselector.cpp \
+           move.cpp \
+           piece.cpp
+RESOURCES +=    resources.qrc
 TRANSLATIONS += zh_CN.ts
-RC_ICONS = klotski.ico
+RC_ICONS =      klotski.ico
