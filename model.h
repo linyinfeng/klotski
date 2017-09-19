@@ -15,6 +15,7 @@ public:
 // Interface
 signals:
     void levelNameChanged(const QString &name);
+    void fileNameChanged(const QString &file);
 
     void canWinStateChanged(bool can_win);
     void canUndoStateChanged(bool can_undo);
@@ -70,6 +71,7 @@ private:
     void decCurrentMoveIndex();
     void setCurrentMoveIndex(int current_move);
 
+    QString file_name_;
     QString level_name_;
     int best_step_count_;
     std::vector<Piece> pieces_;

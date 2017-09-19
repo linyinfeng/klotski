@@ -53,6 +53,7 @@ View::View(QWidget *parent) :
 
     connect(ui->actionOpen, &QAction::triggered, this, &View::promoteToOpenFile);
     connect(ui->actionSave, &QAction::triggered, this, &View::promoteToSaveFile);
+    connect(ui->actionShow_Optimal_solution, &QAction::triggered, this, &View::onLoadOptimalSolution);
 
     connect(ui->historyView, &HistoryView::userSelectedHistory, this, &View::userSelectedHistory);
 
@@ -173,8 +174,13 @@ void View::updateValidMoves(const std::vector<Move> &valid_moves) {
     }
 }
 
-void View::updateWindowTitle(const QString &additional_title) {
-    this->setWindowTitle(tr("Klotski - %1").arg(additional_title));
+void View::updateLevelName(const QString &level_name) {
+    level_name_ = level_name;
+    this->setWindowTitle(tr("Klotski - %1").arg(level_name_));
+}
+void View::updateFileName(const QString &file_name) {
+    qDebug() << "update file name to" << file_name;
+    file_name_ = file_name;
 }
 
 void View::onSavedToFile(bool successed) {
@@ -378,4 +384,10 @@ void View::onAnimationGroupFinished() {
     for (GraphicsPiece *piece : graphics_pieces_) {
         piece->animationFinished();
     }
+}
+
+void View::onLoadOptimalSolution() {
+    QFileInfo file_info(file_name_);
+    qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
+    loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
 }

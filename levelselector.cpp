@@ -9,8 +9,6 @@
 #include <algorithm>
 #include <QDebug>
 
-const QString kDefaultLevelDir = ":/resources/levels";
-
 LevelSelector::LevelSelector(QWidget *parent)
     : QWidget(parent), ui(new Ui::levelSelectorView)
 {
