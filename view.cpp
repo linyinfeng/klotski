@@ -113,8 +113,13 @@ void View::updateStepCountInfo() {
 }
 
 void View::updatePieces(const std::vector<Piece> &pieces) {
-    if (animation_group_)
-        animation_group_->deleteLater();
+    if (animation_group_) {
+        if (animation_group_->state() == QSequentialAnimationGroup::Running ||
+                animation_group_->state() == QSequentialAnimationGroup::Paused) {
+            animation_group_->stop();
+        }
+        animation_group_->clear();
+    }
     scene_->clear();
     graphics_pieces_.clear();
     int size = pieces.size();
@@ -237,6 +242,7 @@ void View::resizeView() {
     ui->graphicsView->setGeometry(view_rect);
     qDebug() << "ui->graphicsView->setGeometry" << view_rect;
     scene_->setSceneRect(QRectF(QPointF(0, 0), view_rect.size()));
+    qDebug() << "ui->graphicsView->fitInView(" << scene_->sceneRect() << ")";
     ui->graphicsView->fitInView(scene_->sceneRect());
 
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
