@@ -47,7 +47,7 @@ void Model::onViewRequireDataRefresh() {
 
 void Model::onSaveToFile(const QString & file_name){
     QFile file(file_name);
-    if (file.open(QIODevice::WriteOnly)) {
+    if (file.open(QIODevice::WriteOnly) && isPiecesValid()) {
         QTextStream stream(&file);
         stream.setCodec(QTextCodec::codecForName("UTF-8"));
         stream.setGenerateByteOrderMark(true);
@@ -138,15 +138,9 @@ void Model::onPieceRotated(int index) {
     updateValidMoves(); // auto emitted
 }
 void Model::onEditModeExited() {
-    history_model_.reset();
-    current_move_index_ = -1;
     original_pieces_ = pieces_;
-    step_count_ = 0;
-    best_step_count_ = 0;
-    level_name_ = tr("Undefined");
-    valid_moves_.clear();
 
-    onViewRequireDataRefresh();
+    onReset();
 }
 
 void Model::onReset() {
@@ -357,7 +351,7 @@ void Model::setCurrentMoveIndex(int current_move) {
 }
 
 /* check if the pieces is correctly edited */
-void Model::validatePieces()
+bool Model::isPiecesValid()
 {
     Matrix<int> matrix(kHorizontalUnit, kVerticalUnit);
     for(int i = 0; i < static_cast<int>(pieces_.size()); i++)
@@ -366,22 +360,22 @@ void Model::validatePieces()
         x = pieces_[i].position().x();
         y = pieces_[i].position().y();
         if(x >= 0 && y >= 0 && y + pieces_[i].size().height() <= kVerticalUnit && x + pieces_[i].size().width() <= kHorizontalUnit)
-        {for(int j = x; j <= x + pieces_[i].size().width() - 1; j++){
-            for(int k = y; k <= y + pieces_[i].size().height() - 1; k++){
-                if(matrix.at(j,k) == 0) {
-                    matrix.at(j, k) = 1;
-                } else {
-                    emit isValidPieces(false);
-                    return;
+        {
+            for(int j = x; j <= x + pieces_[i].size().width() - 1; j++)
+            {
+                for(int k = y; k <= y + pieces_[i].size().height() - 1; k++)
+                {
+                    if(matrix.at(j,k) == 0) {
+                        matrix.at(j, k) = 1;
+                    } else {
+                        return false;
+                    }
                 }
             }
-          }
-        } else{
-            emit isValidPieces(false);
-            return;
+        } else {
+            return false;
         }
-
     }
-    emit isValidPieces(true);
+    return true;
 }
 
