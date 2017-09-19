@@ -71,6 +71,8 @@ private:
     void decCurrentMoveIndex();
     void setCurrentMoveIndex(int current_move);
 
+    bool validatePieces();
+
     QString file_name_;
     QString level_name_;
     int best_step_count_;
