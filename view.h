@@ -57,6 +57,11 @@ signals:
     void changeTranslateToEnglish();
     void changeTranslateToChineseSimplified();
 
+    /* edit mode */
+    void pieceRotated(int index);
+    /* call model clean history and step */
+    void editModeExited();
+
 public slots:
     /* update piece, generate graphics pieces */
     void updatePieces(const std::vector<Piece> &pieces);
@@ -101,6 +106,7 @@ protected:
     /* drop to open file */
     virtual void dragEnterEvent(QDragEnterEvent *event) override;
     virtual void dropEvent(QDropEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
     void onLoadOptimalSolution();
@@ -117,7 +123,10 @@ private slots:
     void onAnimationGroupFinished();
     /* set skins */
     void onToggleSkins(bool use_skin);
-    /* load optimal solution save */
+    /* show handbook */
+    void showHandbook();
+    /* edit mode */
+    void toggleEditMode();
 
 private:
     /* the main resize function */
@@ -139,6 +148,7 @@ private:
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
     bool use_skins_;
+    bool edit_mode_;
 
     QSequentialAnimationGroup *animation_group_;
 

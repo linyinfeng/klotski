@@ -57,7 +57,9 @@ public slots:
     /* save to file */
     void onSaveToFile(const QString & file_name);
 
-
+    /* edit mode */
+    void onPieceRotated(int index);
+    void onEditModeExited();
 
 private:
     /**/
@@ -75,6 +77,8 @@ private:
     void decCurrentMoveIndex();
     void setCurrentMoveIndex(int current_move);
     void validatePieces();
+
+    bool validatePieces();
 
     QString file_name_;
     QString level_name_;

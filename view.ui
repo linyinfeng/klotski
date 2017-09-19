@@ -294,6 +294,14 @@
     <string>Toggle Skins</string>
    </property>
   </action>
+  <action name="actionEdit_Mode">
+   <property name="text">
+    <string>&amp;Edit Mode(Experimental)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

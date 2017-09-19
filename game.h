@@ -52,6 +52,8 @@ public:
         QObject::connect(view, &View::reset,                    model, &Model::onReset);
         QObject::connect(view, &View::loadFile,                 model, &Model::onLoadFile);
         QObject::connect(view, &View::saveToFile,               model, &Model::onSaveToFile);
+        QObject::connect(view, &View::pieceRotated,             model, &Model::onPieceRotated);
+        QObject::connect(view, &View::editModeExited,           model, &Model::onEditModeExited);
 
         QObject::connect(view, &View::changeTranslateToChineseSimplified,
                          this, &Game::onChangeTranslateToChineseSimplified);
@@ -62,7 +64,7 @@ public:
     void start() {
         connect();
         view->refresh();
-        view->forceResize();
+//        view->forceResize();
         view->show();
     }
 

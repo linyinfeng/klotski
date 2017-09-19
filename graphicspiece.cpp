@@ -29,6 +29,8 @@ GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
     in_animation_ = false;
     have_skin_ = false;
 
+    edit_mode_ = false;
+
     virtual_initial_mouse_pos_ = QPointF(0, 0);
     piece_base_pos_ = QPointF(0, 0);
 
@@ -149,6 +151,12 @@ void GraphicsPiece::scaleBackgroundImageToBrush() {
     background_brush_ = background_image_.scaled(boundingRect().size().toSize(), Qt::KeepAspectRatioByExpanding);
 }
 
+void GraphicsPiece::setEditMode(bool edit_mode) {
+    edit_mode_ = edit_mode;
+    addValidMoveDirection(Move()); // force refresh valid moves
+    update();
+}
+
 QRectF GraphicsPiece::boundingRect() const {
     return QRectF(QPointF(0, 0), piece_.size() * scale_);
     // ignore free space for easy drawing
@@ -211,6 +219,9 @@ void GraphicsPiece::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() & Qt::LeftButton) {
 //        moving_direction_ = Direction::invalid;
         virtual_initial_mouse_pos_ = event->scenePos();
+    }
+    if (edit_mode_ && (event->button() & Qt::RightButton)) {
+        rotatePiece();
     }
     qDebug() << this << "mousePressEvent" << event->button();
 }
@@ -293,22 +304,6 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
     QGraphicsObject::keyPressEvent(event);
 
     int x = 0, y = 0;
-#ifdef IGNORE_VALID_MOVES
-    switch (event->key()) {
-    case Qt::Key_W: case Qt::Key_Up:
-        y = -1;
-        break;
-    case Qt::Key_S: case Qt::Key_Down:
-        y = 1;
-        break;
-    case Qt::Key_A: case Qt::Key_Left:
-        x = -1;
-        break;
-    case Qt::Key_D: case Qt::Key_Right:
-        x = 1;
-        break;
-    }
-#else
     switch (event->key()) {
     case Qt::Key_W: case Qt::Key_Up:
         y = can_move_up_ ? -1 : 0;
@@ -322,8 +317,12 @@ void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_D: case Qt::Key_Right:
         x = can_move_right_ ? 1 : 0;
         break;
+    case Qt::Key_R:
+        if (edit_mode_) {
+            rotatePiece();
+        }
+        break;
     }
-#endif
 
     qDebug() << "Keypress move" << x << y;
 
@@ -344,20 +343,26 @@ void GraphicsPiece::focusOutEvent(QFocusEvent *event) {
 }
 
 void GraphicsPiece::clearValidMoveDirection() {
-    can_move_up_ = can_move_down_ = can_move_right_ = can_move_left_ = false;
+    if(!edit_mode_) {
+        can_move_up_ = can_move_down_ = can_move_right_ = can_move_left_ = false;
+    }
     qDebug() << "Piece" << index_ << "clearValidMoveDirection";
     update();
 }
 void GraphicsPiece::addValidMoveDirection(const Move &valid_move) {
     qDebug() << "Piece" << index_ << "adding valid move direction";
-    if (valid_move.y() == -1)
-        can_move_up_ = true;
-    else if (valid_move.y() == 1)
-        can_move_down_ = true;
-    else if (valid_move.x() == -1)
-        can_move_left_ = true;
-    else if (valid_move.x() == 1)
-        can_move_right_ = true;
+    if(!edit_mode_) {
+        if (valid_move.y() == -1)
+            can_move_up_ = true;
+        else if (valid_move.y() == 1)
+            can_move_down_ = true;
+        else if (valid_move.x() == -1)
+            can_move_left_ = true;
+        else if (valid_move.x() == 1)
+            can_move_right_ = true;
+    } else {
+        can_move_down_ = can_move_right_ = can_move_left_ = can_move_up_ = true;
+    }
     update();
 }
 
@@ -400,4 +405,11 @@ void GraphicsPiece::animationFinished() {
 void GraphicsPiece::animationStarted() {
     in_animation_ = true;
     // auto update by animation
+}
+
+void GraphicsPiece::rotatePiece() {
+    QRect old_rect = piece_.geometry();
+    piece_ = Piece(QRect(old_rect.x(), old_rect.y(), old_rect.height(), old_rect.width()));
+    onSceneResize();
+    emit pieceRotated(index_);
 }

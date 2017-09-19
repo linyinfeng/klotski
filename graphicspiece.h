@@ -25,6 +25,7 @@ public:
     void animationStarted();
 
     void setBackgroundImage(const QImage &image);
+    void setEditMode(bool edit_mode);
 
     const Piece &piece() const;
     int index() const;
@@ -32,6 +33,8 @@ public:
 signals:
     void syncMove(const Move &move);
     void addAnimation(QPropertyAnimation *animation);
+
+    void pieceRotated(int index);
 
 public slots:
     void onSceneResize();
@@ -55,6 +58,8 @@ private:
     QPointF calcPosition(const Piece &piece);
     QPointF calcPosition(const QPoint &point);
 
+    void rotatePiece();
+
     void scaleBackgroundImageToBrush();
 
     bool can_move_up_;
@@ -72,6 +77,8 @@ private:
     bool pressed_;
     bool in_animation_;
     bool have_skin_;
+
+    bool edit_mode_;
 
     qreal scale_;
     QRectF rect_; // topLeft vertex is always (0, 0)

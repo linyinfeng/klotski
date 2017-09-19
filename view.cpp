@@ -14,6 +14,7 @@
 #include <QMimeData>
 #include <QList>
 #include <QUrl>
+#include <QDesktopServices>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -23,6 +24,7 @@ View::View(QWidget *parent) :
     ui(new Ui::View),
     level_selector(new LevelSelector),
     use_skins_(false),
+    edit_mode_(false),
     animation_group_(nullptr),
     step_count_(0),
     best_step_count_(0)
@@ -60,9 +62,9 @@ View::View(QWidget *parent) :
     connect(ui->actionEnglish, &QAction::triggered, this, &View::changeTranslateToEnglish);
     connect(ui->actionChinese_Simplified, &QAction::triggered, this, &View::changeTranslateToChineseSimplified);
     connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAboutDialog);
+    connect(ui->actionKlotski_Handbook, &QAction::triggered, this, &View::showHandbook);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
-
     qDebug() << "Resize View at View created";
     resizeView();
 }
@@ -113,24 +115,28 @@ void View::updateStepCountInfo() {
 }
 
 void View::updatePieces(const std::vector<Piece> &pieces) {
-    if (animation_group_)
-        animation_group_->deleteLater();
+    if (animation_group_) {
+        if (animation_group_->state() == QSequentialAnimationGroup::Running ||
+                animation_group_->state() == QSequentialAnimationGroup::Paused) {
+            animation_group_->stop();
+        }
+        animation_group_->clear();
+    }
     scene_->clear();
     graphics_pieces_.clear();
     int size = pieces.size();
     for (int i = 0; i < size; ++i) {
         GraphicsPiece *graphics_piece = new GraphicsPiece(i, pieces[i]);
         graphics_pieces_.push_back(graphics_piece);
-        // Image
-        // default images
-//        graphics_piece->setBackgroundImage(getPieceBackgroundImage(i, pieces[i]));
         if (use_skins_) {
             graphics_piece->setBackgroundImage(
                         getPieceBackgroundImage(graphics_piece->index(), graphics_piece->piece())
             );
         }
+        graphics_piece->setEditMode(edit_mode_);
         connect(graphics_piece, &GraphicsPiece::syncMove, this, &View::syncMove);
         connect(graphics_piece, &GraphicsPiece::addAnimation, this, &View::addSequencedAnimation);
+        connect(graphics_piece, &GraphicsPiece::pieceRotated, this, &View::pieceRotated);
         scene_->addItem(graphics_piece);
         graphics_piece->onSceneResize();
     }
@@ -237,6 +243,7 @@ void View::resizeView() {
     ui->graphicsView->setGeometry(view_rect);
     qDebug() << "ui->graphicsView->setGeometry" << view_rect;
     scene_->setSceneRect(QRectF(QPointF(0, 0), view_rect.size()));
+    qDebug() << "ui->graphicsView->fitInView(" << scene_->sceneRect() << ")";
     ui->graphicsView->fitInView(scene_->sceneRect());
 
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
@@ -293,6 +300,14 @@ void View::dragEnterEvent(QDragEnterEvent *event) {
 void View::dropEvent(QDropEvent *event) {
     qDebug() << "[emit] loadFile(event->mimeData()->urls()[0].toLocalFile())";
     emit loadFile(event->mimeData()->urls()[0].toLocalFile());
+}
+
+void View::keyPressEvent(QKeyEvent *event) {
+    QMainWindow::keyPressEvent(event);
+    qDebug() << event->modifiers() << event->key();
+    if (event->modifiers() & Qt::ShiftModifier && event->key() == Qt::Key_F11) {
+        toggleEditMode();
+    }
 }
 
 void View::onFinish() {
@@ -392,4 +407,23 @@ void View::onLoadOptimalSolution() {
     QFileInfo file_info(file_name_);
     qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
     loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
+}
+
+void View::showHandbook() {
+    QDesktopServices::openUrl(QUrl(
+        QString("file:///") + QCoreApplication::applicationDirPath() + "/help/index.html")
+    );
+}
+
+void View::toggleEditMode() {
+    if (edit_mode_) {
+        edit_mode_ = false;
+        emit editModeExited();
+    } else {
+        edit_mode_ = true;
+    }
+    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+        graphics_piece->setEditMode(edit_mode_);
+        graphics_piece->clearValidMoveDirection();
+    }
 }

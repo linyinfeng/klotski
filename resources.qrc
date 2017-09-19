@@ -32,5 +32,7 @@
         <file>resources/solutions/水泄不通(79).klotski</file>
         <file>resources/solutions/桃花园中(70).klotski</file>
         <file>resources/solutions/一路顺风(39).klotski</file>
+        <file>resources/levels/峰回路转(138).klotski</file>
+        <file>resources/solutions/峰回路转(138).klotski</file>
     </qresource>
 </RCC>
