@@ -117,7 +117,8 @@ private slots:
     void onAnimationGroupFinished();
     /* set skins */
     void onToggleSkins(bool use_skin);
-    /* load optimal solution save */
+    /* show handbook */
+    void showHandbook();
 
 private:
     /* the main resize function */

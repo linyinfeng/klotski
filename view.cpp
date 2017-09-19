@@ -14,6 +14,7 @@
 #include <QMimeData>
 #include <QList>
 #include <QUrl>
+#include <QDesktopServices>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -60,6 +61,7 @@ View::View(QWidget *parent) :
     connect(ui->actionEnglish, &QAction::triggered, this, &View::changeTranslateToEnglish);
     connect(ui->actionChinese_Simplified, &QAction::triggered, this, &View::changeTranslateToChineseSimplified);
     connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAboutDialog);
+    connect(ui->actionKlotski_Handbook, &QAction::triggered, this, &View::showHandbook);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
 
@@ -398,4 +400,10 @@ void View::onLoadOptimalSolution() {
     QFileInfo file_info(file_name_);
     qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
     loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
+}
+
+void View::showHandbook() {
+    QDesktopServices::openUrl(QUrl(
+        QString("file:///") + QCoreApplication::applicationDirPath() + "/help/index.html")
+    );
 }
