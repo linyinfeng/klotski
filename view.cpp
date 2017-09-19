@@ -411,6 +411,7 @@ void View::onLoadOptimalSolution() {
     QFileInfo file_info(file_name_);
     qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
     loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
+    userSelectedHistory(ui->historyView->model()->rowCount() - 1);
 }
 
 void View::showHandbook() {
