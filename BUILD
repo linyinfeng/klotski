@@ -10,4 +10,6 @@ to resources/translate
 Create ico file from
     icon/klotski_512.png
 to
-    icon/klotski.icon
+    icon/klotski.ico
+
+Copy extra resources to working directory
