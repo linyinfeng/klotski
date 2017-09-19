@@ -34,5 +34,13 @@
         <file>resources/solutions/一路顺风(39).klotski</file>
         <file>resources/levels/峰回路转(138).klotski</file>
         <file>resources/solutions/峰回路转(138).klotski</file>
+        <file>resources/levels/凤凰倒影(31).klotski</file>
+        <file>resources/levels/海阔天空(13).klotski</file>
+        <file>resources/levels/诸葛羽扇(16).klotski</file>
+        <file>resources/levels/逃之夭夭(26).klotski</file>
+        <file>resources/solutions/凤凰倒影(31).klotski</file>
+        <file>resources/solutions/海阔天空(13).klotski</file>
+        <file>resources/solutions/诸葛羽扇(16).klotski</file>
+        <file>resources/solutions/逃之夭夭(26).klotski</file>
     </qresource>
 </RCC>
