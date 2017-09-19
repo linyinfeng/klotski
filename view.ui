@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
+    <width>456</width>
     <height>450</height>
    </rect>
   </property>
@@ -52,7 +52,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>450</width>
+     <width>456</width>
      <height>23</height>
     </rect>
    </property>
@@ -86,6 +86,7 @@
     </widget>
     <addaction name="actionShow_Toolbar"/>
     <addaction name="actionShow_Statusbar"/>
+    <addaction name="actionShow_Dock_Information"/>
     <addaction name="separator"/>
     <addaction name="actionToggle_Skins"/>
     <addaction name="separator"/>
@@ -141,7 +142,7 @@
 }</string>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -309,6 +310,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionShow_Dock_Information">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Dock Infomation</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Dock Infomation</string>
    </property>
   </action>
  </widget>

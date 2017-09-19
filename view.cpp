@@ -52,6 +52,8 @@ View::View(QWidget *parent) :
 
     connect(ui->actionShow_Statusbar, &QAction::triggered, ui->statusBar,&QToolBar::setVisible);
     connect(ui->actionShow_Toolbar, &QAction::triggered, ui->toolBar, &QToolBar::setVisible);
+    connect(ui->actionShow_Dock_Information, &QAction::toggled, ui->dockWidgetGameInfo, &QDockWidget::setVisible);
+    connect(ui->dockWidgetGameInfo, &QDockWidget::visibilityChanged, ui->actionShow_Dock_Information, &QAction::setChecked);
 
     connect(ui->actionOpen, &QAction::triggered, this, &View::promoteToOpenFile);
     connect(ui->actionSave, &QAction::triggered, this, &View::promoteToSaveFile);
@@ -65,6 +67,7 @@ View::View(QWidget *parent) :
     connect(ui->actionKlotski_Handbook, &QAction::triggered, this, &View::showHandbook);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
+
     qDebug() << "Resize View at View created";
     resizeView();
 }
