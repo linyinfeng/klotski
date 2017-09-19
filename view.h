@@ -114,11 +114,16 @@ private slots:
     void addSequencedAnimation(QPropertyAnimation *animation);
     void onAnimationGroupFinished();
 
+    /* set skins */
+    void onToggleSkins(bool use_skin);
+
 private:
     /* the main resize function */
     void resizeView();
     /* update step count info label */
     void updateStepCountInfo();
+    /* get piece's brush */
+    QImage getPieceBackgroundImage(int index, const Piece &piece);
 
     /* define the unit button takes */
     static const double kFinishButtonVerticalUnit;
@@ -131,6 +136,7 @@ private:
 
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
+    bool use_skins_;
 
     QSequentialAnimationGroup *animation_group_;
 

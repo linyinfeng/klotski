@@ -22,6 +22,7 @@ View::View(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::View),
     level_selector(new LevelSelector),
+    use_skins_(false),
     animation_group_(nullptr),
     step_count_(0),
     best_step_count_(0)
@@ -44,6 +45,8 @@ View::View(QWidget *parent) :
     connect(ui->actionRedo, &QAction::triggered, this, &View::redo);
     connect(ui->actionRestart, &QAction::triggered, this, &View::reset);
     connect(ui->pushButtonFinish, &QPushButton::clicked, this, &View::onFinish);
+
+    connect(ui->actionToggle_Skins, &QAction::toggled, this, &View::onToggleSkins);
 
     connect(ui->actionShow_Statusbar, &QAction::triggered, ui->statusBar,&QToolBar::setVisible);
     connect(ui->actionShow_Toolbar, &QAction::triggered, ui->toolBar, &QToolBar::setVisible);
@@ -115,6 +118,14 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
     for (int i = 0; i < size; ++i) {
         GraphicsPiece *graphics_piece = new GraphicsPiece(i, pieces[i]);
         graphics_pieces_.push_back(graphics_piece);
+        // Image
+        // default images
+//        graphics_piece->setBackgroundImage(getPieceBackgroundImage(i, pieces[i]));
+        if (use_skins_) {
+            graphics_piece->setBackgroundImage(
+                        getPieceBackgroundImage(graphics_piece->index(), graphics_piece->piece())
+            );
+        }
         connect(graphics_piece, &GraphicsPiece::syncMove, this, &View::syncMove);
         connect(graphics_piece, &GraphicsPiece::addAnimation, this, &View::addSequencedAnimation);
         scene_->addItem(graphics_piece);
@@ -122,6 +133,36 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
     }
     qDebug() << "Level Loaded";
 }
+QImage View::getPieceBackgroundImage(int index, const Piece &piece) {
+    const static QString image_dir(QCoreApplication::applicationDirPath() + "/images/");
+    QImage image;
+    if (piece.size() == QSize(2, 2)) {
+        image.load(image_dir + "2x2.png");
+    } else if (piece.size() == QSize(1, 1)) {
+        image.load(image_dir + "1x1.png");
+    } else if (piece.size() == QSize(1, 2)) {
+        image.load(image_dir + QString("1x2/%1.png").arg(index));
+    } else if (piece.size() == QSize(2, 1)) {
+        image.load(image_dir + QString("2x1/%1.png").arg(index));
+    }
+    return image;
+}
+
+void View::onToggleSkins(bool use_skin) {
+    use_skins_ = use_skin;
+    if (use_skins_) {
+        for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+            graphics_piece->setBackgroundImage(getPieceBackgroundImage(graphics_piece->index(), graphics_piece->piece()));
+        }
+        scene_->setBackgroundBrush(QBrush(QColor(250, 235, 215)));
+    } else {
+        for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+            graphics_piece->setBackgroundImage(QImage());
+        }
+        scene_->setBackgroundBrush(QBrush(Qt::white));
+    }
+}
+
 void View::updateValidMoves(const std::vector<Move> &valid_moves) {
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
         graphics_piece->clearValidMoveDirection();

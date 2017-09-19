@@ -87,6 +87,8 @@
     <addaction name="actionShow_Toolbar"/>
     <addaction name="actionShow_Statusbar"/>
     <addaction name="separator"/>
+    <addaction name="actionToggle_Skins"/>
+    <addaction name="separator"/>
     <addaction name="menuSwitch_Application_Language"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -282,6 +284,14 @@
    </property>
    <property name="text">
     <string>Select &amp;Level</string>
+   </property>
+  </action>
+  <action name="actionToggle_Skins">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Toggle Skins</string>
    </property>
   </action>
  </widget>

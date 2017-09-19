@@ -27,6 +27,7 @@ GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
     pressed_ = false;
     focused_ = false;
     in_animation_ = false;
+    have_skin_ = false;
 
     virtual_initial_mouse_pos_ = QPointF(0, 0);
     piece_base_pos_ = QPointF(0, 0);
@@ -37,15 +38,29 @@ GraphicsPiece::GraphicsPiece(int index, const Piece &piece)
     qDebug() << "New GraphicsPiece" << index << piece_.geometry();
 }
 
+const Piece &GraphicsPiece::piece() const {
+    return piece_;
+}
+
+int GraphicsPiece::index() const {
+    return index_;
+}
+
 void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QPen pen;
+    painter->setBrush(background_brush_);
+    painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
 
+    QPen pen;
     pen.setColor(Qt::black);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setCapStyle(Qt::RoundCap);
+    pen.setColor(Qt::black);
+    pen.setJoinStyle(Qt::RoundJoin);
+    pen.setCapStyle(Qt::RoundCap);
+
     if (focused_) {
         pen.setWidth(3);
     } else {
@@ -54,21 +69,21 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     // Background
     painter->setPen(pen);
     if (pressed_)
-        painter->setBrush(QBrush(QColor(200, 200, 200)));
+        painter->setBrush(QColor(200, 200, 200, have_skin_ ? 64 : 128));
     else
-        painter->setBrush(QBrush(Qt::gray));
+        painter->setBrush(QColor(128, 128, 128, have_skin_ ? 64 : 128));
     painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
 
     // Arrows
     QRectF bounding_rect = boundingRect();
     if (!in_animation_) {
-        pen.setWidth(1);
-        painter->setPen(pen);
-        if (focused_) {
+        if (focused_ || have_skin_) {
             painter->setBrush(QBrush(Qt::white));
         } else {
             painter->setBrush(QBrush(Qt::black));
         }
+        pen.setWidth(0);
+        painter->setPen(pen);
         qreal free_space = scale_ * 0.05;
         if (can_move_up_) {
             QPolygonF polygon;
@@ -99,8 +114,13 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
             painter->drawPolygon(polygon);
         }
     }
-
     // Text
+    if (have_skin_) {
+        pen.setColor(Qt::white);
+    } else {
+        pen.setColor(Qt::black);
+    }
+    painter->setPen(pen);
     static QFont font("Helvetica", 20);
     QFontMetrics font_metrics(font);
     QSize text_size = font_metrics.size(Qt::TextSingleLine, tr("%1").arg(index_));
@@ -110,6 +130,22 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 bounding_rect.height() / 2 + text_size.height() / 2),
         QString("%1").arg(index_)
     );
+}
+
+void GraphicsPiece::setBackgroundImage(const QImage &image) {
+    if (image.isNull()) {
+        have_skin_ = false;
+        background_image_ = image;
+    } else {
+        have_skin_ = true;
+        background_image_ = image;
+        scaleBackgroundImageToBrush();
+    }
+    update();
+}
+
+void GraphicsPiece::scaleBackgroundImageToBrush() {
+    background_brush_ = background_image_.scaled(boundingRect().size().toSize(), Qt::KeepAspectRatioByExpanding);
 }
 
 QRectF GraphicsPiece::boundingRect() const {
@@ -144,6 +180,7 @@ void GraphicsPiece::onSceneResize() {
         rect_ = calcRect(piece_);
         piece_base_pos_ = calcPosition(piece_);
         setPos(piece_base_pos_);
+        scaleBackgroundImageToBrush();
 
         qDebug() << "GraphicsPiece" << index_ << "Resize boundingRect" << boundingRect() << "pos" << pos();
         update();
@@ -354,5 +391,5 @@ void GraphicsPiece::animationFinished() {
 }
 void GraphicsPiece::animationStarted() {
     in_animation_ = true;
-    // no update
+    // auto update by animation
 }

@@ -10,6 +10,8 @@
 #include <QFont>
 #include <QSequentialAnimationGroup>
 #include <QPropertyAnimation>
+#include <QBrush>
+#include <QImage>
 
 class GraphicsPiece : public QGraphicsObject
 {
@@ -21,6 +23,11 @@ public:
     void clearValidMoveDirection();
     void animationFinished();
     void animationStarted();
+
+    void setBackgroundImage(const QImage &image);
+
+    const Piece &piece() const;
+    int index() const;
 
 signals:
     void syncMove(const Move &move);
@@ -48,6 +55,8 @@ private:
     QPointF calcPosition(const Piece &piece);
     QPointF calcPosition(const QPoint &point);
 
+    void scaleBackgroundImageToBrush();
+
     bool can_move_up_;
     bool can_move_down_;
     bool can_move_left_;
@@ -62,9 +71,13 @@ private:
     bool hovered_;
     bool pressed_;
     bool in_animation_;
+    bool have_skin_;
 
     qreal scale_;
     QRectF rect_; // topLeft vertex is always (0, 0)
+
+    QImage background_image_;
+    QBrush background_brush_;
 
     Piece piece_;
     int index_;
