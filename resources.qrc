@@ -20,5 +20,17 @@
         <file>resources/levels/比翼横空(28).klotski</file>
         <file>resources/levels/水泄不通(79).klotski</file>
         <file>resources/levels/齐头并进(60).klotski</file>
+        <file>resources/solutions/比翼横空(28).klotski</file>
+        <file>resources/solutions/兵分三路(72).klotski</file>
+        <file>resources/solutions/层层设防二(120).klotski</file>
+        <file>resources/solutions/层层设防一(102).klotski</file>
+        <file>resources/solutions/横刀立马(81).klotski</file>
+        <file>resources/solutions/夹道藏兵(75).klotski</file>
+        <file>resources/solutions/捷足先登(32).klotski</file>
+        <file>resources/solutions/七步成诗(7).klotski</file>
+        <file>resources/solutions/齐头并进(60).klotski</file>
+        <file>resources/solutions/水泄不通(79).klotski</file>
+        <file>resources/solutions/桃花园中(70).klotski</file>
+        <file>resources/solutions/一路顺风(37).klotski</file>
     </qresource>
 </RCC>
