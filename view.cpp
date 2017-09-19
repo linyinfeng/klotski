@@ -338,7 +338,7 @@ void View::showAboutDialog() {
            "\tYaodanjun Ren\n"
            "\tYutong Deng\n"
            "Github: github.com/0yinf/klotski\n"
-           "All picture are from Koei Tecmo Games's Romance of the Three Kingdoms 13\n"
+           "All picture are from Koei Tecmo Games's\n\tRomance of the Three Kingdoms 13\n"
            "Using Qt in LGPLv3\n"
            "This software should not be used for any commercial purposes"));
 }
