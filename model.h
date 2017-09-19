@@ -33,6 +33,8 @@ signals:
 
     void savedToFile(bool successed);
 
+    void isValidPieces(bool is_valid);
+
 public slots:
     /* emit changed for everything */
     void onViewRequireDataRefresh();
@@ -74,6 +76,7 @@ private:
     void incCurrentMoveIndex();
     void decCurrentMoveIndex();
     void setCurrentMoveIndex(int current_move);
+    void validatePieces();
 
     bool validatePieces();
 
