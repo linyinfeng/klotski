@@ -162,17 +162,17 @@
     <message>
         <location filename="view.ui" line="294"/>
         <source>Toggle Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>切换皮肤</translation>
     </message>
     <message>
         <location filename="view.ui" line="299"/>
         <source>&amp;Edit Mode(Experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>关卡编辑模式(实验中)</translation>
     </message>
     <message>
         <location filename="view.ui" line="302"/>
         <source>Ctrl+E</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+E</translation>
     </message>
     <message>
         <source>Chinese (&amp;Traditional)</source>
@@ -251,7 +251,7 @@
     <message>
         <location filename="view.cpp" line="198"/>
         <source>Failed to save file!</source>
-        <translation type="unfinished"></translation>
+        <translation>关卡保存失败！</translation>
     </message>
     <message>
         <location filename="view.cpp" line="316"/>
@@ -297,7 +297,17 @@ All picture are from Koei Tecmo Games&apos;s
 	Romance of the Three Kingdoms 13
 Using Qt in LGPLv3
 This software should not be used for any commercial purposes</source>
-        <translation type="unfinished"></translation>
+        <translation>开发者：
+	林吟风
+	王年翼
+	马钻杰
+	任姚丹珺
+	邓宇彤
+GitHub： github.com/0yinf/klotski
+所有图片资源来自光荣特库摩公司开发的游戏
+	《三国志13》
+使用 LGPL 协议的 Qt
+本软件不应被用作任何商业目的</translation>
     </message>
     <message>
         <source>Developed by
