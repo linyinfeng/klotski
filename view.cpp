@@ -124,7 +124,7 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
     }
     scene_->clear();
     graphics_pieces_.clear();
-    int size = pieces.size();
+    int size = static_cast<int>(pieces.size());
     for (int i = 0; i < size; ++i) {
         GraphicsPiece *graphics_piece = new GraphicsPiece(i, pieces[i]);
         graphics_pieces_.push_back(graphics_piece);
@@ -185,6 +185,7 @@ void View::updateValidMoves(const std::vector<Move> &valid_moves) {
 void View::updateLevelName(const QString &level_name) {
     level_name_ = level_name;
     this->setWindowTitle(tr("Klotski - %1").arg(level_name_));
+    ui->labelLevelName->setText(level_name_);
 }
 void View::updateFileName(const QString &file_name) {
     qDebug() << "update file name to" << file_name;

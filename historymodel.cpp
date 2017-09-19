@@ -11,7 +11,7 @@ HistoryModel::HistoryModel(QObject *parent)
 
 int HistoryModel::rowCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
-    return data_.size();
+    return static_cast<int>(data_.size());
 }
 int HistoryModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);

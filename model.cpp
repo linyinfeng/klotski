@@ -139,7 +139,8 @@ void Model::onPieceRotated(int index) {
 }
 void Model::onEditModeExited() {
     original_pieces_ = pieces_;
-
+    level_name_ = "Undefined";
+    best_step_count_ = 0;
     onReset();
 }
 
@@ -165,7 +166,7 @@ void Model::applyMove(const Move &move) {
         if (current_move_index_ != -1 && move == history_model_[current_move_index_].second.reverse()) {
             // Undo
             decCurrentMoveIndex();
-            if (history_model_[current_move_index_].second.index() != history_model_[current_move_index_ + 1].second.index())
+            if (current_move_index_ == -1 || history_model_[current_move_index_].second.index() != history_model_[current_move_index_ + 1].second.index())
                 // current_move_index_ has been decreased
                 decStepCount();
         } else {

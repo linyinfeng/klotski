@@ -24,7 +24,7 @@ public:
         translator = new QTranslator();
         QApplication::instance()->installTranslator(translator);
 
-        model->onLoadFile(":/resources/levels/七步成诗(7).klotski");
+        model->onLoadFile(u8":/resources/levels/七步成诗(7).klotski");
     }
 
     /* Connect model and view */
@@ -64,8 +64,8 @@ public:
     void start() {
         connect();
         view->refresh();
-//        view->forceResize();
         view->show();
+        view->forceResize();
     }
 
 private slots:
