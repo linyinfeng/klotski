@@ -42,7 +42,8 @@ public:
         QObject::connect(model, &Model::historyModelChanged,        view, &View::updateHistoryModel);
         QObject::connect(model, &Model::currentMoveIndexChanged,    view, &View::updateCurrentMoveIndex);
         QObject::connect(model, &Model::savedToFile,                view, &View::onSavedToFile);
-        QObject::connect(model, &Model::levelNameChanged,           view, &View::updateWindowTitle);
+        QObject::connect(model, &Model::levelNameChanged,           view, &View::updateLevelName);
+        QObject::connect(model, &Model::fileNameChanged,            view, &View::updateFileName);
 
         QObject::connect(view, &View::requireModelDataRefresh,  model, &Model::onViewRequireDataRefresh);
         QObject::connect(view, &View::undo,                     model, &Model::onUndo);
@@ -61,6 +62,7 @@ public:
     void start() {
         connect();
         view->refresh();
+        view->forceResize();
         view->show();
     }
 

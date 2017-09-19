@@ -14,4 +14,7 @@ extern const int kWinPieceIndex;
 extern const QPoint kWinPosition;
 extern const QString kSaveSuffix;
 
+extern const QString kDefaultLevelDir;
+extern const QString kDefaultSolutionDir;
+
 #endif

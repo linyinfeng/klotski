@@ -29,13 +29,15 @@ void Model::onViewRequireDataRefresh() {
     updateValidMoves(); // auto emitted
     qDebug() << "[EMIT] historyModelChanged(&history_model_)";
     emit historyModelChanged(&history_model_);
-    qDebug() << "[EMIT] emit currentMoveIndexChanged(current_move_index_)";
+    qDebug() << "[EMIT] currentMoveIndexChanged(current_move_index_)";
     emit currentMoveIndexChanged(current_move_index_);
-    qDebug() << "[EMIT] emit levelNameChanged(level_name_)";
+    qDebug() << "[EMIT] levelNameChanged(level_name_)";
     emit levelNameChanged(level_name_);
-    qDebug() << "[EMIT] emit bestStepCountChanged(best_step_count_)";
+    qDebug() << "[EMIT] fileNameChanged(file_name_)";
+    emit fileNameChanged(file_name_);
+    qDebug() << "[EMIT] bestStepCountChanged(best_step_count_)";
     emit bestStepCountChanged(best_step_count_);
-    qDebug() << "[EMIT] emit stepCountChanged(step_count_)";
+    qDebug() << "[EMIT] stepCountChanged(step_count_)";
     emit stepCountChanged(step_count_);
     qDebug() << "[EMIT] updateCanUndoRedoState()";
     updateCanUndoRedoState();
@@ -85,7 +87,7 @@ void Model::onLoadFile(const QString & file_name){
     qDebug() << "Start Load";
     QFile file(file_name);
     if(file.open(QIODevice::ReadOnly))
-    {
+    {    
         original_pieces_.clear();
         pieces_.clear();
         history_model_.reset();
@@ -122,6 +124,7 @@ void Model::onLoadFile(const QString & file_name){
         stream >> current_move_index_;
 
         qDebug() << "Start refresh";
+        file_name_ = file_name;
         onViewRequireDataRefresh();
     } else {
         qDebug() << "Failed to open file";

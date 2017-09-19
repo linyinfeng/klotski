@@ -76,7 +76,9 @@ public slots:
     /* set the redo action's state */
     void updateCanRedoStateChanged(bool can_redo);
     /* update window title */
-    void updateWindowTitle(const QString &title);
+    void updateLevelName(const QString &level_name);
+    /* update level file */
+    void updateFileName(const QString &file);
 
     /* update history model */
     void updateHistoryModel(HistoryModel *history_model);
@@ -101,6 +103,7 @@ protected:
     virtual void dropEvent(QDropEvent *event) override;
 
 private slots:
+    void onLoadOptimalSolution();
     /* do when user requires open a save */
     void promoteToOpenFile();
     /* do when user requires save */
@@ -109,13 +112,12 @@ private slots:
     void showAboutDialog();
     /* do when finish button clicked */
     void onFinish();
-
     /* animation control */
     void addSequencedAnimation(QPropertyAnimation *animation);
     void onAnimationGroupFinished();
-
     /* set skins */
     void onToggleSkins(bool use_skin);
+    /* load optimal solution save */
 
 private:
     /* the main resize function */
@@ -140,6 +142,8 @@ private:
 
     QSequentialAnimationGroup *animation_group_;
 
+    QString level_name_;
+    QString file_name_;
     int step_count_, best_step_count_;
 };
 

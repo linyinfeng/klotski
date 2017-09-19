@@ -50,8 +50,10 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    painter->setBrush(background_brush_);
-    painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
+    if (have_skin_) {
+        painter->setBrush(background_brush_);
+        painter->drawRoundedRect(rect_, scale_ * 0.05, scale_ * 0.05);
+    }
 
     QPen pen;
     pen.setColor(Qt::black);
@@ -135,7 +137,6 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 void GraphicsPiece::setBackgroundImage(const QImage &image) {
     if (image.isNull()) {
         have_skin_ = false;
-        background_image_ = image;
     } else {
         have_skin_ = true;
         background_image_ = image;
@@ -180,7 +181,9 @@ void GraphicsPiece::onSceneResize() {
         rect_ = calcRect(piece_);
         piece_base_pos_ = calcPosition(piece_);
         setPos(piece_base_pos_);
-        scaleBackgroundImageToBrush();
+        if (have_skin_) {
+            scaleBackgroundImageToBrush();
+        }
 
         qDebug() << "GraphicsPiece" << index_ << "Resize boundingRect" << boundingRect() << "pos" << pos();
         update();
@@ -212,6 +215,9 @@ void GraphicsPiece::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     qDebug() << this << "mousePressEvent" << event->button();
 }
 void GraphicsPiece::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+    if (in_animation_) {
+        return;
+    }
     if (event->button() & Qt::LeftButton) {
         QGraphicsObject::mouseMoveEvent(event);
         return;
@@ -278,7 +284,9 @@ void GraphicsPiece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
     pressed_ = false;
     update();
-    applyMove(Move(-1, 0, 0));
+    if (!in_animation_) {
+        applyMove(Move(-1, 0, 0));
+    }
     qDebug() << this << "mouseReleaseEvent" << event->button();
 }
 void GraphicsPiece::keyPressEvent(QKeyEvent *event) {
