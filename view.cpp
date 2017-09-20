@@ -346,17 +346,21 @@ void View::promoteToOpenFile() {
         ui->statusBar->showMessage(tr("No file specified"));
 }
 void View::promoteToSaveFile() {
-    QString file_name = QFileDialog::getSaveFileName(
-        this,
-        tr("Open Save file"),
-        ".",
-        tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
-    qDebug() << "Attempt to save file" << file_name;
-    if (!file_name.isEmpty()) {
-        qDebug() << "[EMIT] saveToFile(file_name)";
-        emit saveToFile(file_name);
+    if (!edit_mode_) {
+        QString file_name = QFileDialog::getSaveFileName(
+            this,
+            tr("Open Save file"),
+            ".",
+            tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
+        qDebug() << "Attempt to save file" << file_name;
+        if (!file_name.isEmpty()) {
+            qDebug() << "[EMIT] saveToFile(file_name)";
+            emit saveToFile(file_name);
+        } else {
+            ui->statusBar->showMessage(tr("No file specified"));
+        }
     } else {
-        ui->statusBar->showMessage(tr("No file specified"));
+        toggleEditMode(); // auto save
     }
 }
 void View::showAboutDialog() {
@@ -440,14 +444,18 @@ void View::toggleEditMode() {
         bool is_ok;
         QString level_name;
         int best_step_count;
-        do {
-            level_name = QInputDialog::getText(this, "Edit Mode",
-                "Please enter level name", QLineEdit::Normal, QString(), &is_ok);
-        } while(!is_ok);
-        do {
-            best_step_count = QInputDialog::getInt(this, "Edit Mode", "Please enter best step count",
-                0, 0, std::numeric_limits<int>::max(), 1, &is_ok);
-        } while(!is_ok);
+        level_name = QInputDialog::getText(this, "Edit Mode",
+            "Please enter level name", QLineEdit::Normal, QString(), &is_ok);
+        if (!is_ok) {
+            toggleEditMode();
+            return;
+        }
+        best_step_count = QInputDialog::getInt(this, "Edit Mode", "Please enter best step count",
+            0, 0, std::numeric_limits<int>::max(), 1, &is_ok);
+        if (!is_ok) {
+            toggleEditMode();
+            return;
+        }
         emit editModeExited(level_name, best_step_count);
         emit promoteToSaveFile();
     }

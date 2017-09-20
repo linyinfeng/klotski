@@ -46,8 +46,12 @@ void Model::onViewRequireDataRefresh() {
 }
 
 void Model::onSaveToFile(const QString & file_name){
+    if (!isPiecesValid()) {
+        emit savedToFile(false);
+        return;
+    }
     QFile file(file_name);
-    if (file.open(QIODevice::WriteOnly) && isPiecesValid()) {
+    if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
         stream.setCodec(QTextCodec::codecForName("UTF-8"));
         stream.setGenerateByteOrderMark(true);
@@ -87,7 +91,7 @@ void Model::onLoadFile(const QString & file_name){
     qDebug() << "Start Load";
     QFile file(file_name);
     if(file.open(QIODevice::ReadOnly))
-    {    
+    {
         original_pieces_.clear();
         pieces_.clear();
         history_model_.reset();

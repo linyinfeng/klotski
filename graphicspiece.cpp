@@ -410,6 +410,7 @@ void GraphicsPiece::animationStarted() {
 void GraphicsPiece::rotatePiece() {
     QRect old_rect = piece_.geometry();
     piece_ = Piece(QRect(old_rect.x(), old_rect.y(), old_rect.height(), old_rect.width()));
-    onSceneResize();
+    onSceneResize(); // resize graphics piece
+    scene()->update();
     emit pieceRotated(index_);
 }
