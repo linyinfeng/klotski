@@ -69,7 +69,6 @@ View::View(QWidget *parent) :
     connect(ui->actionShow_Statusbar, &QAction::toggled, ui->statusBar,&QToolBar::setVisible);
     connect(ui->actionShow_Toolbar, &QAction::toggled, ui->toolBar, &QToolBar::setVisible);
     connect(ui->actionShow_Dock_Information, &QAction::toggled, ui->dockWidgetGameInfo, &QDockWidget::setVisible);
-    connect(ui->dockWidgetGameInfo, &QDockWidget::visibilityChanged, ui->actionShow_Dock_Information, &QAction::setChecked);
 
     connect(ui->actionOpen, &QAction::triggered, this, &View::promoteToOpenFile);
     connect(ui->actionSave, &QAction::triggered, this, &View::promoteToSaveFile);
@@ -218,13 +217,6 @@ void View::updateFileName(const QString &file_name) {
     file_name_ = file_name;
 }
 
-void View::onSavedToFile(bool successed) {
-    if (successed) {
-        ui->statusBar->showMessage(tr("Game saved"));
-    } else {
-        QMessageBox::warning(this, tr("Warning"), tr("Failed to save file!"));
-    }
-}
 
 void View::applyMove(const Move &move) {
     graphics_pieces_[move.index()]->applyMove(move);
@@ -273,6 +265,10 @@ void View::resizeView() {
     scene_->setSceneRect(QRectF(QPointF(0, 0), view_rect.size()));
     qDebug() << "ui->graphicsView->fitInView(" << scene_->sceneRect() << ")";
     ui->graphicsView->fitInView(scene_->sceneRect());
+
+    if (animation_group_) {
+        cancelAllAnimation();
+    }
 
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
 //        qDebug() << "Try resize" << graphics_piece;
@@ -329,13 +325,16 @@ void View::dropEvent(QDropEvent *event) {
     qDebug() << "[emit] loadFile(event->mimeData()->urls()[0].toLocalFile())";
     emit loadFile(event->mimeData()->urls()[0].toLocalFile());
 }
-
 void View::keyPressEvent(QKeyEvent *event) {
     QMainWindow::keyPressEvent(event);
     qDebug() << event->modifiers() << event->key();
     if (event->modifiers() & Qt::ShiftModifier && event->key() == Qt::Key_F11) {
         toggleEditMode();
     }
+}
+void View::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    event->accept();
 }
 
 void View::onFinish() {
@@ -384,6 +383,31 @@ void View::promoteToSaveFile() {
         toggleEditMode(); // auto save
     }
 }
+void View::onSavedToFile(bool successed) {
+    if (successed) {
+        ui->statusBar->showMessage(tr("Game saved"));
+    } else {
+        QMessageBox::warning(this, tr("Warning"), tr("Failed to save file!"));
+    }
+}
+
+void View::onLoadOptimalSolution() {
+    QFileInfo file_info(QCoreApplication::applicationDirPath() +
+        kDefaultSolutionDir + QString("/%1(%2).%3").arg(level_name_).arg(best_step_count_).arg(kSaveSuffix));
+    if (file_info.isFile()) {
+        qDebug() << "load file" << file_info.filePath();
+        loadFile(file_info.filePath());
+        ui->statusBar->showMessage(tr("Optimal solution loaded"));
+    } else {
+        QMessageBox::warning(this, tr("Warning"), tr("Can't find solution"));
+    }
+}
+
+void View::showHandbook() {
+    QDesktopServices::openUrl(QUrl(
+        QString("file:///") + QCoreApplication::applicationDirPath() + "/help/index.html")
+    );
+}
 void View::showAboutDialog() {
     QMessageBox::about(this, tr("About Klotski"),
         tr("Developed by\n"
@@ -393,9 +417,71 @@ void View::showAboutDialog() {
            "\tYaodanjun Ren\n"
            "\tYutong Deng\n"
            "Github: github.com/0yinf/klotski\n"
-           "All picture are from Koei Tecmo Games's\n\tRomance of the Three Kingdoms 13\n"
+           "This software use The MIT License\n"
            "Using Qt in LGPLv3\n"
+           "For all character pictures are from Koei Tecmo Games's\n\tRomance of the Three Kingdoms 13\n"
            "This software should not be used for any commercial purposes"));
+}
+
+void View::toggleEditMode() {
+    if (edit_mode_) {
+        edit_mode_ = false;
+        ui->statusBar->showMessage(tr("Edit mode closed"));
+    } else {
+        edit_mode_ = true;
+        ui->statusBar->showMessage(tr("Edit mode entered"));
+    }
+    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+        graphics_piece->setEditMode(edit_mode_);
+        graphics_piece->clearValidMoveDirection();
+    }
+    if (!edit_mode_) {
+        bool is_ok;
+        QString level_name;
+        int best_step_count;
+        level_name = QInputDialog::getText(this, tr("Edit Mode"),
+            tr("Please enter level name"), QLineEdit::Normal, QString(), &is_ok);
+        if (!is_ok) {
+            toggleEditMode();
+            return;
+        }
+        best_step_count = QInputDialog::getInt(this, tr("Edit Mode"), tr("Please enter best step count"),
+            0, 0, std::numeric_limits<int>::max(), 1, &is_ok);
+        if (!is_ok) {
+            toggleEditMode();
+            return;
+        }
+        emit editModeExited(level_name, best_step_count);
+        emit reset();
+        emit promoteToSaveFile();
+    }
+}
+
+void View::saveSettings() {
+    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&file);
+        stream << ui->statusBar->isVisible() << "\n"
+               << ui->toolBar->isVisible() << "\n"
+               << ui->dockWidgetGameInfo->isVisible() << "\n"
+               << use_skins_ << endl;
+    }
+}
+void View::loadSettings() {
+    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&file);
+        int status_bar_visible, tool_bar_visible, dock_info_visible, use_skins;
+        QString language_name;
+        stream >> status_bar_visible
+               >> tool_bar_visible
+               >> dock_info_visible
+               >> use_skins;
+        ui->actionShow_Statusbar->setChecked(status_bar_visible);
+        ui->actionShow_Toolbar->setChecked(tool_bar_visible);
+        ui->actionShow_Dock_Information->setChecked(dock_info_visible);
+        ui->actionToggle_Skins->setChecked(use_skins);
+    }
 }
 
 void View::addSequencedAnimation(QPropertyAnimation *animation) {
@@ -438,87 +524,15 @@ void View::onAnimationGroupFinished() {
     }
     forceResize(); // ensure size is correct
 }
-
-void View::onLoadOptimalSolution() {
-    QFileInfo file_info(QCoreApplication::applicationDirPath() +
-        kDefaultSolutionDir + QString("/%1(%2).%3").arg(level_name_).arg(best_step_count_).arg(kSaveSuffix));
-    if (file_info.isFile()) {
-        qDebug() << "load file" << file_info.filePath();
-        loadFile(file_info.filePath());
-        ui->statusBar->showMessage(tr("Optimal solution loaded"));
-    } else {
-        QMessageBox::warning(this, tr("Warning"), tr("Can't find solution"));
+void View::cancelAllAnimation() {
+    if (animation_group_) {
+        if (animation_group_->state() != QSequentialAnimationGroup::Stopped)
+            animation_group_->stop();
+        animation_group_->deleteLater();
+        animation_group_ = nullptr;
     }
-}
-
-void View::showHandbook() {
-    QDesktopServices::openUrl(QUrl(
-        QString("file:///") + QCoreApplication::applicationDirPath() + "/help/index.html")
-    );
-}
-
-void View::toggleEditMode() {
-    if (edit_mode_) {
-        edit_mode_ = false;
-        ui->statusBar->showMessage(tr("Edit mode closed"));
-    } else {
-        edit_mode_ = true;
-        ui->statusBar->showMessage(tr("Edit mode entered"));
-    }
-    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
-        graphics_piece->setEditMode(edit_mode_);
-        graphics_piece->clearValidMoveDirection();
-    }
-    if (!edit_mode_) {
-        bool is_ok;
-        QString level_name;
-        int best_step_count;
-        level_name = QInputDialog::getText(this, tr("Edit Mode"),
-            tr("Please enter level name"), QLineEdit::Normal, QString(), &is_ok);
-        if (!is_ok) {
-            toggleEditMode();
-            return;
-        }
-        best_step_count = QInputDialog::getInt(this, tr("Edit Mode"), tr("Please enter best step count"),
-            0, 0, std::numeric_limits<int>::max(), 1, &is_ok);
-        if (!is_ok) {
-            toggleEditMode();
-            return;
-        }
-        emit editModeExited(level_name, best_step_count);
-        emit promoteToSaveFile();
-    }
-}
-
-void View::saveSettings() {
-    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
-    if (file.open(QIODevice::WriteOnly)) {
-        QTextStream stream(&file);
-        stream << ui->statusBar->isVisible() << "\n"
-               << ui->toolBar->isVisible() << "\n"
-               << ui->dockWidgetGameInfo->isVisible() << "\n"
-               << use_skins_ << endl;
-    }
-}
-
-void View::loadSettings() {
-    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
-    if (file.open(QIODevice::ReadOnly)) {
-        QTextStream stream(&file);
-        int status_bar_visible, tool_bar_visible, dock_info_visible, use_skins;
-        QString language_name;
-        stream >> status_bar_visible
-               >> tool_bar_visible
-               >> dock_info_visible
-               >> use_skins;
-        ui->actionShow_Statusbar->setChecked(status_bar_visible);
-        ui->actionShow_Toolbar->setChecked(tool_bar_visible);
-        ui->actionShow_Dock_Information->setChecked(dock_info_visible);
-        ui->actionToggle_Skins->setChecked(use_skins);
-    }
-}
-
-void View::closeEvent(QCloseEvent *event) {
-    saveSettings();
-    event->accept();
+//    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
+//        // when be called onSceneResize，graphics_piece force update its position
+//        graphics_piece->onSceneResize();
+//    }
 }

@@ -20,9 +20,7 @@ class Move
 
 public:
     Move(int index, int x, int y);
-
     Move();
-
     Move(const Move &move);
     Move &operator= (const Move &move);
     Direction direction();

@@ -51,6 +51,28 @@ public:
         model->onSaveToFile(QCoreApplication::applicationDirPath() + kAutoSaveFileName);
     }
 
+    /* Start the game */
+    void start() {
+        connect();
+        view->refresh();
+        view->show();
+        view->forceResize();
+    }
+
+private slots:
+    /* About translate  */
+    void onChangeTranslateToEnglish() {
+        translator->load("");
+        language_indicator_ = "en_US";
+        reloadView();
+    }
+    void onChangeTranslateToChineseSimplified() {
+        translator->load(":/resources/translate/zh_CN.qm");
+        language_indicator_ = "zh_CN";
+        reloadView();
+    }
+
+private:
     /* Connect model and view */
     void connect() {
         QObject::connect(model, &Model::syncMove, view,  &View::applyMove);
@@ -77,35 +99,13 @@ public:
         QObject::connect(view, &View::loadFile,                 model, &Model::onLoadFile);
         QObject::connect(view, &View::saveToFile,               model, &Model::onSaveToFile);
         QObject::connect(view, &View::pieceRotated,             model, &Model::onPieceRotated);
-        QObject::connect(view, &View::editModeExited,           model, &Model::onEditModeExited);
+        QObject::connect(view, &View::editModeExited,           model, &Model::changeLevelInfo);
 
         QObject::connect(view, &View::changeTranslateToChineseSimplified,
                          this, &Game::onChangeTranslateToChineseSimplified);
         QObject::connect(view, &View::changeTranslateToEnglish,
                          this, &Game::onChangeTranslateToEnglish);
     }
-    /* Start the game */
-    void start() {
-        connect();
-        view->refresh();
-        view->show();
-        view->forceResize();
-    }
-
-private slots:
-    /* About translate  */
-    void onChangeTranslateToEnglish() {
-        translator->load("");
-        language_indicator_ = "en_US";
-        reloadView();
-    }
-    void onChangeTranslateToChineseSimplified() {
-        translator->load(":/resources/translate/zh_CN.qm");
-        language_indicator_ = "zh_CN";
-        reloadView();
-    }
-
-private:
     void reloadView() {
         view->close();
         view->deleteLater();

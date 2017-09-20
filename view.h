@@ -139,6 +139,8 @@ private:
     void updateStepCountInfo();
     /* get piece's brush */
     QImage getPieceBackgroundImage(int index, const Piece &piece);
+    /* cancel all animation */
+    void cancelAllAnimation();
 
     /* define the unit button takes */
     static const double kFinishButtonVerticalUnit;

@@ -57,10 +57,9 @@ public slots:
 
     /* edit mode */
     void onPieceRotated(int index);
-    void onEditModeExited(const QString &new_level_name, int new_step_count);
+    void changeLevelInfo(const QString &new_level_name, int new_step_count);
 
 private:
-    /**/
     void load(const QString &file_name);
 
     void updateValidMoves();
