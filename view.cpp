@@ -389,10 +389,13 @@ void View::addSequencedAnimation(QPropertyAnimation *animation) {
     }
 
     // Fast animation
-    int current_animation_count = animation_group_->animationCount();
-    if (current_animation_count != 0 && current_animation_count != 1) {
-        animation->setDuration(animation->duration() / current_animation_count);
-    }
+//    int current_animation_count = animation_group_->animationCount();
+//    if (current_animation_count != 0 && current_animation_count != 1) {
+//        int new_duration = animation->duration() / current_animation_count;
+//        if (new_duration < 50)
+//            new_duration = 50;
+//        animation->setDuration(new_duration);
+//    }
     animation_group_->addAnimation(animation);
 
     for (GraphicsPiece *piece : graphics_pieces_) {
