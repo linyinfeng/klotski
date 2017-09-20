@@ -8,8 +8,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication a(argc, argv);
 
-    qDebug() << "Application run in" << QCoreApplication::applicationDirPath();
-//    int fontId = QFontDatabase::addApplicationFont(QCoreApplication::applicationDirPath() + "/fonts/wqy-zenhei.ttc" );
+//    qDebug() << "Application run in" << QCoreApplication::applicationDirPath();
+//    int fontId = QFontDatabase::addApplicationFont(QCoreApplication::applicationDirPath() + "/fonts/inziu-iosevka-SC-regular.ttf" );
 //    QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
 
 //    QFont font;
@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 //        QApplication::setFont(font);
 //        qDebug() << "Font Loaded";
 //    }
+    QApplication::setFont(QFont("Microsoft YaHei"));
 
     Game game;
     game.start();
