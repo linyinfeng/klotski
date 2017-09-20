@@ -107,6 +107,7 @@ protected:
     virtual void dragEnterEvent(QDragEnterEvent *event) override;
     virtual void dropEvent(QDropEvent *event) override;
     virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void onLoadOptimalSolution();
@@ -127,6 +128,9 @@ private slots:
     void showHandbook();
     /* edit mode */
     void toggleEditMode();
+    /* about settings */
+    void saveSettings();
+    void loadSettings();
 
 private:
     /* the main resize function */
@@ -144,6 +148,8 @@ private:
     /* UI */
     Ui::View *ui;
     LevelSelector *level_selector;
+
+    QString current_language_;
 
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;

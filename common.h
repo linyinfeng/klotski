@@ -17,4 +17,6 @@ extern const QString kSaveSuffix;
 extern const QString kDefaultLevelDir;
 extern const QString kDefaultSolutionDir;
 
+extern const QString kSettingsFileName;
+
 #endif

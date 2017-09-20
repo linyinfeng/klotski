@@ -18,6 +18,7 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <numeric>
+#include <QTextCodec>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -53,8 +54,8 @@ View::View(QWidget *parent) :
 
     connect(ui->actionToggle_Skins, &QAction::toggled, this, &View::onToggleSkins);
 
-    connect(ui->actionShow_Statusbar, &QAction::triggered, ui->statusBar,&QToolBar::setVisible);
-    connect(ui->actionShow_Toolbar, &QAction::triggered, ui->toolBar, &QToolBar::setVisible);
+    connect(ui->actionShow_Statusbar, &QAction::toggled, ui->statusBar,&QToolBar::setVisible);
+    connect(ui->actionShow_Toolbar, &QAction::toggled, ui->toolBar, &QToolBar::setVisible);
     connect(ui->actionShow_Dock_Information, &QAction::toggled, ui->dockWidgetGameInfo, &QDockWidget::setVisible);
     connect(ui->dockWidgetGameInfo, &QDockWidget::visibilityChanged, ui->actionShow_Dock_Information, &QAction::setChecked);
 
@@ -66,10 +67,12 @@ View::View(QWidget *parent) :
 
     connect(ui->actionEnglish, &QAction::triggered, this, &View::changeTranslateToEnglish);
     connect(ui->actionChinese_Simplified, &QAction::triggered, this, &View::changeTranslateToChineseSimplified);
+
     connect(ui->actionAbout_Klotski, &QAction::triggered, this, &View::showAboutDialog);
     connect(ui->actionKlotski_Handbook, &QAction::triggered, this, &View::showHandbook);
 
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
+//    connect(this, &View::)
 
     qDebug() << "Resize View at View created";
     resizeView();
@@ -213,6 +216,7 @@ void View::applyMove(const Move &move) {
 void View::forceResize() {
     QResizeEvent *event = new QResizeEvent(size(), size());
     QCoreApplication::postEvent(this, event);
+    resizeView();
 }
 void View::resizeView() {
     const double MainAreaHeightWidthRatio =
@@ -447,13 +451,13 @@ void View::toggleEditMode() {
         bool is_ok;
         QString level_name;
         int best_step_count;
-        level_name = QInputDialog::getText(this, "Edit Mode",
-            "Please enter level name", QLineEdit::Normal, QString(), &is_ok);
+        level_name = QInputDialog::getText(this, tr("Edit Mode"),
+            tr("Please enter level name"), QLineEdit::Normal, QString(), &is_ok);
         if (!is_ok) {
             toggleEditMode();
             return;
         }
-        best_step_count = QInputDialog::getInt(this, "Edit Mode", "Please enter best step count",
+        best_step_count = QInputDialog::getInt(this, tr("Edit Mode"), tr("Please enter best step count"),
             0, 0, std::numeric_limits<int>::max(), 1, &is_ok);
         if (!is_ok) {
             toggleEditMode();
@@ -462,4 +466,39 @@ void View::toggleEditMode() {
         emit editModeExited(level_name, best_step_count);
         emit promoteToSaveFile();
     }
+}
+
+void View::saveSettings() {
+    QFile file(QCoreApplication::applicationDirPath() + kSettingsFileName);
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream stream(&file);
+        stream.setGenerateByteOrderMark(true);
+        stream << ui->statusBar->isVisible() << "\n"
+               << ui->toolBar->isVisible() << "\n"
+               << ui->dockWidgetGameInfo->isVisible() << "\n"
+               << use_skins_ << endl;
+    }
+}
+
+void View::loadSettings() {
+    QFile file(QCoreApplication::applicationDirPath() + kSettingsFileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&file);
+        stream.setCodec(QTextCodec::codecForName("UTF-8"));
+        int status_bar_visible, tool_bar_visible, dock_info_visible, use_skins;
+        QString language_name;
+        stream >> status_bar_visible
+               >> tool_bar_visible
+               >> dock_info_visible
+               >> use_skins;
+        ui->actionShow_Statusbar->setChecked(status_bar_visible);
+        ui->actionShow_Toolbar->setChecked(tool_bar_visible);
+        ui->actionShow_Dock_Information->setChecked(dock_info_visible);
+        ui->actionToggle_Skins->setChecked(use_skins);
+    }
+}
+
+void View::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    event->accept();
 }
