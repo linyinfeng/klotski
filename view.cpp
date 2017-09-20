@@ -441,7 +441,8 @@ void View::toggleEditMode() {
         int best_step_count;
         level_name = QInputDialog::getText(this, tr("Edit Mode"),
             tr("Please enter level name"), QLineEdit::Normal, QString(), &is_ok);
-        if (!is_ok) {
+        level_name = level_name.simplified();
+        if (!is_ok || level_name.isEmpty()) {
             toggleEditMode();
             return;
         }

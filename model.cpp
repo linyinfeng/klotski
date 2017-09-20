@@ -98,7 +98,7 @@ void Model::onLoadFile(const QString & file_name){
 
         QTextStream stream(&file);
 
-        stream >> level_name_;
+        level_name_ = stream.readLine();
         stream >> best_step_count_;
         int pieces_count;
         stream >> pieces_count;
