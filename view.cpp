@@ -389,10 +389,10 @@ void View::addSequencedAnimation(QPropertyAnimation *animation) {
     }
 
     // Fast animation
-//    int current_animation_count = animation_group_->animationCount();
-//    if (current_animation_count != 0 && current_animation_count != 1) {
-//        animation->setDuration(animation->duration() / current_animation_count);
-//    }
+    int current_animation_count = animation_group_->animationCount();
+    if (current_animation_count != 0 && current_animation_count != 1) {
+        animation->setDuration(animation->duration() / current_animation_count);
+    }
     animation_group_->addAnimation(animation);
 
     for (GraphicsPiece *piece : graphics_pieces_) {
@@ -412,13 +412,13 @@ void View::onAnimationGroupFinished() {
     for (GraphicsPiece *piece : graphics_pieces_) {
         piece->animationFinished();
     }
+    forceResize(); // ensure size is correct
 }
 
 void View::onLoadOptimalSolution() {
     QFileInfo file_info(file_name_);
     qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
     loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
-    userSelectedHistory(ui->historyView->model()->rowCount() - 1);
     ui->statusBar->showMessage(tr("Optimal solution loaded"));
 }
 
