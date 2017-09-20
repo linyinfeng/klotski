@@ -528,7 +528,11 @@ void View::cancelAllAnimation() {
     if (animation_group_) {
         if (animation_group_->state() != QSequentialAnimationGroup::Stopped)
             animation_group_->stop();
-        onAnimationGroupFinished();
+        animation_group_->deleteLater();
+        animation_group_ = nullptr;
+        for (GraphicsPiece *piece : graphics_pieces_) {
+            piece->animationFinished();
+        }
     }
 //    for (GraphicsPiece *graphics_piece : graphics_pieces_) {
 //        // when be called onSceneResize，graphics_piece force update its position
