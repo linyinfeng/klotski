@@ -28,7 +28,7 @@ div#tableContainer {
 	display: table;
 	border-spacing: 10px;
 }
-h2#best{
+h1#best{
   text-align: center;
 }
 div#tableRow {
@@ -42,9 +42,7 @@ section#drinks {
     padding: 15px;
     vertical-align: top;
 }
-p#headertext{
-  margin:
-}
+
 span#point{
   font-weight: bold;
 }
