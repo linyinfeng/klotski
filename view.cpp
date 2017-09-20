@@ -19,6 +19,7 @@
 #include <QLineEdit>
 #include <numeric>
 #include <QTextCodec>
+#include <vector>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -43,6 +44,17 @@ View::View(QWidget *parent) :
     // can't be initialized in initialize list
     scene_ = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(scene_);
+
+    const QString kExtraImageDir(QCoreApplication::applicationDirPath() + "/images/");
+    // Max image count, resize for convenience
+    two_by_two_images_.load(kExtraImageDir + "2x2.png");
+    one_by_one_images_.load(kExtraImageDir + "1x1.png");
+    one_by_two_images_.push_back(QImage());
+    two_by_one_images_.push_back(QImage());
+    for (int i = 1; i <= 6; ++i) {
+        one_by_two_images_.push_back(QImage(kExtraImageDir + QString("1x2/%1.png").arg(i)));
+        two_by_one_images_.push_back(QImage(kExtraImageDir + QString("2x1/%1.png").arg(i)));
+    }
 
     connect(ui->actionSelect_Level, &QAction::triggered, level_selector, &LevelSelector::show);
     connect(level_selector, &LevelSelector::loadFile, this, &View::loadFile);
@@ -74,6 +86,8 @@ View::View(QWidget *parent) :
     connect(ui->actionQuit, &QAction::triggered, this, &View::close);
 //    connect(this, &View::)
 
+
+    loadSettings(); // must be called after all connect
     qDebug() << "Resize View at View created";
     resizeView();
 }
@@ -152,18 +166,21 @@ void View::updatePieces(const std::vector<Piece> &pieces) {
     qDebug() << "Level Loaded";
 }
 QImage View::getPieceBackgroundImage(int index, const Piece &piece) {
-    const static QString image_dir(QCoreApplication::applicationDirPath() + "/images/");
-    QImage image;
+
     if (piece.size() == QSize(2, 2)) {
-        image.load(image_dir + "2x2.png");
+        return two_by_two_images_;
     } else if (piece.size() == QSize(1, 1)) {
-        image.load(image_dir + "1x1.png");
+        return one_by_one_images_;
     } else if (piece.size() == QSize(1, 2)) {
-        image.load(image_dir + QString("1x2/%1.png").arg(index));
+        if (index >= 1 && index <= 6) {
+            return one_by_two_images_[index];
+        }
     } else if (piece.size() == QSize(2, 1)) {
-        image.load(image_dir + QString("2x1/%1.png").arg(index));
+        if (index >= 1 && index <= 6) {
+            return two_by_one_images_[index];
+        }
     }
-    return image;
+    return QImage();
 }
 
 void View::onToggleSkins(bool use_skin) {
@@ -469,10 +486,9 @@ void View::toggleEditMode() {
 }
 
 void View::saveSettings() {
-    QFile file(QCoreApplication::applicationDirPath() + kSettingsFileName);
+    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
-        stream.setGenerateByteOrderMark(true);
         stream << ui->statusBar->isVisible() << "\n"
                << ui->toolBar->isVisible() << "\n"
                << ui->dockWidgetGameInfo->isVisible() << "\n"
@@ -481,10 +497,9 @@ void View::saveSettings() {
 }
 
 void View::loadSettings() {
-    QFile file(QCoreApplication::applicationDirPath() + kSettingsFileName);
+    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream stream(&file);
-        stream.setCodec(QTextCodec::codecForName("UTF-8"));
         int status_bar_visible, tool_bar_visible, dock_info_visible, use_skins;
         QString language_name;
         stream >> status_bar_visible

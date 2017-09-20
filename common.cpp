@@ -13,4 +13,7 @@ extern const QString kSaveSuffix("klotski");
 extern const QString kDefaultLevelDir = ":/resources/levels";
 extern const QString kDefaultSolutionDir = ":/resources/solutions";
 
-extern const QString kSettingsFileName = "/settings.txt";
+extern const QString kViewSettingsFileName = "/view_settings.txt";
+extern const QString kLanguageSettingsFileName = "/language_settings.txt";
+
+extern const QString kAutoSaveFileName = "/auto_save.klotski";

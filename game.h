@@ -6,6 +6,7 @@
 
 #include "view.h"
 #include "model.h"
+#include "common.h"
 
 #include <QObject>
 #include <QTranslator>
@@ -19,12 +20,35 @@ class Game : public QObject
     Q_OBJECT
 public:
     Game() {
-        view = new View();
-        model = new Model();
         translator = new QTranslator();
         QApplication::instance()->installTranslator(translator);
+        QFile file(QCoreApplication::applicationDirPath() + kLanguageSettingsFileName);
+        if (file.open(QIODevice::ReadOnly)) {
+            QTextStream stream(&file);
+            stream >> language_indicator_;
+        } else {
+            language_indicator_ = "en_US";
+        }
 
-        model->onLoadFile(u8":/resources/levels/七步成诗(7).klotski");
+        if (language_indicator_ == "zh_CN") {
+            translator->load(":/resources/translate/zh_CN.qm");
+        } else {
+            translator->load("");
+        }
+
+        view = new View();
+        model = new Model();
+
+        model->onLoadFile(QCoreApplication::applicationDirPath() + kAutoSaveFileName);
+    }
+
+    ~Game() {
+        QFile file(QCoreApplication::applicationDirPath() + kLanguageSettingsFileName);
+        if (file.open(QIODevice::WriteOnly)) {
+            QTextStream stream(&file);
+            stream << language_indicator_ << endl;
+        }
+        model->onSaveToFile(QCoreApplication::applicationDirPath() + kAutoSaveFileName);
     }
 
     /* Connect model and view */
@@ -72,10 +96,12 @@ private slots:
     /* About translate  */
     void onChangeTranslateToEnglish() {
         translator->load("");
+        language_indicator_ = "en_US";
         reloadView();
     }
     void onChangeTranslateToChineseSimplified() {
         translator->load(":/resources/translate/zh_CN.qm");
+        language_indicator_ = "zh_CN";
         reloadView();
     }
 
@@ -91,6 +117,7 @@ private:
     View *view;
     Model *model;
     QTranslator *translator;
+    QString language_indicator_;
 };
 
 #endif // GAME_H

@@ -153,7 +153,13 @@ private:
 
     QGraphicsScene *scene_;
     std::vector<GraphicsPiece *> graphics_pieces_;
+
     bool use_skins_;
+    QImage two_by_two_images_;
+    std::vector<QImage> one_by_two_images_;
+    std::vector<QImage> two_by_one_images_;
+    QImage one_by_one_images_;
+
     bool edit_mode_;
 
     QSequentialAnimationGroup *animation_group_;
