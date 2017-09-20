@@ -496,7 +496,7 @@ void View::addSequencedAnimation(QPropertyAnimation *animation) {
         return;
     } else {
         animation_group_->pause();
-        qDebug() << animation_group_->animationCount() << "animation are processing";
+//        qDebug() << animation_group_->animationCount() << "animation are processing";
     }
 
     // Fast animation
