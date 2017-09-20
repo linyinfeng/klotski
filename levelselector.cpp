@@ -14,6 +14,8 @@ LevelSelector::LevelSelector(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowModality(Qt::ApplicationModal);
+
     QStringList filter;
     filter << "*." + kSaveSuffix;
     QDir level_dir(kDefaultLevelDir);
