@@ -137,10 +137,10 @@ void Model::onPieceRotated(int index) {
     qDebug() << "[EMIT] updateValidMoves()";
     updateValidMoves(); // auto emitted
 }
-void Model::onEditModeExited() {
+void Model::onEditModeExited(const QString &new_level_name, int new_best_step_count) {
     original_pieces_ = pieces_;
-    level_name_ = "Undefined";
-    best_step_count_ = 0;
+    level_name_ = new_level_name;
+    best_step_count_ = new_best_step_count;
     onReset();
 }
 

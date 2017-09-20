@@ -60,7 +60,7 @@ signals:
     /* edit mode */
     void pieceRotated(int index);
     /* call model clean history and step */
-    void editModeExited();
+    void editModeExited(const QString &new_level_name, int new_best_step_count);
 
 public slots:
     /* update piece, generate graphics pieces */

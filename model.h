@@ -57,7 +57,7 @@ public slots:
 
     /* edit mode */
     void onPieceRotated(int index);
-    void onEditModeExited();
+    void onEditModeExited(const QString &new_level_name, int new_step_count);
 
 private:
     /**/

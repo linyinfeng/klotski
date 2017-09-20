@@ -15,6 +15,9 @@
 #include <QList>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <numeric>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
 const double View::kFinishButtonHorizontalUnit = 2;
@@ -412,6 +415,7 @@ void View::onLoadOptimalSolution() {
     qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
     loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
     userSelectedHistory(ui->historyView->model()->rowCount() - 1);
+    ui->statusBar->showMessage(tr("Optimal solution loaded"));
 }
 
 void View::showHandbook() {
@@ -423,14 +427,28 @@ void View::showHandbook() {
 void View::toggleEditMode() {
     if (edit_mode_) {
         edit_mode_ = false;
+        ui->statusBar->showMessage(tr("Edit mode closed"));
     } else {
         edit_mode_ = true;
+        ui->statusBar->showMessage(tr("Edit mode entered"));
     }
     for (GraphicsPiece *graphics_piece : graphics_pieces_) {
         graphics_piece->setEditMode(edit_mode_);
         graphics_piece->clearValidMoveDirection();
     }
     if (!edit_mode_) {
-        emit editModeExited();
+        bool is_ok;
+        QString level_name;
+        int best_step_count;
+        do {
+            level_name = QInputDialog::getText(this, "Edit Mode",
+                "Please enter level name", QLineEdit::Normal, QString(), &is_ok);
+        } while(!is_ok);
+        do {
+            best_step_count = QInputDialog::getInt(this, "Edit Mode", "Please enter best step count",
+                0, 0, std::numeric_limits<int>::max(), 1, &is_ok);
+        } while(!is_ok);
+        emit editModeExited(level_name, best_step_count);
+        emit promoteToSaveFile();
     }
 }
