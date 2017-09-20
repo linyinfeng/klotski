@@ -490,7 +490,10 @@ void View::addSequencedAnimation(QPropertyAnimation *animation) {
         animation_group_ = new QSequentialAnimationGroup(this);
         connect(animation_group_, &QSequentialAnimationGroup::finished, this, &View::onAnimationGroupFinished);
     } else if (animation_group_->state() == QSequentialAnimationGroup::Stopped) {
-        animation_group_ = new QSequentialAnimationGroup(this);
+        onAnimationGroupFinished();
+        // animation_group_ will be set to nullptr
+        addSequencedAnimation(animation);
+        return;
     } else {
         animation_group_->pause();
         qDebug() << animation_group_->animationCount() << "animation are processing";

@@ -9,16 +9,16 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     qDebug() << "Application run in" << QCoreApplication::applicationDirPath();
-    int fontId = QFontDatabase::addApplicationFont(QCoreApplication::applicationDirPath() + "/fonts/SourceHanSansSC-Regular.otf" );
-    QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
+//    int fontId = QFontDatabase::addApplicationFont(QCoreApplication::applicationDirPath() + "/fonts/wqy-zenhei.ttc" );
+//    QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
 
-    QFont font;
-    if (fontFamilies.size() > 0)
-    {
-        font.setFamily(fontFamilies.at(0));
-        QApplication::setFont(font);
-        qDebug() << "Font Loaded";
-    }
+//    QFont font;
+//    if (fontFamilies.size() > 0)
+//    {
+//        font.setFamily(fontFamilies.at(0));
+//        QApplication::setFont(font);
+//        qDebug() << "Font Loaded";
+//    }
 
     Game game;
     game.start();
