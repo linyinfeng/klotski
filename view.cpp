@@ -440,10 +440,15 @@ void View::onAnimationGroupFinished() {
 }
 
 void View::onLoadOptimalSolution() {
-    QFileInfo file_info(file_name_);
-    qDebug() << "load file" << kDefaultSolutionDir + "/" + file_info.fileName();
-    loadFile(kDefaultSolutionDir + "/" + file_info.fileName());
-    ui->statusBar->showMessage(tr("Optimal solution loaded"));
+    QFileInfo file_info(QCoreApplication::applicationDirPath() +
+        kDefaultSolutionDir + QString("/%1(%2).%3").arg(level_name_).arg(best_step_count_).arg(kSaveSuffix));
+    if (file_info.isFile()) {
+        qDebug() << "load file" << file_info.filePath();
+        loadFile(file_info.filePath());
+        ui->statusBar->showMessage(tr("Optimal solution loaded"));
+    } else {
+        QMessageBox::warning(this, tr("Warning"), tr("Can't find solution"));
+    }
 }
 
 void View::showHandbook() {

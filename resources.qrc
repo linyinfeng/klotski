@@ -8,39 +8,5 @@
         <file>resources/icons/exit.svg</file>
         <file>resources/translate/zh_CN.qm</file>
         <file>resources/icons/level-select.svg</file>
-        <file>resources/levels/一路顺风(39).klotski</file>
-        <file>resources/levels/七步成诗(7).klotski</file>
-        <file>resources/levels/兵分三路(72).klotski</file>
-        <file>resources/levels/夹道藏兵(75).klotski</file>
-        <file>resources/levels/层层设防一(102).klotski</file>
-        <file>resources/levels/层层设防二(120).klotski</file>
-        <file>resources/levels/捷足先登(32).klotski</file>
-        <file>resources/levels/桃花园中(70).klotski</file>
-        <file>resources/levels/横刀立马(81).klotski</file>
-        <file>resources/levels/比翼横空(28).klotski</file>
-        <file>resources/levels/水泄不通(79).klotski</file>
-        <file>resources/levels/齐头并进(60).klotski</file>
-        <file>resources/solutions/比翼横空(28).klotski</file>
-        <file>resources/solutions/兵分三路(72).klotski</file>
-        <file>resources/solutions/层层设防二(120).klotski</file>
-        <file>resources/solutions/层层设防一(102).klotski</file>
-        <file>resources/solutions/横刀立马(81).klotski</file>
-        <file>resources/solutions/夹道藏兵(75).klotski</file>
-        <file>resources/solutions/捷足先登(32).klotski</file>
-        <file>resources/solutions/七步成诗(7).klotski</file>
-        <file>resources/solutions/齐头并进(60).klotski</file>
-        <file>resources/solutions/水泄不通(79).klotski</file>
-        <file>resources/solutions/桃花园中(70).klotski</file>
-        <file>resources/solutions/一路顺风(39).klotski</file>
-        <file>resources/levels/峰回路转(138).klotski</file>
-        <file>resources/solutions/峰回路转(138).klotski</file>
-        <file>resources/levels/凤凰倒影(31).klotski</file>
-        <file>resources/levels/海阔天空(13).klotski</file>
-        <file>resources/levels/诸葛羽扇(16).klotski</file>
-        <file>resources/levels/逃之夭夭(26).klotski</file>
-        <file>resources/solutions/凤凰倒影(31).klotski</file>
-        <file>resources/solutions/海阔天空(13).klotski</file>
-        <file>resources/solutions/诸葛羽扇(16).klotski</file>
-        <file>resources/solutions/逃之夭夭(26).klotski</file>
     </qresource>
 </RCC>

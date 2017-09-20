@@ -228,7 +228,7 @@
         <translation type="vanished">%1/%2 步数</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="127"/>
+        <location filename="view.cpp" line="137"/>
         <source>%1/%2&lt;span style=&quot;font-size: 11px;&quot;&gt;steps&lt;/span&gt;</source>
         <translation>%1/%2&lt;span style=&quot;font-size: 11px;&quot;&gt;步&lt;/span&gt;</translation>
     </message>
@@ -241,17 +241,18 @@
         <translation type="vanished">加载关卡</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="200"/>
+        <location filename="view.cpp" line="213"/>
         <source>Klotski - %1</source>
         <translation>华容道 - %1</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="210"/>
+        <location filename="view.cpp" line="223"/>
         <source>Game saved</source>
         <translation>游戏已保存</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="212"/>
+        <location filename="view.cpp" line="225"/>
+        <location filename="view.cpp" line="450"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
@@ -260,43 +261,43 @@
         <translation type="vanished">打开文件失败</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="212"/>
+        <location filename="view.cpp" line="225"/>
         <source>Failed to save file!</source>
         <translation>关卡保存失败！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="330"/>
-        <location filename="view.cpp" line="334"/>
+        <location filename="view.cpp" line="344"/>
+        <location filename="view.cpp" line="348"/>
         <source>You win!</source>
         <translation>你赢了！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="331"/>
+        <location filename="view.cpp" line="345"/>
         <source>Your take %1 steps to finish this level
 The best solution of this level takes %2 steps</source>
         <translation>你用了%1步完成本关
 本关最优解为%2步</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="335"/>
+        <location filename="view.cpp" line="349"/>
         <source>Congratulations!
 You find the best solution!</source>
         <translation>恭喜！
 你找到了最优解！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="343"/>
-        <location filename="view.cpp" line="361"/>
+        <location filename="view.cpp" line="357"/>
+        <location filename="view.cpp" line="375"/>
         <source>Klotski Save Files (*.%1)</source>
         <translation>华容道存档文件 (*.%1)</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="374"/>
+        <location filename="view.cpp" line="388"/>
         <source>About Klotski</source>
         <translation>关于华容道</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="375"/>
+        <location filename="view.cpp" line="389"/>
         <source>Developed by
 	Yinfeng Lin
 	Nianyi Wang
@@ -321,41 +322,44 @@ GitHub： github.com/0yinf/klotski
 本软件不应被用作任何商业目的</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="432"/>
+        <location filename="view.cpp" line="448"/>
         <source>Optimal solution loaded</source>
         <translation>最优解已加载</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="444"/>
+        <location filename="view.cpp" line="450"/>
+        <source>Can&apos;t find solution</source>
+        <translation>没有存储的最优解</translation>
+    </message>
+    <message>
+        <location filename="view.cpp" line="463"/>
         <source>Edit mode closed</source>
         <translation>关闭编辑模式</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="447"/>
+        <location filename="view.cpp" line="466"/>
         <source>Edit mode entered</source>
         <translation>进入编辑模式</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="457"/>
-        <location filename="view.cpp" line="463"/>
+        <location filename="view.cpp" line="476"/>
+        <location filename="view.cpp" line="482"/>
         <source>Edit Mode</source>
         <translation>编辑模式</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="458"/>
+        <location filename="view.cpp" line="477"/>
         <source>Please enter level name</source>
         <translation>请输入关卡名</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="463"/>
+        <location filename="view.cpp" line="482"/>
         <source>Please enter best step count</source>
         <translation>请输入最优解步数</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="483"/>
-        <location filename="view.cpp" line="503"/>
         <source>en_US</source>
-        <translation type="unfinished">zh_CN</translation>
+        <translation type="obsolete">zh_CN</translation>
     </message>
     <message>
         <source>English</source>
@@ -408,7 +412,7 @@ The best solution only takes %2 steps</source>
         <translation type="vanished">祝贺！你找到了最优解法！</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="341"/>
+        <location filename="view.cpp" line="355"/>
         <source>Open Saved game</source>
         <translation>打开存档</translation>
     </message>
@@ -417,19 +421,19 @@ The best solution only takes %2 steps</source>
         <translation type="vanished">华容道存档(*.klotski)</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="351"/>
+        <location filename="view.cpp" line="365"/>
         <source>&quot;%1&quot; can&apos;t be find or is not a file</source>
         <oldsource>&quot;%1&quot; can&apos;t be find or is not a file </oldsource>
         <translation>&quot;%1&quot; 不是一个有效的文件</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="353"/>
         <location filename="view.cpp" line="367"/>
+        <location filename="view.cpp" line="381"/>
         <source>No file specified</source>
         <translation>没有选择文件</translation>
     </message>
     <message>
-        <location filename="view.cpp" line="359"/>
+        <location filename="view.cpp" line="373"/>
         <source>Open Save file</source>
         <translation>打开存档文件</translation>
     </message>
