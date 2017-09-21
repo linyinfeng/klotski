@@ -125,7 +125,7 @@ void GraphicsPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         pen.setColor(Qt::black);
     }
     painter->setPen(pen);
-    static QFont font("Helvetica", 20);
+    static QFont font("Microsoft YaHei", 20);
     QFontMetrics font_metrics(font);
     QSize text_size = font_metrics.size(Qt::TextSingleLine, tr("%1").arg(index_));
     painter->setFont(font);
