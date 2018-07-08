@@ -367,11 +367,14 @@ void View::promoteToOpenFile() {
 }
 void View::promoteToSaveFile() {
     if (!edit_mode_) {
+        QString filter = tr("Klotski Save Files (*.%1)").arg(kSaveSuffix);
         QString file_name = QFileDialog::getSaveFileName(
             this,
             tr("Open Save file"),
             ".",
-            tr("Klotski Save Files (*.%1)").arg(kSaveSuffix));
+            filter, &filter, QFileDialog::DontConfirmOverwrite);
+        if (!file_name.endsWith("." + kSaveSuffix))
+            file_name.append(".").append(kSaveSuffix);
         qDebug() << "Attempt to save file" << file_name;
         if (!file_name.isEmpty()) {
             qDebug() << "[EMIT] saveToFile(file_name)";
