@@ -18,7 +18,6 @@
 #include <QInputDialog>
 #include <QLineEdit>
 #include <numeric>
-#include <QTextCodec>
 #include <vector>
 
 const double View::kFinishButtonVerticalUnit = 0.5;
@@ -45,7 +44,7 @@ View::View(QWidget *parent) :
     scene_ = new QGraphicsScene(ui->graphicsView);
     ui->graphicsView->setScene(scene_);
 
-    const QString kExtraImageDir(QCoreApplication::applicationDirPath() + "/images/");
+    const QString kExtraImageDir(dataDir() + "/images/");
     // Max image count, resize for convenience
     two_by_two_images_.load(kExtraImageDir + "2x2.png");
     one_by_one_images_.load(kExtraImageDir + "1x1.png");
@@ -395,7 +394,7 @@ void View::onSavedToFile(bool successed) {
 }
 
 void View::onLoadOptimalSolution() {
-    QFileInfo file_info(QCoreApplication::applicationDirPath() +
+    QFileInfo file_info(dataDir() +
         kDefaultSolutionDir + QString("/%1(%2).%3").arg(level_name_).arg(best_step_count_).arg(kSaveSuffix));
     if (file_info.isFile()) {
         qDebug() << "load file" << file_info.filePath();
@@ -408,7 +407,7 @@ void View::onLoadOptimalSolution() {
 
 void View::showHandbook() {
     QDesktopServices::openUrl(QUrl(
-        QString("file:///") + QCoreApplication::applicationDirPath() + "/help/index.html")
+        QString("file:///") + dataDir() + "/help/index.html")
     );
 }
 void View::showAboutDialog() {
@@ -462,17 +461,17 @@ void View::toggleEditMode() {
 }
 
 void View::saveSettings() {
-    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
+    QFile file(writableDir() + kViewSettingsFileName);
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
         stream << ui->statusBar->isVisible() << "\n"
                << ui->toolBar->isVisible() << "\n"
                << ui->dockWidgetGameInfo->isVisible() << "\n"
-               << use_skins_ << endl;
+               << use_skins_ << Qt::endl;
     }
 }
 void View::loadSettings() {
-    QFile file(QCoreApplication::applicationDirPath() + kViewSettingsFileName);
+    QFile file(writableDir() + kViewSettingsFileName);
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream stream(&file);
         int status_bar_visible, tool_bar_visible, dock_info_visible, use_skins;

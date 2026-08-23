@@ -8,7 +8,6 @@
 #include <QFile>
 #include <QTextStream>
 #include <QTimer>
-#include <QTextCodec>
 
 Model::Model(QObject *parent)
     : QObject(parent),
@@ -53,7 +52,7 @@ void Model::onSaveToFile(const QString & file_name){
     QFile file(file_name);
     if (file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
-        stream.setCodec(QTextCodec::codecForName("UTF-8"));
+        stream.setEncoding(QStringConverter::Utf8);
         stream.setGenerateByteOrderMark(true);
         // Level Basic Infomation
         stream << level_name_ << "\n";
@@ -79,7 +78,7 @@ void Model::onSaveToFile(const QString & file_name){
         }
         stream << current_move_index_ << "\n";
 
-        stream << flush;
+        stream << Qt::flush;
         qDebug() << "[emit] savedToFile(true)";
         emit savedToFile(true);
     } else {

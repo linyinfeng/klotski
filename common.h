@@ -22,4 +22,11 @@ extern const QString kLanguageSettingsFileName;
 
 extern const QString kAutoSaveFileName;
 
+/* Writable per-user data dir (XDG/AppData); store installs are read-only. */
+QString writableDir();
+
+/* First existing dir holding the read-only resources (levels, solutions, images, help):
+ * user data dir, install/share dirs, then the dev layout next to the binary. */
+QString dataDir();
+
 #endif

@@ -5,6 +5,9 @@
 #include <algorithm>
 #include "move.h"
 
+typedef QPair<int, const Move *> HistoryStep;
+Q_DECLARE_METATYPE(HistoryStep)
+
 HistoryModel::HistoryModel(QObject *parent)
     : QAbstractItemModel(parent) {
 }

@@ -1,1 +1,19 @@
+# Qt Creator user settings
 klotski.pro.user
+
+# qmake build artifacts
+.qmake.stash
+Makefile
+*.o
+moc_*
+qrc_*
+ui_*
+klotski
+build/
+*.qm
+
+# nix
+result
+
+# editor local settings
+.vscode/

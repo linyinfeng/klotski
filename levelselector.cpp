@@ -5,7 +5,7 @@
 #include <QString>
 #include <QFileInfo>
 #include <QList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <algorithm>
 #include <QDebug>
 
@@ -18,7 +18,7 @@ LevelSelector::LevelSelector(QWidget *parent)
 
     QStringList filter;
     filter << "*." + kSaveSuffix;
-    QDir level_dir(QCoreApplication::applicationDirPath() + kDefaultLevelDir);
+    QDir level_dir(dataDir() + kDefaultLevelDir);
     QFileInfoList file_info_list =  level_dir.entryInfoList(filter);
 
     QRegularExpression re(R"parttern(.*\((\d*)\).*)parttern");
@@ -45,6 +45,6 @@ void LevelSelector::addListItem(const QString &item) {
 
 void LevelSelector::onItemDoubleClicked(QListWidgetItem *item) {
     QString file_base_name = item->data(Qt::DisplayRole).toString();
-    loadFile(QCoreApplication::applicationDirPath() + kDefaultLevelDir + QString("/%1.%2").arg(file_base_name).arg(kSaveSuffix));
+    loadFile(dataDir() + kDefaultLevelDir + QString("/%1.%2").arg(file_base_name).arg(kSaveSuffix));
     hide();
 }

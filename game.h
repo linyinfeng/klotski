@@ -8,7 +8,10 @@
 #include "model.h"
 #include "common.h"
 
+#include <QApplication>
+#include <QFile>
 #include <QObject>
+#include <QTextStream>
 #include <QTranslator>
 
 /* Game Object
@@ -22,7 +25,7 @@ public:
     Game() {
         translator = new QTranslator();
         QApplication::instance()->installTranslator(translator);
-        QFile file(QCoreApplication::applicationDirPath() + kLanguageSettingsFileName);
+        QFile file(writableDir() + kLanguageSettingsFileName);
         if (file.open(QIODevice::ReadOnly)) {
             QTextStream stream(&file);
             stream >> language_indicator_;
@@ -31,7 +34,7 @@ public:
         }
 
         if (language_indicator_ == "zh_CN") {
-            translator->load(":/resources/translate/zh_CN.qm");
+            translator->load(":/i18n/zh_CN.qm");
         } else {
             translator->load("");
         }
@@ -43,12 +46,12 @@ public:
     }
 
     ~Game() {
-        QFile file(QCoreApplication::applicationDirPath() + kLanguageSettingsFileName);
+        QFile file(writableDir() + kLanguageSettingsFileName);
         if (file.open(QIODevice::WriteOnly)) {
             QTextStream stream(&file);
-            stream << language_indicator_ << endl;
+            stream << language_indicator_ << Qt::endl;
         }
-        model->onSaveToFile(QCoreApplication::applicationDirPath() + kAutoSaveFileName);
+        model->onSaveToFile(writableDir() + kAutoSaveFileName);
     }
 
     /* Start the game */
@@ -67,7 +70,7 @@ private slots:
         reloadView();
     }
     void onChangeTranslateToChineseSimplified() {
-        translator->load(":/resources/translate/zh_CN.qm");
+        translator->load(":/i18n/zh_CN.qm");
         language_indicator_ = "zh_CN";
         reloadView();
     }

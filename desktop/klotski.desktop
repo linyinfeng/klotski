@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Klotski
+Comment=Sliding block puzzle game
+Exec=klotski
+Icon=klotski
+Categories=Game;BoardGame;
